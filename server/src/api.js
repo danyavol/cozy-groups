@@ -3,6 +3,7 @@ const api = express.Router();
 module.exports = api;
 
 const { getUser, saveUser, loginUser, registerUser } = require('./database/users.js');
+const { userDTO } = require('./dto.js');
 
 
 api.post('/login', async (req, res) => {
@@ -24,7 +25,7 @@ api.post('/login', async (req, res) => {
         let result = await loginUser(login, password);
         if (result.ok) {
             response.ok = true;
-            response.user = result.user;
+            response.user = userDTO(result.user);
         } else {
             response.ok = false;
             response.error = 'Неверный пароль'
@@ -46,21 +47,20 @@ api.post('/register', async (req, res) => {
     } else if (!password) {
         response.ok = false;
         response.error = 'Введите пароль';
-    } else if (!pass_Regexp.test(password)) {
-        console.log(password);
-        response.ok = false;
-        response.error = 'Неверный формат пароля';
     } else if (!login_Regexp.test(login)) {
         response.ok = false;
         response.error = 'Неверный формат логина';
+    } else if (!pass_Regexp.test(password)) {
+        response.ok = false;
+        response.error = 'Неверный формат пароля';
     } else {
         // Поиск такого логина в БД
         let user = await getUser(login);
         if (!user) {
+            // Регистрация
             let result = await registerUser(login, password);
-            response.ok = true;
-            // Сохранение пользователя в БД
-            // ...
+            response.ok = result.ok;
+            if (result.ok) response.user = userDTO(result.user);
         } else {
             response.ok = false;
             response.error = 'Логин занят';

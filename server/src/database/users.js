@@ -1,7 +1,8 @@
-const { MongoClient } = require("mongodb");
+const { MongoClient } = require('mongodb');
 const uri = process.env.DB_URI;
 const dbParams = {useUnifiedTopology: true};
 
+const {v4: uuidv4} = require('uuid');
 
 module.exports.getUser = async (login) => {
     const client = new MongoClient(uri, dbParams);
@@ -19,7 +20,7 @@ module.exports.getUser = async (login) => {
 
 module.exports.loginUser = async (login, password) => {
     const client = new MongoClient(uri, dbParams);
-    let response = {};
+    let response = {ok: false};
     try {
         await client.connect();
         const collection = client.db("cozydata").collection("users");
@@ -37,9 +38,6 @@ module.exports.loginUser = async (login, password) => {
             response.user = user;
         }
 
-        delete response.user.password;
-        delete response.user._id;
-
     } finally {
         await client.close();
     }
@@ -48,17 +46,28 @@ module.exports.loginUser = async (login, password) => {
 
 module.exports.registerUser = async (login, password) => {
     const client = new MongoClient(uri, dbParams);
-    let result;
+    let response = {ok: false};
     try {
         await client.connect();
         const collection = client.db("cozydata").collection("users");
+
+        let user = {
+            id: uuidv4(),
+            login: login,
+            password: password
+        }
         
-        result = await collection.insertOne({login: login, password: password});
+        let result = await collection.insertOne(user);
 
-        console.log(result);
-
+        if (result.result.ok) {
+            response.ok = true;
+            response.user = user;
+        } else {
+            response.ok = false;
+        }
+        
     } finally {
         await client.close();
     }
-    return result;
+    return response;
 };
