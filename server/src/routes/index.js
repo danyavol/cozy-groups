@@ -11,8 +11,6 @@ const { userDTO } = require('../dto');
 const auth = async function (req, res, next) {
     let token = await getToken(req.headers.authorization);
 
-    console.log('Auth required. Current token:', req.headers.authorization);
-
     if (!token) {
         let error = new Error('Не авторизован!');
         error.status = 401;
@@ -60,7 +58,7 @@ router.post('/register', async (req, res, next) => {
             if (savedUser) {
                 let token = uuidv4();
                 await addToken({login: login, token: token});
-                
+
                 response.ok = true;
                 response.message = 'Пользователь успешно зарегистрирован'
                 response.token = token;
