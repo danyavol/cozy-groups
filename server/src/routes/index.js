@@ -58,8 +58,12 @@ router.post('/register', async (req, res, next) => {
             let savedUser = await registerUser(user);
 
             if (savedUser) {
+                let token = uuidv4();
+                await addToken({login: login, token: token});
+                
                 response.ok = true;
                 response.message = 'Пользователь успешно зарегистрирован'
+                response.token = token;
             }
         } else {
             response.ok = false;
