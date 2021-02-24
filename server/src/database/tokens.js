@@ -16,14 +16,14 @@ module.exports.getToken = async (userToken) => {
     return token;
 };
 
-module.exports.addToken = async (userLogin, userToken) => {
+module.exports.addToken = async (data) => {
     const client = new MongoClient(uri, dbParams);
     let result;
     try {
         await client.connect();
         const collection = client.db("cozydata").collection("tokens");
         
-        result = await collection.insertOne({user: userLogin, token: userToken});
+        result = await collection.insertOne(data);
     } finally {
         await client.close();
     }
@@ -37,7 +37,7 @@ module.exports.deleteAllTokens = async (userLogin) => {
         await client.connect();
         const collection = client.db("cozydata").collection("tokens");
         
-        result = await collection.deleteMany({user: userLogin});
+        result = await collection.deleteMany({login: userLogin});
     } finally {
         await client.close();
     }

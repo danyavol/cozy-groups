@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const {v4: uuidv4} = require('uuid');
 
-const { getToken } = require('../database/tokens');
+const { getToken, deleteAllTokens, addToken } = require('../database/tokens');
 const { getUser, registerUser, loginUser } = require('../database/users');
 const { userDTO } = require('../dto');
 
@@ -27,7 +27,7 @@ function isValidPassword(presentedPassword, userPassword) {
 }
 
 
-router.post('/registration', async (req, res, next) => {
+router.post('/register', async (req, res, next) => {
     let { password, login } = req.body;
     const pass_Regexp = /[A-Za-z0-9!@#$%^&*]{4,20}/;
     const login_Regexp = /[A-Za-z0-9]{4,20}/;
@@ -50,8 +50,17 @@ router.post('/registration', async (req, res, next) => {
         let user = await getUser(login);
         if (!user) {
             // Регистрация
-            let encryptedPass = bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);
-            response = await registerUser(login, encryptedPass);
+            user = {
+                id: uuidv4(),
+                login: login,
+                password: bcrypt.hashSync(password, bcrypt.genSaltSync(10), null)
+            }
+            let savedUser = await registerUser(user);
+
+            if (savedUser) {
+                response.ok = true;
+                response.message = 'Пользователь успешно зарегистрирован'
+            }
         } else {
             response.ok = false;
             response.message = 'Логин занят';
@@ -80,22 +89,27 @@ router.post('/login', async (req, res, next) => {
         let user = await getUser(login);
         if (!user) {
             // Пользователь не найден
-        }
-        if ( isValidPassword(password, user.password) ) {
-            // Пароль верный
-
-        } else {
-            // Неверный пароль
-
-
-        }
-
-        if (result.ok) {
-            response.ok = true;
-            response.user = userDTO(result.user);
-        } else {
             response.ok = false;
-            response.error = 'Неверный пароль'
+            response.message = 'Логин не найден';
+        } else {
+            if ( isValidPassword(password, user.password) ) {
+                // Пароль верный
+                let data = {
+                    login: login,
+                    token: uuidv4()
+                };
+                
+                await deleteAllTokens(login);
+                await addToken(data);
+    
+                response.ok = true;
+                response.message = 'Успешно авторизован';
+                response.token = data.token;
+            } else {
+                // Неверный пароль
+                response.ok = false;
+                response.message = 'Неверный пароль';
+            }
         }
     }
 

@@ -13,7 +13,6 @@ const router = require('./src/routes/index');
 Каждый ответ сервера содержит следующие поля:
 {
     ok: Boolean, // выполнился запрос или не выполнился
-    status: Number, // статус запроса
     message: String // дополнительное сообщение с пояснением
 }
 */
@@ -34,7 +33,6 @@ app.use((err, req, res, next) => {
 
     res.json({
         ok: false,
-        status: err.status,
         message: err.message
     });
 });
