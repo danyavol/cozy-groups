@@ -2,8 +2,8 @@ const express = require('express');
 const api = express.Router();
 module.exports = api;
 
-const { getUser, saveUser, loginUser, registerUser } = require('./database/users.js');
-const { userDTO } = require('./dto.js');
+const { getUser, saveUser, loginUser, registerUser } = require('../database/users.js');
+const { userDTO } = require('../dto.js');
 
 
 api.post('/login', async (req, res) => {
