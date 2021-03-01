@@ -6,6 +6,7 @@ import {
   Link
 } from "react-router-dom";
 import './App.css';
+import RegisterForm from "./registerForm.js"
 
 function App() {
   return (
@@ -29,6 +30,9 @@ function App() {
           <Route path="/login">
             <Login />
           </Route>
+          <Route path = "/register">
+            <Register/>
+          </Route>
         </Switch>
       </div>
     </Router>
@@ -40,7 +44,10 @@ function Home() {
 }
 
 function Login() {
-  return <h2>Login page</h2>
+  return <h2>Login page.</h2>
+}
+function Register() {
+  return <RegisterForm />
 }
 
 export default App;
