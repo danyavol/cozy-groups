@@ -1,5 +1,6 @@
 
 import React, { Component } from 'react';
+import axios from 'axios';
 class Auth extends Component {
 
     constructor(props){
@@ -18,16 +19,29 @@ handleSubmit(event){
     event.preventDefault();
     let data = {login : this.state.login, password : this.state.password }
     console.log("Form submitted.");
-    fetch('http://localhost:3080/register', {
-        method : 'POST',
-        body : JSON.stringify(data),
-        headers : {
-            'Content-Type' : 'application/json'
-        }
-    }).then(response => {
-        response.json();
+
+    axios.post('http://localhost:3080/register', data)
+    .then(response => {
         console.log(response);
-    })
+
+        if (response.data.ok) {
+            // Все гуд, запрос проше
+        } else {
+            // Выводим пользователю response.data.message
+        }
+    }); 
+
+    // fetch('http://localhost:3080/register', {
+    //     method : 'POST',
+    //     body : JSON.stringify(data),
+    //     headers : {
+    //         'Content-Type' : 'application/json'
+    //     }
+    // })
+    // .then(response => response.json())
+    // .then(json => {
+    //     console.log(json);
+    // })
 }
 
 handleLoginOnChange(event) {

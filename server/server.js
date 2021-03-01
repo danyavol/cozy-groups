@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const app = express();
 const PORT = 3080;  
@@ -19,6 +20,9 @@ const router = require('./src/routes/index');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+
+// Запросы на сервер разрешены только с того же домена и с домена ниже
+app.use( cors({origin: 'http://localhost:3000'}) );
 
 app.use('/', router);
 
