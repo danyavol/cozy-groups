@@ -14,10 +14,11 @@ class Auth extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-handleSubmit(){
+handleSubmit(event){
+    event.preventDefault();
     let data = {login : this.state.login, password : this.state.password }
     console.log("Form submitted.");
-    fetch('/register', {
+    fetch('http://localhost:3080/register', {
         method : 'POST',
         body : JSON.stringify(data),
         headers : {
@@ -45,7 +46,7 @@ handlePasswordOnChange(event) {
                 <input type = "text" placeholder = "Input password." value = {this.state.password} onChange = {this.handlePasswordOnChange}/>
                 <input type = "text" placeholder = "Repeat password." value = {this.state.repeatPassword}/>
                 <a href = "/login">Уже есть аккаунт?</a>
-                <button type = "submit">Зарегистрироваться.</button>
+                <input type = "submit" placeholder= "Зарегистрироваться."/>
             </form>
         );
     }
