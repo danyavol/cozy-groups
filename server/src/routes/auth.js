@@ -95,7 +95,8 @@ auth.post('/login', async (req, res, next) => {
                 // Пароль верный
                 let data = {
                     login: login,
-                    token: uuidv4()
+                    token: uuidv4(),
+                    'user-agent': req.headers['user-agent']
                 };
                 
                 await deleteAllTokens(login);
