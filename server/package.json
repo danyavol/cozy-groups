@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.7",
-    "webpack": "^5.23.0"
+    "webpack": "^5.24.2"
   },
   "scripts": {
     "build": "webpack",
