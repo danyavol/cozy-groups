@@ -10,7 +10,7 @@ class Header extends Component {
         return (
             <header>
                 <div className="logo">
-                    <img src="/images/logo.svg"></img>
+                    <img src="/images/logo.svg" alt="site-logo" />
                     <h2>COZY GROUPS</h2>
                 </div>
                 <ul>
