@@ -1,33 +1,34 @@
 require('dotenv').config();
 
 const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
 const app = express();
 const PORT = 3080;  
 
-const router = require('./src/routes/index');
-//const api = require('./src/routes/api.js');
-//app.use('/api', api);
 
 /* 
 Каждый ответ сервера содержит следующие поля:
 {
     ok: Boolean, // выполнился запрос или не выполнился
-    message: String // дополнительное сообщение с пояснением
+    message: String // дополнительное сообщение с пояснением или текстом ошибки
 }
 */
 
+
+// Запросы на сервер разрешены только с этого домена
+const cors = require('cors');
+app.use( cors({origin: 'http://localhost:3000'}) );
+
+// Парсер входящих запросов
+const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
-// Запросы на сервер разрешены только с того же домена и с домена ниже
-app.use( cors({origin: 'http://localhost:3000'}) );
 
-app.use('/', router);
+app.use('/', require('./src/index.js'));
+
 
 app.use((req, res, next) => {
-    const err = new Error('Не найдено!');
+    const err = new Error('Запрашиваемый путь не существует');
     err.status = 404;
     next(err);   
 });
