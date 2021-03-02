@@ -20,14 +20,24 @@ class Register extends Component {
         return (
             <Fragment>
                 <h2>Register page</h2>
-                <form onSubmit = {this.handleSubmit}>
-                    <input type = "text" placeholder = "Input login." value = {this.state.login} onChange = {this.handleLoginOnChange}/>
-                    <input type = "password" placeholder = "Input password." value = {this.state.password} onChange = {this.handlePasswordOnChange}/>
-                    <input type = "password" placeholder = "Repeat password." value = {this.state.repeatPassword} onChange ={this.handleRepeatPasswordOnChange}/>
-                    <a href = "/login">Уже есть аккаунт?</a>
-                    <input type = "submit" placeholder= "Зарегистрироваться."/>
+                <form className="ui form">
+                    <div className="field">
+                        <label>First Name</label>
+                        <input type="text" name="first-name" placeholder="First Name" />
+                     </div>
+                    <div className="field">
+                        <label>Last Name</label>
+                        <input type="text" name="last-name" placeholder="Last Name"/>
+                    </div>
+                    <div className="field">
+                        <div className="ui checkbox">
+                            <input type="checkbox" tabIndex="0" className="hidden"/>
+                            <label>Я согласен с условиями пользовательского соглашения</label>
+                         </div>
+                    </div>
+                    <button className="ui button" type="submit">Submit</button>
                 </form>
-            </Fragment>
+                </Fragment>
         );
     }
 

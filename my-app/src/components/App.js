@@ -11,6 +11,8 @@ import Register from '../pages/register/register.js';
 
 import Header from './header/header.js';
 
+import 'semantic-ui-css/semantic.min.css'
+
 class App extends Component {
     render() {
         return (
