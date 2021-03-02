@@ -1,0 +1,19 @@
+:root {
+    --primary-color: #FF6939;
+
+    --header-background-color: #222731;
+    --text-header: #FFFFFF;
+
+    --background-color: #F1F5F9;
+    --surface: #FFFFFF;
+    --text-surface: #212121;
+    --text-surface-secondary: #BDBDBD;
+
+    --success-color: #9BC53D;
+    --error-color: #E55934;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+}

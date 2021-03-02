@@ -1,0 +1,19 @@
+html, body {
+    height: 100%;
+}
+
+#root {
+    display: flex;
+    height: 100%;
+}
+
+main {
+    background: var(--background-color);
+    width: calc(100% - 300px);
+    padding: 20px;
+    color: var(--text-surface);
+}
+
+.card {
+    background-color: var(--surface);
+}

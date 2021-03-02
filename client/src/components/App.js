@@ -11,27 +11,34 @@ import Register from '../pages/register/register.js';
 
 import Header from './header/header.js';
 
+import './App.css';
+
 import 'semantic-ui-css/semantic.min.css'
 
 class App extends Component {
+    
+    onRouteChanged() {
+        console.log("ROUTE CHANGED");
+    }
     render() {
         return (
             <Fragment>
-                <Router>
+                <Router onChange={this.onRouteChanged}>
                     
                     <Header />
-
-                    <Switch>
-                    <Route exact path="/">
-                        <Home />
-                    </Route>
-                    <Route path="/login">
-                        <Login />
-                    </Route>
-                    <Route path = "/register">
-                        <Register />
-                    </Route>
-                    </Switch>
+                    <main>
+                        <Switch>
+                        <Route exact path="/">
+                            <Home />
+                        </Route>
+                        <Route path="/login">
+                            <Login />
+                        </Route>
+                        <Route path = "/register">
+                            <Register />
+                        </Route>
+                        </Switch>
+                    </main>
                 </Router>
             </Fragment>
         );
