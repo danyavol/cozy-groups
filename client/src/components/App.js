@@ -24,7 +24,6 @@ class App extends Component {
         return (
             <Fragment>
                 <Router onChange={this.onRouteChanged}>
-                    
                     <Header />
                     <main>
                         <Switch>

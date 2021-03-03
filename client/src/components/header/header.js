@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from "react-router-dom";
+import {Link, useRouteMatch} from "react-router-dom";
 import "./header.css";
 
 import { Icon } from 'semantic-ui-react';
@@ -14,22 +14,40 @@ class Header extends Component {
                     <h2>COZY GROUPS</h2>
                 </div>
                 <ul>
-                    <li className="active">
-                        <Icon name="home" size="big" />
-                        <Link to="/">Главная</Link>
-                    </li>
-                    <li>
-                        <Icon name="sign-in" size="big" />
-                        <Link to="/login">Войти</Link>
-                    </li>
-                    <li>
-                        <Icon name="unlock alternate" size="big" />
-                        <Link to="/register">Регистрация</Link>
-                    </li>
+                    <MenuLink
+                        activeOnlyWhenExact={true}
+                        to="/"
+                        label="Главная"
+                        iconName="home"
+                    />
+                    <MenuLink
+                        to="/login"
+                        label="Войти"
+                        iconName="sign-in"
+                    />
+                    <MenuLink
+                        to="/register"
+                        label="Регистрация"
+                        iconName="unlock alternative"
+                    />
                 </ul>
             </header>
         );
     }
+}
+
+function MenuLink({iconName, label, to, activeOnlyWhenExact }) {
+    let match = useRouteMatch({
+        path: to,
+        exact: activeOnlyWhenExact
+    });
+
+    return (
+        <li className={match ? "active" : ""}>
+            <Icon name={iconName} size="big" />
+            <Link to={to}>{label}</Link>
+        </li>
+    )
 }
 
 export default Header;
