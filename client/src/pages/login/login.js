@@ -1,5 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import axios from 'axios';
+import {Link} from "react-router-dom";
+import ReactDOM from 'react-dom'
 
 class Login extends Component {
 
@@ -19,11 +21,30 @@ class Login extends Component {
         return (
             <Fragment>
                 <h2>Login page</h2>
-                <form onSubmit = {this.handleSubmit}>
-                    <input type = "text" placeholder = "Input login." value = {this.state.login} onChange = {this.handleLoginOnChange} />
-                    <input type = "text" placeholder = "Input password." value = {this.state.password} onChange = {this.handlePasswordOnChange} />
-                    <input type = "submit" placeholder= "Войти." value = "Войти" />
-                    <a href = "/register">Ещё не зарегистрированы?</a>
+                <form className="ui form" onSubmit = {this.handleSubmit}>
+                    <div id="errorBlock"></div>
+                    <div className="field">
+                        <label>Введите логин</label>
+                        <input
+                            type="text"
+                            name="login"
+                            placeholder="Логин"
+                            value={this.state.login}
+                            onChange={this.handleLoginOnChange}
+                        />
+                    </div>
+                    <div className="field">
+                        <label>Введите пароль</label>
+                        <input
+                            type="password"
+                            name="password"
+                            placeholder="Пароль"
+                            value={this.state.password}
+                            onChange={this.handlePasswordOnChange}
+                        />
+                    </div>
+                    <button className="ui button" type="submit">Войти</button>
+                    <Link to="/register">Ещё не зарегистрированы?</Link>
                 </form>
             </Fragment>
         );
@@ -55,7 +76,10 @@ class Login extends Component {
                     } 
                     else {
                     // Ошибка авторизации. Выводим пользователю текст ошибки response.data.message
-                    console.log("Ошибка " + response.data.message);
+                        ResponseError({
+                            label: "Ошибка",
+                            responseMessage: response.data.message
+                        });
                     }
                 }
                 ); 
@@ -72,6 +96,17 @@ class Login extends Component {
         this.setState({password : event.target.value})
     }
 
+}
+
+function ResponseError({ label, responseMessage }) {
+    const element = (
+        <div className="ui negative message">
+            {/*<i className="close icon"></i>*/}
+            <div className="header">{label}</div>
+            <p>{responseMessage}</p>
+        </div>
+    );
+    ReactDOM.render(element, document.getElementById("errorBlock"));
 }
 
 export default Login;

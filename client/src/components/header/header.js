@@ -28,7 +28,7 @@ class Header extends Component {
                     <MenuLink
                         to="/register"
                         label="Регистрация"
-                        iconName="unlock alternative"
+                        iconName="unlock alternate"
                     />
                 </ul>
             </header>
