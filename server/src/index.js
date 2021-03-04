@@ -21,8 +21,8 @@ const authorizedOnly = async function (req, res, next) {
 // Авторизация
 router.use('/auth', require('./routes/auth.js'));
 
-// API
-router.use('/api', require('./routes/api.js'));
+// Управление группами
+router.use('/groups', require('./routes/groups.js'));
 
 
 router.get('/secret', authorizedOnly, (req, res) => {

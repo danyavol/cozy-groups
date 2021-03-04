@@ -134,5 +134,5 @@ auth.post('/login', async (req, res, next) => {
 });
 
 function capitalize(string) {
-    return string ? string[0].toUpperCase() + string.toLowerCase().slice(1) : string;
+    return string ? string[0].toUpperCase() + string.toLowerCase().slice(1) : null;
 }
