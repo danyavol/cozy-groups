@@ -8,7 +8,6 @@ module.exports = async function generateInviteCode() {
 
     let code;
     do {
-        console.log(1);
         code = randomCode();
     } while (existingCodes.includes(code));
 

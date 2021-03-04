@@ -10,7 +10,7 @@ module.exports = {
             await client.connect();
             const collection = client.db("cozydata").collection("tokens");
             
-            if (userToken)
+            if (query)
                 token = await collection.findOne(query);
             else 
                 token = await collection.find();

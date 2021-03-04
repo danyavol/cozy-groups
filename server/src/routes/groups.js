@@ -30,7 +30,7 @@ groups.post('/create', authorizedOnly, async (req, res) => {
     let senderId = req.headers.authorization;
     let { name } = req.body;
     let response = {}
-    console.log(senderId, name);
+    
     if (!name) {
         res.status(400);
         response.ok = false;
