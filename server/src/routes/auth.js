@@ -5,7 +5,7 @@ module.exports = auth;
 
 const bcrypt = require('bcryptjs');
 const {v4: uuidv4} = require('uuid');
-const { deleteAllTokens, addToken } = require('../database/tokens.js');
+const tokensCollection = require('../database/tokens.js');
 const usersCollection = require('../database/users.js');
 
 function isValidPassword(presentedPassword, userPassword) {
@@ -63,13 +63,18 @@ auth.post('/register', async (req, res, next) => {
             let savedUser = await usersCollection.insertUser(user);
 
             if (savedUser) {
-                let token = uuidv4();
-                await addToken({login: login, token: token});
+                let tokenData = {
+                    login: login,
+                    token: uuidv4(),
+                    'user-agent': req.headers['user-agent']
+                }
+
+                await tokensCollection.insertToken(tokenData);
 
                 res.status(200);
                 response.ok = true;
                 response.message = 'Пользователь успешно зарегистрирован'
-                response.token = token;
+                response.token = tokenData.token;
             }
         } else {
             res.status(400);
@@ -114,8 +119,8 @@ auth.post('/login', async (req, res, next) => {
                     'user-agent': req.headers['user-agent']
                 };
                 
-                await deleteAllTokens(login);
-                await addToken(data);
+                await tokensCollection.deleteToken({login: login});
+                await tokensCollection.insertToken(data);
     
                 res.status(200);
                 response.ok = true;
