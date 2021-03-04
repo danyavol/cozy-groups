@@ -57,7 +57,10 @@ class Login extends Component {
         event.preventDefault();
         if(this.state.login === '' || this.state.password === '')
         {
-            console.log("Заполните недостающие поля!")
+            ResponseError({
+                label: "Ошибка",
+                responseMessage: "Заполните недостающие поля!"
+            });
         }
         else
         {
@@ -90,12 +93,10 @@ class Login extends Component {
         }
 
     handleLoginOnChange(event) {
-        console.log("Login Change");
         this.setState({login : event.target.value})
     }
 
     handlePasswordOnChange(event) {
-        console.log("Password Change");
         this.setState({password : event.target.value})
     }
 
