@@ -14,9 +14,10 @@ function isValidPassword(presentedPassword, userPassword) {
 
 
 auth.post('/register', async (req, res, next) => {
-    let { password, login } = req.body;
+    let { password, login, firstName, lastName } = req.body;
     const pass_Regexp = /[A-Za-z0-9!@#$%^&*]{4,20}/;
     const login_Regexp = /[A-Za-z0-9]{4,20}/;
+    const name_Regexp = /^([A-Za-z]+|[А-Яа-я]+)$/;
     let response = {};
 
     if (!login) {
@@ -27,6 +28,10 @@ auth.post('/register', async (req, res, next) => {
         res.status(400);
         response.ok = false;
         response.message = 'Введите пароль';
+    } else if (!firstName) {
+        res.status(400);
+        response.ok = false;
+        response.message = 'Введите имя';
     } else if (!login_Regexp.test(login)) {
         res.status(400);
         response.ok = false;
@@ -35,6 +40,14 @@ auth.post('/register', async (req, res, next) => {
         res.status(400);
         response.ok = false;
         response.message = 'Неверный формат пароля';
+    } else if (!name_Regexp.test(firstName)) {
+        res.status(400);
+        response.ok = false;
+        response.message = 'Неверный формат имени';
+    } else if (lastName && !name_Regexp.test(lastName)) {
+        res.status(400);
+        response.ok = false;
+        response.message = 'Неверный формат фамилии';
     } else {
         // Поиск такого логина в БД
         let user = await getUser(login);
@@ -43,7 +56,9 @@ auth.post('/register', async (req, res, next) => {
             user = {
                 id: uuidv4(),
                 login: login,
-                password: bcrypt.hashSync(password, bcrypt.genSaltSync(10), null)
+                password: bcrypt.hashSync(password, bcrypt.genSaltSync(10), null),
+                firstName: capitalize(firstName),
+                lastName: capitalize(lastName)
             }
             let savedUser = await registerUser(user);
 
@@ -117,3 +132,7 @@ auth.post('/login', async (req, res, next) => {
 
     res.json(response);
 });
+
+function capitalize(string) {
+    return string ? string[0].toUpperCase() + string.toLowerCase().slice(1) : string;
+}
