@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import {Link} from "react-router-dom";
 import axios from 'axios';
 
 class Register extends Component {
@@ -19,25 +20,47 @@ class Register extends Component {
     render() {
         return (
             <Fragment>
-                <h2>Register page</h2>
-                <form className="ui form">
+                <form className="ui form attached segment padded container text">
+                    <h2 className="ui header">Регистрация</h2>
+
                     <div className="field">
-                        <label>First Name</label>
-                        <input type="text" name="first-name" placeholder="First Name" />
-                     </div>
-                    <div className="field">
-                        <label>Last Name</label>
-                        <input type="text" name="last-name" placeholder="Last Name"/>
+                        <label>Логин</label>
+                        <input type="text" name="login" placeholder="Введите логин" />
                     </div>
+
+
                     <div className="field">
-                        <div className="ui checkbox">
-                            <input type="checkbox" tabIndex="0" className="hidden"/>
-                            <label>Я согласен с условиями пользовательского соглашения</label>
-                         </div>
+                        <label>Имя</label>
+                        <div className="two fields">
+                            <div className="field">
+                                <input type="text" name="firtName" placeholder="Введите имя" />
+                            </div>
+                            <div className="field">
+                                <input type="text" name="lastName" placeholder="Введите фамилию" />
+                            </div>
+                        </div>
                     </div>
-                    <button className="ui button" type="submit">Submit</button>
+
+
+                    <div className="field">
+                        <label>Пароль</label>
+                        <div className="two fields">
+                            <div className="field">
+                                <input type="text" name="password" placeholder="Введите пароль"/>
+                            </div>
+                            <div className="field">
+                                <input type="text" name="passwordConfirm" placeholder="Повторите пароль"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button className="ui blue button" type="submit">Создать аккаунт</button>
                 </form>
-                </Fragment>
+                <div className="ui bottom attached warning message container text">
+                    <i className="icon help"></i>
+                    Уже есть аккаунт? <Link to="/login">Войти</Link>
+                </div>
+            </Fragment>
         );
     }
 

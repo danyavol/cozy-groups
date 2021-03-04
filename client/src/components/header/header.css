@@ -31,6 +31,7 @@ header ul li i {
 
 header ul li a {
     color: var(--text-header);
+    padding: 10px;
 }
 
 header ul li a:hover {

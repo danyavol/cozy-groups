@@ -17,13 +17,10 @@ import 'semantic-ui-css/semantic.min.css'
 
 class App extends Component {
     
-    onRouteChanged() {
-        console.log("ROUTE CHANGED");
-    }
     render() {
         return (
             <Fragment>
-                <Router onChange={this.onRouteChanged}>
+                <Router>
                     <Header />
                     <main>
                         <Switch>

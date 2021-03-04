@@ -19,33 +19,36 @@ class Login extends Component {
 
     render() {
         return (
-            <Fragment>
-                <h2>Login page</h2>
-                <form className="ui form" onSubmit = {this.handleSubmit}>
+            <Fragment> 
+                <form className="ui form attached segment padded container text" onSubmit = {this.handleSubmit}>
+                    <h2 className="ui header">Авторизация</h2>
                     <div id="errorBlock"></div>
                     <div className="field">
-                        <label>Введите логин</label>
+                        <label>Логин</label>
                         <input
                             type="text"
                             name="login"
-                            placeholder="Логин"
+                            placeholder="Введите логин"
                             value={this.state.login}
                             onChange={this.handleLoginOnChange}
                         />
                     </div>
                     <div className="field">
-                        <label>Введите пароль</label>
+                        <label>Пароль</label>
                         <input
                             type="password"
                             name="password"
-                            placeholder="Пароль"
+                            placeholder="Введите пароль"
                             value={this.state.password}
                             onChange={this.handlePasswordOnChange}
                         />
                     </div>
-                    <button className="ui button" type="submit">Войти</button>
-                    <Link to="/register">Ещё не зарегистрированы?</Link>
+                    <button className="ui blue button" type="submit">Войти</button>
                 </form>
+                <div className="ui bottom attached warning message container text">
+                    <i className="icon help"></i>
+                    Ещё не зарегистрированы? <Link to="/register">Создать аккаунт</Link>
+                </div>
             </Fragment>
         );
     }
