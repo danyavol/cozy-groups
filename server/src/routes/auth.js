@@ -6,7 +6,7 @@ module.exports = auth;
 const bcrypt = require('bcryptjs');
 const {v4: uuidv4} = require('uuid');
 const { deleteAllTokens, addToken } = require('../database/tokens.js');
-const { getUser, registerUser } = require('../database/users.js');
+const usersCollection = require('../database/users.js');
 
 function isValidPassword(presentedPassword, userPassword) {
     return bcrypt.compareSync(presentedPassword, userPassword);
@@ -50,7 +50,7 @@ auth.post('/register', async (req, res, next) => {
         response.message = 'Неверный формат фамилии';
     } else {
         // Поиск такого логина в БД
-        let user = await getUser(login);
+        let user = await usersCollection.findUser({login: login});
         if (!user) {
             // Регистрация
             user = {
@@ -60,7 +60,7 @@ auth.post('/register', async (req, res, next) => {
                 firstName: capitalize(firstName),
                 lastName: capitalize(lastName)
             }
-            let savedUser = await registerUser(user);
+            let savedUser = await usersCollection.insertUser(user);
 
             if (savedUser) {
                 let token = uuidv4();
@@ -99,7 +99,7 @@ auth.post('/login', async (req, res, next) => {
     } 
     // Попытка авторизации
     else {
-        let user = await getUser(login);
+        let user = await usersCollection.findUser({login: login});
         if (!user) {
             // Пользователь не найден
             res.status(400);
