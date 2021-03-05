@@ -133,7 +133,7 @@ class Register extends Component {
             password : this.state.password 
         }
 
-        axios.post('http://localhost:3080/register', data)
+        axios.post('http://localhost:3080/auth/register', data)
         .then(response => {
             console.log(response);
 
