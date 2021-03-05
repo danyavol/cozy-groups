@@ -36,20 +36,6 @@ class Header extends Component {
     }
 }
 
-function MenuLink({iconName, label, to, activeOnlyWhenExact }) {
-    let match = useRouteMatch({
-        path: to,
-        exact: activeOnlyWhenExact
-    });
-
-    return (
-        <li className={match ? "active" : ""}>
-            <Icon name={iconName} size="big" />
-            <Link to={to}>{label}</Link>
-        </li>
-    )
-}
-
 function MenuLink({ iconName, label, to, activeOnlyWhenExact }) {
     let match = useRouteMatch({
         path: to,
