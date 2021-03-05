@@ -9,9 +9,6 @@ const generateInviteCode = require('../service/inviteCode.js');
 
 /*
 
-POST: /groups/join
-    { inviteCode: String }
-
 POST: /groups/edit-info
     { groupId: String, name: String }
 
@@ -27,7 +24,7 @@ POST: /groups/kick-user
 */
 
 groups.post('/create', authorizedOnly, async (req, res) => {
-    let senderId = req.headers.authorization;
+    let senderId = res.locals.userId;
     let { name } = req.body;
     let response = {}
     
@@ -53,6 +50,47 @@ groups.post('/create', authorizedOnly, async (req, res) => {
         response.groupId = group.id;
         response.inviteCode = group.inviteCode;
         response.message = 'Группа успешно создана';
+    }
+
+    res.json(response);
+});
+
+groups.post('/join', authorizedOnly, async (req, res) => {
+    let senderId = res.locals.userId;
+    let { inviteCode } = req.body;
+    let response = {};
+
+    let group = await groupsCollection.findGroup({inviteCode: inviteCode});
+    if (!group) {
+        res.status(400);
+        response.ok = false;
+        response.message = 'Группа с таким кодом приглашения не найдена'
+    } else {
+        // Проверка, состоит ли пользователь уже в группе
+        let alreadyMember = false;
+        for (let i = 0; i < group.users.length; i++) {
+            if (group.users[i].id == senderId) {
+                alreadyMember = true;
+                break;
+            } 
+        }
+
+        if (alreadyMember) {
+            res.status(400);
+            response.ok = false;
+            response.message = 'Вы уже состоите в этой группе';
+        } else {
+            let userData = {
+                id: senderId,
+                role: 'member'
+            };
+            await groupsCollection.updateGroup( {id: group.id}, {$push: {users: userData}} );
+    
+            res.status(200);
+            response.ok = true;
+            response.message = 'Вы успешно присоединились к группе';
+        }
+        
     }
 
     res.json(response);
