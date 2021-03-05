@@ -2,46 +2,53 @@ const { MongoClient } = require('mongodb');
 const uri = process.env.DB_URI;
 const dbParams = {useUnifiedTopology: true};
 
+
 module.exports = {
-    findToken: async (query) => {
+    // Получить одну или все группы
+    findGroup: async (query) => {
         const client = new MongoClient(uri, dbParams);
-        let token;
+        let group;
         try {
             await client.connect();
-            const collection = client.db("cozydata").collection("tokens");
-            
+            const collection = client.db("cozydata").collection("groups");
+    
             if (query)
-                token = await collection.findOne(query);
+                group = await collection.findOne(query);
             else 
-                token = await collection.find();
+                group = await collection.find();
+    
         } finally {
             await client.close();
         }
-        return token;
+        return group;
     },
 
-    insertToken: async (data) => {
+    // Создать группу
+    insertGroup: async (group) => {
         const client = new MongoClient(uri, dbParams);
         let result;
         try {
             await client.connect();
-            const collection = client.db("cozydata").collection("tokens");
-            
-            result = await collection.insertOne(data);
+            const collection = client.db("cozydata").collection("groups");
+    
+            result = await collection.insertOne(group);
+    
         } finally {
             await client.close();
         }
         return result;
     },
 
-    deleteToken: async (query) => {
+    // Обновить группу
+    updateGroup: async (filter, group) => {
         const client = new MongoClient(uri, dbParams);
         let result;
         try {
             await client.connect();
-            const collection = client.db("cozydata").collection("tokens");
-            
-            result = await collection.deleteMany(query);
+            const collection = client.db("cozydata").collection("groups");
+    
+            result = await collection.updateOne(filter, group);
+    
         } finally {
             await client.close();
         }
