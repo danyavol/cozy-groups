@@ -1,49 +1,96 @@
 import React, { Component, Fragment } from 'react';
 import axios from 'axios';
 import {Link} from "react-router-dom";
-import ReactDOM from 'react-dom'
 
 class Login extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             login:'',
-            password :'',
+            password:'',
+
+            loginError: '',
+            passwordError: '',
+
+            globalErrorTitle: '',
+            globalError: '',
+
+            loading: false
         }
         this.handleLoginOnChange = this.handleLoginOnChange.bind(this);
         this.handlePasswordOnChange = this.handlePasswordOnChange.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.hideGlobalError = this.hideGlobalError.bind(this);
     }
 
 
     render() {
         return (
-            <Fragment> 
-                <form className="ui form attached segment padded container text" onSubmit = {this.handleSubmit}>
+            <Fragment>
+                <form className="ui form attached segment padded container text" onSubmit = {this.handleSubmit} autoComplete="off">
                     <h2 className="ui header">Авторизация</h2>
-                    <div id="errorBlock"></div>
-                    <div className="field">
+
+                    <div className={`ui negative message ${this.state.globalError ? '' : 'hidden'}`}>
+                        <i className="close icon" onClick={this.hideGlobalError}></i>
+                        <div className="header">{this.state.globalErrorTitle}</div>
+                        <p>{this.state.globalError}</p>
+                    </div>
+
+                    <div className={`field required ${this.state.loginError ? 'error' : ''}`}>
                         <label>Логин</label>
                         <input
                             type="text"
                             name="login"
                             placeholder="Введите логин"
                             value={this.state.login}
-                            onChange={this.handleLoginOnChange}
+                            onChange={this.handleInputChange}
                         />
+                        <div className={`ui basic red pointing prompt label ${this.state.loginError === 'empty' ? 'visible' : 'hidden'}`}>Введите логин</div>
                     </div>
-                    <div className="field">
+
+                    <div className={`field required ${this.state.passwordError ? 'error' : ''}`}>
                         <label>Пароль</label>
                         <input
                             type="password"
                             name="password"
                             placeholder="Введите пароль"
                             value={this.state.password}
-                            onChange={this.handlePasswordOnChange}
+                            onChange={this.handleInputChange}
                         />
+                        <div className={`ui basic red pointing prompt label ${this.state.passwordError === 'empty' ? 'visible' : 'hidden'}`}>Введите пароль</div>
                     </div>
-                    <button className="ui blue button" type="submit">Войти</button>
+
+                    <button
+                        className={`ui blue button ${this.state.loading ? 'loading' : ''}`}
+                        type="submit"
+                        disabled={this.state.loading ? 'disabled' : ''}
+                    >Войти</button>
+
+                    {/*<div>*/}
+                    {/*    <div className="field">*/}
+                    {/*        <label>Логин</label>*/}
+                    {/*        <input*/}
+                    {/*            type="text"*/}
+                    {/*            name="login"*/}
+                    {/*            placeholder="Введите логин"*/}
+                    {/*            value={this.state.login}*/}
+                    {/*            onChange={this.handleLoginOnChange}*/}
+                    {/*        />*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
+                    {/*<div className="field">*/}
+                    {/*    <label>Пароль</label>*/}
+                    {/*    <input*/}
+                    {/*        type="password"*/}
+                    {/*        name="password"*/}
+                    {/*        placeholder="Введите пароль"*/}
+                    {/*        value={this.state.password}*/}
+                    {/*        onChange={this.handlePasswordOnChange}*/}
+                    {/*    />*/}
+                    {/*</div>*/}
+                    {/*<button className="ui blue button" type="submit">Войти</button>*/}
                 </form>
                 <div className="ui bottom attached warning message container text">
                     <i className="icon help"></i>
@@ -53,64 +100,125 @@ class Login extends Component {
         );
     }
 
-    handleSubmit(event){
+    hideGlobalError() {
+        this.setState({
+            globalErrorTitle: '',
+            globalError: ''
+        });
+    }
+
+    handleSubmit(event) {
         event.preventDefault();
-        if(this.state.login === '' || this.state.password === '')
-        {
-            ResponseError({
-                label: "Ошибка",
-                responseMessage: "Заполните недостающие поля!"
-            });
-        }
-        else
-        {
-            let data = {login : this.state.login, password : this.state.password }
-            console.log("Form submitted.");
-            axios.post('http://localhost:3080/login', data)
-                .then(response => {
-                console.log(response);
-                    if (response.data.ok) {
-                    // Все гуд, запрос прошел
-                    // Сохраняем токен в localStorage
-                    localStorage.setItem('token', response.data.token);
-    
-                    // Получаем доступ к приватной страничке с использованием этого токена
-                    let token = localStorage.getItem('token');
-                    axios.get('http://localhost:3080/secret', {headers: {'Authorization': token}}).then(response => {
-                        console.log(response);
-                    })
-                    } 
-                    else {
-                    // Ошибка авторизации. Выводим пользователю текст ошибки response.data.message
-                        ResponseError({
-                            label: "Ошибка",
-                            responseMessage: response.data.message
-                        });
-                    }
-                }
-                ); 
-        }
+
+        let isValid = true;
+
+        if (!this.validateField('login', this.state.login)) isValid = false;
+        if (!this.validateField('password', this.state.password)) isValid = false;
+
+        if (!isValid) return;
+
+        this.setState({ loading: true });
+
+        let data = {
+            login: this.state.login,
+            password: this.state.password
         }
 
+        axios.post('http://localhost:3080/login', data)
+            .then(response => {
+                console.log(response);
+
+                if (response.data.ok) {
+                    localStorage.setItem('token', response.data.token);
+
+                    let token = localStorage.getItem('token');
+                    axios.get('http://localhost:3080/secret', { headers: { 'Authorization': token}})
+                        .then(response => { console.log(response) });
+                }
+                else
+                    this.setState({
+                        globalErrorTitle: 'Ошибка',
+                        globalError: response.data.message,
+                        loading: false
+                    });
+            })
+            .catch(() => {
+                this.setState({
+                    globalErrorTitle: 'Ошибка',
+                    globalError: 'Ошибка соединения с сервером',
+                    loading: false
+                });
+            });
+
+        // if(this.state.login === '' || this.state.password === '') {
+        //     ResponseError({
+        //         label: "Ошибка",
+        //         responseMessage: "Заполните недостающие поля!"
+        //     });
+        // } else {
+        //     let data = { login : this.state.login, password : this.state.password }
+        //     console.log("Form submitted.");
+        //     axios.post('http://localhost:3080/login', data)
+        //         .then(response => {
+        //         console.log(response);
+        //             if (response.data.ok) {
+        //             // Все гуд, запрос прошел
+        //             // Сохраняем токен в localStorage
+        //             localStorage.setItem('token', response.data.token);
+        //
+        //             // Получаем доступ к приватной страничке с использованием этого токена
+        //             let token = localStorage.getItem('token');
+        //             axios.get('http://localhost:3080/secret', {headers: {'Authorization': token}}).then(response => {
+        //                 console.log(response);
+        //             })
+        //             } else {
+        //             // Ошибка авторизации. Выводим пользователю текст ошибки response.data.message
+        //                 ResponseError({
+        //                     label: "Ошибка",
+        //                     responseMessage: response.data.message
+        //                 });
+        //             }
+        //         });
+        // }
+    }
+
     handleLoginOnChange(event) {
-        this.setState({login : event.target.value})
+        this.setState({ login : event.target.value })
     }
 
     handlePasswordOnChange(event) {
-        this.setState({password : event.target.value})
+        this.setState({ password : event.target.value })
     }
 
-}
+    handleInputChange(e) {
+        this.setState(
+            {[e.target.name]: e.target.value},
+            () => this.validateField(e.target.name, e.target.value)
+        );
+    }
 
-function ResponseError({ label, responseMessage }) {
-    const element = (
-        <div className="ui negative message">
-            {/*<i className="close icon"></i>*/}
-            <div className="header">{label}</div>
-            <p>{responseMessage}</p>
-        </div>
-    );
-    ReactDOM.render(element, document.getElementById("errorBlock"));
+    validateField(fieldName, value) {
+        switch (fieldName) {
+            case 'login':
+                if (!value) {
+                    this.setState({loginError: 'empty'});
+                    return false;
+                }
+                else {
+                    this.setState({loginError: null});
+                    return true;
+                }
+            case 'password':
+                if (!value) {
+                    this.setState({passwordError: 'empty'});
+                    return false;
+                }
+                else {
+                    this.setState({passwordError: null});
+                    return true;
+                }
+        }
+    }
 }
 
 export default Login;
