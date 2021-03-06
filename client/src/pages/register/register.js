@@ -143,7 +143,6 @@ class Register extends Component {
     }
 
     handleSubmit(event) {
-        console.log('press');
         event.preventDefault();
 
         let isValid = true;
@@ -169,16 +168,18 @@ class Register extends Component {
 
         axios.post('http://localhost:3080/auth/register', data)
         .then(response => {
-            console.log(response);
+            this.setState({ loading: false });
 
-            if (response.data.ok)
+            if (response.data.ok) {
                 localStorage.setItem('token', response.data.token);
-            else
+
+                this.props.updateToken(response.data.token);
+            } else {
                 this.setState({
                     globalErrorTitle: 'Ошибка',
-                    globalError: response.data.message,
-                    loading: false
+                    globalError: response.data.message
                 });
+            }
         })
         .catch(() => {
             this.setState({

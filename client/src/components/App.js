@@ -16,28 +16,46 @@ import './App.css';
 import 'semantic-ui-css/semantic.min.css'
 
 class App extends Component {
+
+    constructor() {
+        super();
+        this.state = {
+            token: null
+        }
+
+        this.updateToken = this.updateToken.bind(this);
+    }
+
+    componentDidMount() {
+        this.setState( {token: localStorage.getItem('token')} );
+    }
     
     render() {
         return (
             <Fragment>
                 <Router>
-                    <Header />
+                    <Header token={this.state.token} />
                     <main>
                         <Switch>
                         <Route exact path="/">
                             <Home />
                         </Route>
                         <Route path="/login">
-                            <Login />
+                            <Login updateToken={this.updateToken} />
                         </Route>
                         <Route path = "/register">
-                            <Register />
+                            <Register updateToken={this.updateToken} />
                         </Route>
                         </Switch>
                     </main>
                 </Router>
             </Fragment>
         );
+    }
+
+    updateToken(value) {
+        console.log(123, value);
+        this.setState({token: value});
     }
 }
 

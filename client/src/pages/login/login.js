@@ -124,25 +124,23 @@ class Login extends Component {
             password: this.state.password
         }
 
-        axios.post('http://localhost:3080/login', data)
+        axios.post('http://localhost:3080/auth/login', data)
             .then(response => {
-                console.log(response);
+                this.setState({ loading: false });
 
                 if (response.data.ok) {
                     localStorage.setItem('token', response.data.token);
 
-                    let token = localStorage.getItem('token');
-                    axios.get('http://localhost:3080/secret', { headers: { 'Authorization': token}})
-                        .then(response => { console.log(response) });
-                }
-                else
+                    this.props.updateToken(response.data.token);
+                } else {
                     this.setState({
                         globalErrorTitle: 'Ошибка',
-                        globalError: response.data.message,
-                        loading: false
+                        globalError: response.data.message
                     });
+                }
             })
-            .catch(() => {
+            .catch((err) => {
+                console.log(err);
                 this.setState({
                     globalErrorTitle: 'Ошибка',
                     globalError: 'Ошибка соединения с сервером',
