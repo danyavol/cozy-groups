@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
-import {Link, useRouteMatch} from "react-router-dom";
+import {Link, useRouteMatch, withRouter} from "react-router-dom";
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSignInAlt, faSignOutAlt, faUserCog, faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
+import { faPlusSquare } from '@fortawesome/free-regular-svg-icons'
+
 import "./header.css";
 
 import { Icon } from 'semantic-ui-react';
@@ -9,37 +14,63 @@ class Header extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            token: null
+            token: null,
+            myGroups: []
         };
+    }
+
+    changeRoute(path) {
+        this.props.history.push(path)
     }
 
     render() {
         return (
             <header>
                 <div className="logo">
-                    <img src="/images/logo.svg" alt="site-logo" />
-                    <h2>COZY GROUPS</h2>
+                    <img src="/images/logo.svg" alt="site-logo" onClick={() => this.changeRoute('/')} />
+                    <h2 onClick={() => this.changeRoute('/')}>COZY GROUPS</h2>
                 </div>
-                <ul>
-                    <MenuLink
-                        activeOnlyWhenExact={true}
-                        to="/"
-                        label="Главная"
-                        iconName="home"
-                    />
+                {/* Для не авторизованных пользователей */}
+                <div className={this.state.token ? 'hidden' : ''}>
                     <MenuLink
                         to="/login"
-                        label="Войти"
-                        iconName="sign-in"
-                        hidden={this.state.token ? true : false}
+                        label="Вход"
+                        icon={faSignInAlt}
                     />
                     <MenuLink
                         to="/register"
                         label="Регистрация"
-                        iconName="unlock alternate"
-                        hidden={this.state.token ? true : false}
+                        icon={faUnlockAlt}
                     />
-                </ul>
+                </div>
+                {/* Для авторизованных */}
+                <div className={`header-menu ${this.state.token ? '' : 'hidden'}`}>
+                    <div className="menu-top">
+                        <div className="myGroups">
+                            <div className="title">
+                                <h3>Мои группы</h3>
+                                <Link to={'/add-group'} ><FontAwesomeIcon icon={faPlusSquare} size='2x' /></Link>
+                            </div>
+                            <div id="myGroups">
+                                <h5><Link to={'/'}>Название группы 1</Link></h5>
+                                <h5><Link to={'/'}>Название группы 2</Link></h5>
+                                {/* <h6>У вас нету групп</h6> */}
+                            </div>
+                        </div> 
+                    </div>
+                    <div className="menu-bottom">
+                        <MenuLink
+                            to="/settings"
+                            label="Настройки"
+                            icon={faUserCog}
+                        />
+                        <MenuLink
+                            to="/"
+                            label="Выйти"
+                            icon={faSignOutAlt}
+                        />
+                    </div>
+                </div>
             </header>
         );
     }
@@ -52,18 +83,18 @@ class Header extends Component {
     }
 }
 
-function MenuLink({ iconName, label, to, activeOnlyWhenExact, hidden }) {
+function MenuLink({ icon, label, to }) {
     let match = useRouteMatch({
         path: to,
-        exact: activeOnlyWhenExact
+        exact: true
     });
 
     return (
-        <li className={`${hidden ? 'hidden' : ''} ${match ? "active" : ""}`}>
-            <Icon name={iconName} size="big" />
-            <Link to={to}>{label}</Link>
-        </li>
+        <div className={`header-link ${match ? 'active' : ''}`}>
+            <FontAwesomeIcon icon={icon} size='2x' />
+            <h4><Link to={to}>{label}</Link></h4>
+        </div>
     )
 }
 
-export default Header;
+export default withRouter(Header);
