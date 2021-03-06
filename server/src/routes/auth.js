@@ -64,6 +64,7 @@ auth.post('/register', async (req, res, next) => {
 
             if (savedUser) {
                 let tokenData = {
+                    userId: user.id,
                     login: login,
                     token: uuidv4(),
                     'user-agent': req.headers['user-agent']
@@ -114,6 +115,7 @@ auth.post('/login', async (req, res, next) => {
             if ( isValidPassword(password, user.password) ) {
                 // Пароль верный
                 let data = {
+                    userId: user.id,
                     login: login,
                     token: uuidv4(),
                     'user-agent': req.headers['user-agent']
