@@ -1,11 +1,16 @@
 header {
+    padding: 45px 30px 25px 30px;
     width: 300px;
     background: var(--header-background-color);
     color: var(--text-header);
+    display: flex !important;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 header .logo {
-    margin: 30px 0 100px;
+    margin-bottom: 60px;
     text-align: center;
 }
 
@@ -13,27 +18,117 @@ header .logo img {
     width: 100px;
 }
 
-header ul li.active {
+header .logo img:hover, header .logo h2:hover  {
+    cursor: pointer;
+}
+
+header .logo h2:hover, header .logo img:hover ~ h2 {
+    color: var(--yellow);
+    animation: color_change 2s infinite alternate;
+    transition: 0.15s ease-in-out;
+}
+
+@keyframes color_change {
+	0% { color: var(--yellow); }
+    75% { color: var(--orange); }
+}
+
+header .logo h2 {
+    margin-top: 25px;
+    margin-left: 28px;
+    font-weight: 900;
+    font-size: 24px;
+    word-spacing: 9px;
+    transition: color 0.15s ease-in-out;
+}
+
+
+
+
+.header-link {
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+}
+
+.header-link svg {
+    min-width: 30px;
+    margin-right: -30px;
+}
+
+.header-link h4 {
+    margin: 0;
+}
+
+.header-link.active, .header-link.active a {
     color: var(--primary-color);
 }
 
-header ul li.active a {
-    color: var(--primary-color);
-}
-
-header ul li {
-    padding: 15px;
-}
-
-header ul li i {
-    margin: 0 20px !important;
-}
-
-header ul li a {
+.header-link a {
     color: var(--text-header);
+    padding: 10px 10px 10px 50px;
+    display: inline-block;
+    z-index: 10;
 }
 
-header ul li a:hover {
+.header-link a:hover {
     color: var(--primary-color);
 }
 
+
+
+
+.header-menu {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.header-menu h5 {
+    margin: 15px 0;
+    color: var(--text-surface-secondary);
+}
+
+.header-menu h6 {
+    color: var(--text-surface-secondary);
+    margin-left: 20px;
+}
+
+.header-menu h3 {
+    margin: 0;
+}
+
+.header-menu .menu-top {
+    flex-grow: 1;
+}
+
+.header-menu .menu-top .myGroups .title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.header-menu .menu-top .myGroups .title svg {
+    color: var(--success-color);
+    transition: 0.15s ease-in-out;
+}
+
+.header-menu .menu-top .myGroups .title svg:hover {
+    color: var(--success-color-hover);
+    transition: 0.15s ease-in-out;
+}
+
+#myGroups {
+    padding-left: 30px;
+}
+
+header a {
+    color: var(--text-surface-secondary);
+    transition: 0.15s ease-in-out;
+}
+
+header a:hover {
+    color: var(--text-header);
+    transition: 0.15s ease-in-out;
+}

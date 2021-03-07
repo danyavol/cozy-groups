@@ -1,3 +1,11 @@
+
+
+* {
+    padding: 0;
+    margin: 0;
+    font-family: 'Inter', sans-serif !important;
+}
+
 :root {
     --primary-color: #FF6939;
 
@@ -10,10 +18,38 @@
     --text-surface-secondary: #BDBDBD;
 
     --success-color: #9BC53D;
+    --success-color-hover: #cde696;
     --error-color: #E55934;
+
+    --yellow: #FDE74C;
+    --blue: #5BC0EB;
+    --orange: #FA7921;
 }
 
-* {
-    padding: 0;
-    margin: 0;
+.hidden {
+    display: none;
+}
+
+ul {
+    list-style: none;
+}
+
+h3 {
+    font-size: 24px !important;
+    font-weight: 200 !important;
+}
+
+h4 {
+    font-size: 20px !important;
+    font-weight: 400 !important;
+}
+
+h5 {
+    font-size: 16px !important;
+    font-weight: 400 !important;
+}
+
+h6 {
+    font-size: 14px !important;
+    font-weight: 400 !important;
 }
