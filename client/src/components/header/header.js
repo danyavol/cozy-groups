@@ -17,10 +17,17 @@ class Header extends Component {
             token: null,
             myGroups: []
         };
+        this.exit = this.exit.bind(this);
     }
 
     changeRoute(path) {
         this.props.history.push(path)
+    }
+
+    exit() {
+        localStorage.removeItem('token');
+        this.props.history.push("/")
+        this.props.updateToken(null)
     }
 
     render() {
@@ -65,6 +72,7 @@ class Header extends Component {
                             icon={faUserCog}
                         />
                         <MenuLink
+                            click={this.exit}
                             to="/"
                             label="Выйти"
                             icon={faSignOutAlt}
@@ -83,7 +91,7 @@ class Header extends Component {
     }
 }
 
-function MenuLink({ icon, label, to }) {
+function MenuLink({ icon, label, to, click }) {
     let match = useRouteMatch({
         path: to,
         exact: true
@@ -92,7 +100,7 @@ function MenuLink({ icon, label, to }) {
     return (
         <div className={`header-link ${match ? 'active' : ''}`}>
             <FontAwesomeIcon icon={icon} size='2x' />
-            <h4><Link to={to}>{label}</Link></h4>
+            <h4><Link onClick ={click ? click : null} to={to}>{label}</Link></h4>
         </div>
     )
 }
