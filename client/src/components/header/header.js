@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Link, useRouteMatch, withRouter} from "react-router-dom";
+import { Link, useRouteMatch, withRouter } from "react-router-dom";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignInAlt, faSignOutAlt, faUserCog, faUnlockAlt } from '@fortawesome/free-solid-svg-icons';

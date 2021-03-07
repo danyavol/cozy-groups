@@ -18,6 +18,12 @@ const PORT = 3080;
 const cors = require('cors');
 app.use( cors({origin: 'http://localhost:3000'}) );
 
+
+app.use((req, res, next) => {
+    console.log(req.headers);
+    next();
+})
+
 // Парсер входящих запросов
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));

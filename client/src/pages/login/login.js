@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import axios from 'axios';
-import {Link} from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 
 class Login extends Component {
 
@@ -23,6 +23,10 @@ class Login extends Component {
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.hideGlobalError = this.hideGlobalError.bind(this);
+    }
+
+    changeRoute(path) {
+        this.props.history.push(path)
     }
 
 
@@ -68,29 +72,7 @@ class Login extends Component {
                         disabled={this.state.loading ? 'disabled' : ''}
                     >Войти</button>
 
-                    {/*<div>*/}
-                    {/*    <div className="field">*/}
-                    {/*        <label>Логин</label>*/}
-                    {/*        <input*/}
-                    {/*            type="text"*/}
-                    {/*            name="login"*/}
-                    {/*            placeholder="Введите логин"*/}
-                    {/*            value={this.state.login}*/}
-                    {/*            onChange={this.handleLoginOnChange}*/}
-                    {/*        />*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                    {/*<div className="field">*/}
-                    {/*    <label>Пароль</label>*/}
-                    {/*    <input*/}
-                    {/*        type="password"*/}
-                    {/*        name="password"*/}
-                    {/*        placeholder="Введите пароль"*/}
-                    {/*        value={this.state.password}*/}
-                    {/*        onChange={this.handlePasswordOnChange}*/}
-                    {/*    />*/}
-                    {/*</div>*/}
-                    {/*<button className="ui blue button" type="submit">Войти</button>*/}
+    
                 </form>
                 <div className="ui bottom attached warning message container text">
                     <i className="icon help"></i>
@@ -124,6 +106,8 @@ class Login extends Component {
             password: this.state.password
         }
 
+        this.hideGlobalError();
+
         axios.post('http://localhost:3080/auth/login', data)
             .then(response => {
                 this.setState({ loading: false });
@@ -132,52 +116,23 @@ class Login extends Component {
                     localStorage.setItem('token', response.data.token);
 
                     this.props.updateToken(response.data.token);
-                } else {
-                    this.setState({
-                        globalErrorTitle: 'Ошибка',
-                        globalError: response.data.message
-                    });
+
+                    this.changeRoute('/');
                 }
             })
             .catch((err) => {
-                console.log(err);
+                let errorText;
+
+                if (err.response) errorText = err.response.data.message;
+                else errorText = 'Ошибка соединения с сервером';
+                
                 this.setState({
                     globalErrorTitle: 'Ошибка',
-                    globalError: 'Ошибка соединения с сервером',
+                    globalError: errorText,
                     loading: false
                 });
+                
             });
-
-        // if(this.state.login === '' || this.state.password === '') {
-        //     ResponseError({
-        //         label: "Ошибка",
-        //         responseMessage: "Заполните недостающие поля!"
-        //     });
-        // } else {
-        //     let data = { login : this.state.login, password : this.state.password }
-        //     console.log("Form submitted.");
-        //     axios.post('http://localhost:3080/login', data)
-        //         .then(response => {
-        //         console.log(response);
-        //             if (response.data.ok) {
-        //             // Все гуд, запрос прошел
-        //             // Сохраняем токен в localStorage
-        //             localStorage.setItem('token', response.data.token);
-        //
-        //             // Получаем доступ к приватной страничке с использованием этого токена
-        //             let token = localStorage.getItem('token');
-        //             axios.get('http://localhost:3080/secret', {headers: {'Authorization': token}}).then(response => {
-        //                 console.log(response);
-        //             })
-        //             } else {
-        //             // Ошибка авторизации. Выводим пользователю текст ошибки response.data.message
-        //                 ResponseError({
-        //                     label: "Ошибка",
-        //                     responseMessage: response.data.message
-        //                 });
-        //             }
-        //         });
-        // }
     }
 
     handleLoginOnChange(event) {
@@ -219,4 +174,4 @@ class Login extends Component {
     }
 }
 
-export default Login;
+export default withRouter(Login);

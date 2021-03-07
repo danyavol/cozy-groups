@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 
 import axios from 'axios';
 
@@ -33,6 +33,10 @@ class Register extends Component {
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.hideGlobalError = this.hideGlobalError.bind(this);
+    }
+
+    changeRoute(path) {
+        this.props.history.push(path)
     }
 
     render() {
@@ -174,20 +178,23 @@ class Register extends Component {
                 localStorage.setItem('token', response.data.token);
 
                 this.props.updateToken(response.data.token);
-            } else {
-                this.setState({
-                    globalErrorTitle: 'Ошибка',
-                    globalError: response.data.message
-                });
+
+                this.changeRoute('/');
             }
         })
-        .catch(() => {
+        .catch((err) => {
+            let errorText;
+
+            if (err.response) errorText = err.response.data.message;
+            else errorText = 'Ошибка соединения с сервером';
+            
             this.setState({
                 globalErrorTitle: 'Ошибка',
-                globalError: 'Ошибка соединения с сервером',
+                globalError: errorText,
                 loading: false
             });
-        }); 
+            
+        });
        
     }
 
@@ -260,4 +267,4 @@ class Register extends Component {
     
 }
 
-export default Register;
+export default withRouter(Register);
