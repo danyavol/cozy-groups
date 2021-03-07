@@ -2,7 +2,7 @@ const codeLength = 6;
 const groupsCollection = require('../database/groups.js');
 
 module.exports = async function generateInviteCode() {
-    let groups = await groupsCollection.findGroup();
+    let groups = await groupsCollection.findGroup(null, true);
     let existingCodes = [];
     groups.map(group => existingCodes.push(group.inviteCode));
 

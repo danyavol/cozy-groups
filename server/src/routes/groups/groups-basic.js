@@ -10,7 +10,8 @@ module.exports = groups;
 
 const generateInviteCode = require('../../service/inviteCode.js');
 const groupsCollection = require('../../database/groups.js');
-
+const usersCollection = require('../../database/users.js');
+const {v4: uuidv4} = require('uuid');
 
 
 groups.post('/create', async (req, res) => {
@@ -33,7 +34,11 @@ groups.post('/create', async (req, res) => {
                 { id: senderId, role: 'owner' }
             ]
         }
-        await groupsCollection.insertGroup(group);
+
+        await Promise.all([
+            groupsCollection.insertGroup(group),
+            usersCollection.updateUser( {id: senderId}, {$push: {groups: group.id}} )
+        ]);
 
         res.status(200);
         response.ok = true;
@@ -75,7 +80,11 @@ groups.post('/join', async (req, res) => {
                 id: senderId,
                 role: 'member'
             };
-            await groupsCollection.updateGroup( {id: group.id}, {$push: {users: userData}} );
+
+            await Promise.all([
+                groupsCollection.updateGroup( {id: group.id}, {$push: {users: userData}} ),
+                usersCollection.updateUser( {id: senderId}, {$push: {groups: group.id}} )
+            ]);
     
             res.status(200);
             response.ok = true;
@@ -83,6 +92,32 @@ groups.post('/join', async (req, res) => {
         }
         
     }
+
+    res.json(response);
+});
+
+
+/** Получение основной информации о всех группах */
+groups.get('/', async (req, res) => {
+    let senderId = res.locals.userId;
+    let response = {};
+
+    let user = await usersCollection.findUser( {id: senderId} );
+    let groups = await groupsCollection.findGroup( {id: {$in: user.groups || []}}, true );
+
+    console.log(groups);
+
+    let outputGroups = [];
+    for (let group of groups) {
+        outputGroups.push({
+            id: group.id,
+            name: group.name,
+        });
+    }
+
+    res.status(200);
+    response.ok = true;
+    response.groups = outputGroups;
 
     res.json(response);
 });

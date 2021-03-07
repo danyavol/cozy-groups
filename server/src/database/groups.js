@@ -4,18 +4,19 @@ const dbParams = {useUnifiedTopology: true};
 
 
 module.exports = {
-    // Получить одну или все группы
-    findGroup: async (query) => {
+    // Получить одну, несколько или все группы
+    findGroup: async (query, findMany=false) => {
         const client = new MongoClient(uri, dbParams);
         let group;
         try {
             await client.connect();
             const collection = client.db("cozydata").collection("groups");
-    
-            if (query)
+
+            if (findMany) {
+                group = await collection.find(query).toArray();
+            } else {
                 group = await collection.findOne(query);
-            else 
-                group = await collection.find();
+            }  
     
         } finally {
             await client.close();
