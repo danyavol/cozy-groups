@@ -54,7 +54,7 @@ auth.post('/register', async (req, res, next) => {
         if (!user) {
             // Регистрация
             user = {
-                id: uuidv4(),
+                id: 'user-' + uuidv4(),
                 login: login,
                 password: bcrypt.hashSync(password, bcrypt.genSaltSync(10), null),
                 firstName: capitalize(firstName),
@@ -67,7 +67,7 @@ auth.post('/register', async (req, res, next) => {
                 let tokenData = {
                     userId: user.id,
                     login: login,
-                    token: uuidv4(),
+                    token: 'token-' + uuidv4(),
                     'user-agent': req.headers['user-agent']
                 }
 
