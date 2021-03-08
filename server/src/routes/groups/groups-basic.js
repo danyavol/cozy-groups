@@ -8,7 +8,7 @@ const express = require('express');
 const groups = express.Router();
 module.exports = groups;
 
-const generateInviteCode = require('../../service/inviteCode.js');
+const generateCode = require('../../service/codeGenerator.js');
 const groupsCollection = require('../../database/groups.js');
 const usersCollection = require('../../database/users.js');
 const {v4: uuidv4} = require('uuid');
@@ -26,10 +26,12 @@ groups.post('/create', async (req, res) => {
     } 
     // Создание группы
     else {
+        let allGroups = await groupsCollection.findGroup(null, true);
+        
         let group = {
-            id: uuidv4(),
+            id: generateCode(allGroups, 'id'),
             name: name,
-            inviteCode: await generateInviteCode(),
+            inviteCode: generateCode(allGroups, 'inviteCode'),
             users: [
                 { id: senderId, role: 'owner' }
             ]
