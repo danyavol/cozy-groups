@@ -33,19 +33,19 @@ class App extends Component {
     componentDidMount() {
         this.setState( {token: localStorage.getItem('token')} );
 
-        axios.get('http://localhost:8080/groups/')
+        axios.get('http://localhost:8080/groups/', {
+            headers: {
+                'Authorization': this.state.token
+            }
+        })
             .then(response => {
                 if (response.data.ok) {
-                    let groups = response.data;
-                    let myGroups = [];
-                    groups.forEach(group => {
-                        if (group.authorization === this.state.token)
-                            myGroups.push(group);
-                    });
-
-                    this.setState(this.state.myGroups = myGroups);
+                    this.setState(this.state.myGroups = response.data)
                 }
-            });
+            })
+            .catch(err => {
+                console.log(err);
+            })
     }
     
     render() {

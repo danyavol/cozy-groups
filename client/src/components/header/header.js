@@ -8,6 +8,7 @@ import { faPlusSquare } from '@fortawesome/free-regular-svg-icons'
 import "./header.css";
 
 import { Icon } from 'semantic-ui-react';
+import axios from "axios";
 
 class Header extends Component {
 
@@ -18,6 +19,7 @@ class Header extends Component {
             myGroups: []
         };
         this.exit = this.exit.bind(this);
+        this.refreshGroups = this.refreshGroups.bind(this);
     }
 
     changeRoute(path) {
@@ -63,6 +65,7 @@ class Header extends Component {
                                 <h5><Link to={'/'}>Название группы 2</Link></h5>
                                 {/* <h6>У вас нету групп</h6> */}
                                 <h5>Кол-во групп: {this.state.myGroups.length}</h5>
+                                <i className="close icon" onClick={this.refreshGroups}></i>
                             </div>
                         </div> 
                     </div>
@@ -90,6 +93,22 @@ class Header extends Component {
             this.setState({token: this.props.token});
         }
     }
+
+    refreshGroups() {
+        axios.get('http://localhost:8080/groups/', {
+            headers: {
+                'Authorization': this.state.token
+            }
+        })
+            .then(response => {
+                if (response.data.ok) {
+                    this.setState(this.state.myGroups = response.data)
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
 }
 
 function MenuLink({ icon, label, to, click }) {
@@ -105,5 +124,7 @@ function MenuLink({ icon, label, to, click }) {
         </div>
     )
 }
+
+
 
 export default withRouter(Header);
