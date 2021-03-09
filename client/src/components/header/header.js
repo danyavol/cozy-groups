@@ -62,6 +62,7 @@ class Header extends Component {
                                 <h5><Link to={'/'}>Название группы 1</Link></h5>
                                 <h5><Link to={'/'}>Название группы 2</Link></h5>
                                 {/* <h6>У вас нету групп</h6> */}
+                                <h5>Кол-во групп: {this.state.myGroups.length}</h5>
                             </div>
                         </div> 
                     </div>

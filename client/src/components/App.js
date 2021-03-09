@@ -14,13 +14,15 @@ import Header from './header/header.js';
 import './App.css';
 
 import 'semantic-ui-css/semantic.min.css'
+import axios from "axios";
 
 class App extends Component {
 
     constructor() {
         super();
         this.state = {
-            token: null
+            token: null,
+            myGroups: []
         }
 
         this.updateToken = this.updateToken.bind(this);
@@ -28,13 +30,27 @@ class App extends Component {
 
     componentDidMount() {
         this.setState( {token: localStorage.getItem('token')} );
+
+        axios.get('http://localhost:8080/groups/')
+            .then(response => {
+                if (response.data.ok) {
+                    let groups = response.data;
+                    let myGroups = [];
+                    groups.forEach(group => {
+                        if (group.authorization === this.state.token)
+                            myGroups.push(group);
+                    });
+
+                    this.setState(this.state.myGroups = myGroups);
+                }
+            });
     }
     
     render() {
         return (
             <Fragment>
                 <Router>
-                    <Header updateToken={this.updateToken} token={this.state.token} />
+                    <Header updateToken={this.updateToken} token={this.state.token} myGroups={this.state.myGroups} />
                     <main>
                         <Switch>
                         <Route exact path="/">
