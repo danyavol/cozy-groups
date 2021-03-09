@@ -65,7 +65,7 @@ class App extends Component {
                             <Register updateToken={this.updateToken} />
                         </Route>
                         <Route path ="/add-group">
-                            <AddGroups />
+                            <AddGroups token={this.state.token} />
                         </Route>
                         <Route to="/*">
                             <Error />

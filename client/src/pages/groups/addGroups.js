@@ -6,9 +6,11 @@ class addGroups extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            token:null,
             inviteCode : '',
             groupName : ''
         }
+        this.joinGroup = this.joinGroup.bind(this);
         this.createGroup = this.createGroup.bind(this);
         this.handleGroupNameChange = this.handleGroupNameChange.bind(this);
         this.handleInviteCodeChange = this.handleInviteCodeChange.bind(this);
@@ -17,7 +19,7 @@ class addGroups extends Component {
     
     render() {
         return (
-            <form onSubmit = {this.createGroup}>
+            <div>
                 <div className="ui very padded text container segment">
                     <h2 className="ui header">Add Group page.</h2>
                 </div>
@@ -41,7 +43,7 @@ class addGroups extends Component {
                                 </div>
                                 <div className="results"></div>
                             </div>
-                            <div className="ui primary button">Присоединиться </div> 
+                            <div onClick={this.joinGroup} className="ui primary button">Присоединиться </div> 
                         </div>
                         <div className="column">
                             <div className="ui icon header"><i className="world icon"></i> Создать группу </div>
@@ -65,14 +67,16 @@ class addGroups extends Component {
                     </div>
                 </div>
                 <button>Да</button>
-            </form>
+            </div>
         );
     }
 
-    createGroup(event){
-        event.preventDefault();
-        let data = this.state.groupName;
-        axios.post('http://localhost:3080/groups/create', data)
+    createGroup(){
+        let data = {name : this.state.groupName}
+        axios.post('http://localhost:3080/groups/create',data, {
+            headers: {
+                'Authorization': this.props.token
+            }})
             .then(response => {
                 if(response.data.ok) {
                     console.log('Успешно создана группа!')
@@ -86,6 +90,25 @@ class addGroups extends Component {
         })
     }
 
+joinGroup() {
+    let data = {inviteCode : this.state.inviteCode}
+        axios.post('http://localhost:3080/groups/join',data, {
+            headers: {
+                'Authorization': this.props.token
+            }})
+            .then(response => {
+                if(response.data.ok) {
+                    console.log('Вы присоединились к группе!')
+                }
+            })
+        .catch((err) => {
+            let errorText;
+            if (err.response) errorText = err.response.data.message;
+            else errorText = 'Ошибка соединения с сервером';
+            console.log(errorText);
+        })
+}
+
     handleInviteCodeChange(e) {
         this.setState({inviteCode : e.target.value})
     }
@@ -98,7 +121,6 @@ class addGroups extends Component {
     handleInputChange(e) {
         this.setState(
             {[e.target.name]: e.target.value}
-           // () => this.validateField(e.target.name, e.target.value)
         );
     }
 
