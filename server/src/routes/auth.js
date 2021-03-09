@@ -118,7 +118,7 @@ auth.post('/login', async (req, res, next) => {
                 let data = {
                     userId: user.id,
                     login: login,
-                    token: uuidv4(),
+                    token: 'token-' + uuidv4(),
                     'user-agent': req.headers['user-agent']
                 };
                 
