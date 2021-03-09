@@ -18,8 +18,6 @@ class Login extends Component {
 
             loading: false
         }
-        this.handleLoginOnChange = this.handleLoginOnChange.bind(this);
-        this.handlePasswordOnChange = this.handlePasswordOnChange.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.hideGlobalError = this.hideGlobalError.bind(this);

@@ -84,14 +84,14 @@ header .logo h2 {
     flex-grow: 1;
 }
 
-.header-menu h5 {
+.header-menu h5, li {
     margin: 15px 0;
     color: var(--text-surface-secondary);
 }
 
 .header-menu h6 {
     color: var(--text-surface-secondary);
-    margin-left: 20px;
+    margin-left: 50px;
 }
 
 .header-menu h3 {
