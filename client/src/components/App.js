@@ -33,7 +33,7 @@ class App extends Component {
     componentDidMount() {
         this.setState( {token: localStorage.getItem('token')} );
 
-        axios.get('http://localhost:8080/groups/', {
+        axios.get('http://localhost:3080/groups/', {
             headers: {
                 'Authorization': this.state.token
             }

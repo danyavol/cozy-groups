@@ -22,6 +22,23 @@ class Header extends Component {
         this.refreshGroups = this.refreshGroups.bind(this);
     }
 
+    componentDidMount() {
+        axios.get('http://localhost:3080/groups/', {
+            headers: {
+                'Authorization': this.state.token
+            }
+        })
+            .then(response => {
+                if (response.data.ok) {
+                    this.setState(this.state.myGroups = response.data);
+                    console.log(this.state.myGroups.groups.length);
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
     changeRoute(path) {
         this.props.history.push(path)
     }
@@ -64,7 +81,6 @@ class Header extends Component {
                                 <h5><Link to={'/'}>Название группы 1</Link></h5>
                                 <h5><Link to={'/'}>Название группы 2</Link></h5>
                                 {/* <h6>У вас нету групп</h6> */}
-                                <h5>Кол-во групп: {this.state.myGroups.length}</h5>
                                 <i className="close icon" onClick={this.refreshGroups}></i>
                             </div>
                         </div> 
@@ -95,14 +111,15 @@ class Header extends Component {
     }
 
     refreshGroups() {
-        axios.get('http://localhost:8080/groups/', {
+        axios.get('http://localhost:3080/groups/', {
             headers: {
                 'Authorization': this.state.token
             }
         })
             .then(response => {
                 if (response.data.ok) {
-                    this.setState(this.state.myGroups = response.data)
+                    this.setState(this.state.myGroups = response.data);
+                    console.log(this.state.myGroups.groups.length);
                 }
             })
             .catch(err => {
@@ -124,6 +141,8 @@ function MenuLink({ icon, label, to, click }) {
         </div>
     )
 }
+
+
 
 
 
