@@ -10,10 +10,12 @@ import Login from '../pages/login/login.js';
 import Register from '../pages/register/register.js';
 import Error from '../pages/notFound/404.js'
 import Header from './header/header.js';
+import AddGroups from '../pages/groups/addGroups.js';
 
 import './App.css';
 
 import 'semantic-ui-css/semantic.min.css'
+
 
 class App extends Component {
 
@@ -45,6 +47,9 @@ class App extends Component {
                         </Route>
                         <Route path = "/register">
                             <Register updateToken={this.updateToken} />
+                        </Route>
+                        <Route path ="/add-group">
+                            <AddGroups />
                         </Route>
                         <Route to="/*">
                             <Error />
