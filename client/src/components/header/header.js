@@ -123,7 +123,7 @@ function GroupsList(props) {
         const listGroups = props.myGroups.map((group) =>
             <li key={group.id}>
                 <h5>
-                    <Link to={'/'}>{group.name}</Link>
+                    <Link to={'/groups/' + group.id}>{group.name}</Link>
                 </h5>
             </li>
         );
