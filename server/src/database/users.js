@@ -3,17 +3,18 @@ const uri = process.env.DB_URI;
 const dbParams = {useUnifiedTopology: true};
 
 module.exports = {
-    findUser: async (query) => {
+    findUser: async (query, findMany=false) => {
         const client = new MongoClient(uri, dbParams);
         let user;
         try {
             await client.connect();
             const collection = client.db("cozydata").collection("users");
 
-            if (query)
+            if (findMany) {
+                user = await collection.find(query).toArray();
+            } else {
                 user = await collection.findOne(query);
-            else
-                user = await collection.find();
+            }  
 
         } finally {
             await client.close();
