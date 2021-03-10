@@ -98,6 +98,41 @@ groups.post('/join', async (req, res) => {
     res.json(response);
 });
 
+groups.post('/leave', async (req, res) => {
+    let senderId = res.locals.userId;
+    let { groupId } = req.body;
+    let response = {};
+
+    let group, userData;
+    await Promise.all([
+        groupsCollection.findGroup( {id: groupId} ),
+        usersCollection.findUser( {id: senderId} )
+    ]).then(result => { group = result[0]; userData = result[1] });
+
+    if (!group) {
+        res.status(400);
+        response.ok = false;
+        response.message = 'Группа не найдена';
+    } else if (!userData.groups.includes(groupId)) {
+        res.status(400);
+        response.ok = false;
+        response.message = 'Вы не состоите в этой группе';
+    } else {
+        group.users = group.users.filter( val => val.id == senderId ? false : true );
+
+        await Promise.all([
+            usersCollection.updateUser( {id: senderId}, {$pull: {groups: groupId}} ),
+            groupsCollection.updateGroup( {id: groupId}, {$set: {users: group.users}} )
+        ]);
+
+        res.status(200);
+        response.ok = true;
+        response.message = 'Вы успешно вышли из группы';
+    }
+
+    res.json(response);
+});
+
 
 /** Получение основной информации о всех группах */
 groups.get('/', async (req, res) => {
