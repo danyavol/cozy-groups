@@ -117,6 +117,10 @@ groups.post('/leave', async (req, res) => {
         res.status(400);
         response.ok = false;
         response.message = 'Вы не состоите в этой группе';
+    } else if ( group.users.filter(val => val.id == senderId)[0].role == 'owner' ) {
+        res.status(400);
+        response.ok = false;
+        response.message = 'Нельзя выйти из группы являясь ее владельцем. Сперва передайте свои права другому участнику';
     } else {
         group.users = group.users.filter( val => val.id == senderId ? false : true );
 
