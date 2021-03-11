@@ -1,13 +1,11 @@
-import React, { Component } from 'react';
-import { Link, useRouteMatch, withRouter } from "react-router-dom";
+import React, {Component} from 'react';
+import {Link, useRouteMatch, withRouter} from "react-router-dom";
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSignInAlt, faSignOutAlt, faUserCog, faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
-import { faPlusSquare } from '@fortawesome/free-regular-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faSignInAlt, faSignOutAlt, faUnlockAlt, faUserCog} from '@fortawesome/free-solid-svg-icons';
+import {faPlusSquare} from '@fortawesome/free-regular-svg-icons'
 
 import "./header.css";
-
-import { Icon } from 'semantic-ui-react';
 import axios from "axios";
 
 class Header extends Component {
@@ -16,7 +14,9 @@ class Header extends Component {
         super(props)
         this.state = {
             token: null,
-            myGroups: []
+            myGroups: [],
+
+            loading: false
         };
         this.exit = this.exit.bind(this);
         this.refreshGroups = this.refreshGroups.bind(this);
@@ -60,13 +60,7 @@ class Header extends Component {
                                 <h3>Мои группы</h3>
                                 <Link to={'/add-group'} ><FontAwesomeIcon icon={faPlusSquare} size='2x' /></Link>
                             </div>
-                            <div id="myGroups">
-                                <h5><Link to={'/'}>Название группы 1</Link></h5>
-                                <h5><Link to={'/'}>Название группы 2</Link></h5>
-                                {/* <h6>У вас нету групп</h6> */}
-                                <h5>Кол-во групп: {this.state.myGroups.length}</h5>
-                                <i className="close icon" onClick={this.refreshGroups}></i>
-                            </div>
+                            <GroupsList state={this.state}  />
                         </div> 
                     </div>
                     <div className="menu-bottom">
@@ -87,27 +81,62 @@ class Header extends Component {
         );
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps, prevState) {
         if (prevProps !== this.props) {
             console.log('did update');
-            this.setState({token: this.props.token});
+            this.setState({
+                token: this.props.token,
+                loading: this.props.loading
+            });
+        }
+
+        if (this.props.myGroups !== prevProps.myGroups) {
+            this.setState({myGroups: this.props.myGroups});
+            console.log(this.state.myGroups, 'header');
         }
     }
 
     refreshGroups() {
-        axios.get('http://localhost:8080/groups/', {
+        axios.get('http://localhost:3080/groups/', {
             headers: {
                 'Authorization': this.state.token
             }
         })
             .then(response => {
                 if (response.data.ok) {
-                    this.setState(this.state.myGroups = response.data)
+                    this.setState(this.state.myGroups = response.data.groups);
+                    console.log(this.state.myGroups);
                 }
             })
             .catch(err => {
                 console.log(err);
             })
+    }
+
+
+}
+
+function GroupsList(props) {
+    console.log(props.state.myGroups);
+    if (props.state.myGroups.length !== 0) {
+        console.log('выполняется');
+        const listGroups = props.state.myGroups.map((group) =>
+            <li key={group.id}>
+                <GroupsMenuLinks to={'/groups/' + group.id} label={group.name} />
+            </li>
+        );
+
+        return (
+            <ul id="myGroups">{listGroups}</ul>
+        )
+    } else if (props.state.loading) {
+        return (
+            <div className="ui small active centered inline inverted loader"></div>
+        )
+    } else {
+        return (
+            <h6>У вас нет групп</h6>
+        )
     }
 }
 
@@ -120,11 +149,22 @@ function MenuLink({ icon, label, to, click }) {
     return (
         <div className={`header-link ${match ? 'active' : ''}`}>
             <FontAwesomeIcon icon={icon} size='2x' />
-            <h4><Link onClick ={click ? click : null} to={to}>{label}</Link></h4>
+            <h4><Link onClick={click ? click : null} to={to}>{label}</Link></h4>
         </div>
     )
 }
 
+function GroupsMenuLinks({ label, to, click }) {
+    let match = useRouteMatch({
+        path: to,
+        exact: true
+    });
 
+    return (
+        <div className={`groups-link ${match ? 'active' : ''}`}>
+            <h5 className="text-truncate"><Link title={label} onClick={click ? click : null} to={to}>{label}</Link></h5>
+        </div>
+    )
+}
 
 export default withRouter(Header);

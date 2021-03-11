@@ -11,6 +11,7 @@ import Register from '../pages/register/register.js';
 import Error from '../pages/notFound/404.js'
 import Header from './header/header.js';
 import AddGroups from '../pages/groups/addGroups.js';
+import Group from '../pages/groups/group';
 
 import './App.css';
 
@@ -24,7 +25,9 @@ class App extends Component {
         super();
         this.state = {
             token: null,
-            myGroups: []
+            Groups: [],
+
+            loading: false
         }
 
         this.updateToken = this.updateToken.bind(this);
@@ -33,43 +36,56 @@ class App extends Component {
     componentDidMount() {
         this.setState( {token: localStorage.getItem('token')} );
 
-        axios.get('http://localhost:8080/groups/', {
-            headers: {
-                'Authorization': this.state.token
-            }
-        })
-            .then(response => {
-                if (response.data.ok) {
-                    this.setState(this.state.myGroups = response.data)
+
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if ((this.state.token !== prevState.token) && this.state.token !== null) {
+            this.setState({loading: true});
+            axios.get('http://localhost:3080/groups/', {
+                headers: {
+                    'Authorization': this.state.token
                 }
             })
-            .catch(err => {
-                console.log(err);
-            })
+                .then(response => {
+                    if (response.data.ok) {
+                        this.setState({
+                            Groups: response.data.groups,
+                            loading: false
+                        })
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        }
+        // this.setState({loading: false});
+        console.log(this.state.Groups, 'app.js');
     }
-    
+
     render() {
         return (
             <Fragment>
                 <Router>
-                    <Header updateToken={this.updateToken} token={this.state.token} myGroups={this.state.myGroups} />
+                    <Header updateToken={this.updateToken} token={this.state.token} myGroups={this.state.Groups} loading={this.state.loading} />
                     <main>
                         <Switch>
-                        <Route exact path="/">
-                            <Home />
-                        </Route>
-                        <Route path="/login">
-                            <Login updateToken={this.updateToken} />
-                        </Route>
-                        <Route path = "/register">
-                            <Register updateToken={this.updateToken} />
-                        </Route>
-                        <Route path ="/add-group">
-                            <AddGroups token={this.state.token} />
-                        </Route>
-                        <Route to="/*">
-                            <Error />
-                        </Route>
+                            <Route exact path="/">
+                                <Home />
+                            </Route>
+                            <Route path="/login">
+                                <Login updateToken={this.updateToken} />
+                            </Route>
+                            <Route path = "/register">
+                                <Register updateToken={this.updateToken} />
+                            </Route>
+                            <Route path ="/add-group">
+                                <AddGroups token={this.state.token} />
+                            </Route>
+                            <Route path="/groups/:id" component={Group} />
+                            <Route to="/*">
+                                <Error />
+                            </Route>
                         </Switch>
                     </main>
                 </Router>
