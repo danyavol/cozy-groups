@@ -25,7 +25,9 @@ class App extends Component {
         super();
         this.state = {
             token: null,
-            Groups: []
+            Groups: [],
+
+            loading: false
         }
 
         this.updateToken = this.updateToken.bind(this);
@@ -39,6 +41,7 @@ class App extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if ((this.state.token !== prevState.token) && this.state.token !== null) {
+            this.setState({loading: true});
             axios.get('http://localhost:3080/groups/', {
                 headers: {
                     'Authorization': this.state.token
@@ -46,13 +49,17 @@ class App extends Component {
             })
                 .then(response => {
                     if (response.data.ok) {
-                        this.setState(this.state.Groups = response.data.groups)
+                        this.setState({
+                            Groups: response.data.groups,
+                            loading: false
+                        })
                     }
                 })
                 .catch(err => {
                     console.log(err);
                 })
         }
+        // this.setState({loading: false});
         console.log(this.state.Groups, 'app.js');
     }
 
@@ -60,7 +67,7 @@ class App extends Component {
         return (
             <Fragment>
                 <Router>
-                    <Header updateToken={this.updateToken} token={this.state.token} myGroups={this.state.Groups} />
+                    <Header updateToken={this.updateToken} token={this.state.token} myGroups={this.state.Groups} loading={this.state.loading} />
                     <main>
                         <Switch>
                             <Route exact path="/">

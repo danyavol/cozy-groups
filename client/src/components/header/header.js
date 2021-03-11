@@ -14,7 +14,9 @@ class Header extends Component {
         super(props)
         this.state = {
             token: null,
-            myGroups: []
+            myGroups: [],
+
+            loading: false
         };
         this.exit = this.exit.bind(this);
         this.refreshGroups = this.refreshGroups.bind(this);
@@ -58,7 +60,7 @@ class Header extends Component {
                                 <h3>Мои группы</h3>
                                 <Link to={'/add-group'} ><FontAwesomeIcon icon={faPlusSquare} size='2x' /></Link>
                             </div>
-                            <GroupsList myGroups={this.state.myGroups} />
+                            <GroupsList state={this.state}  />
                         </div> 
                     </div>
                     <div className="menu-bottom">
@@ -82,7 +84,10 @@ class Header extends Component {
     componentDidUpdate(prevProps, prevState) {
         if (prevProps !== this.props) {
             console.log('did update');
-            this.setState({token: this.props.token});
+            this.setState({
+                token: this.props.token,
+                loading: this.props.loading
+            });
         }
 
         if (this.props.myGroups !== prevProps.myGroups) {
@@ -112,10 +117,10 @@ class Header extends Component {
 }
 
 function GroupsList(props) {
-    console.log(props.myGroups);
-    if (props.myGroups.length !== 0) {
+    console.log(props.state.myGroups);
+    if (props.state.myGroups.length !== 0) {
         console.log('выполняется');
-        const listGroups = props.myGroups.map((group) =>
+        const listGroups = props.state.myGroups.map((group) =>
             <li key={group.id}>
                 <GroupsMenuLinks to={'/groups/' + group.id} label={group.name} />
             </li>
@@ -123,6 +128,10 @@ function GroupsList(props) {
 
         return (
             <ul id="myGroups">{listGroups}</ul>
+        )
+    } else if (props.state.loading) {
+        return (
+            <div className="ui small active centered inline inverted loader"></div>
         )
     } else {
         return (
@@ -153,7 +162,7 @@ function GroupsMenuLinks({ label, to, click }) {
 
     return (
         <div className={`groups-link ${match ? 'active' : ''}`}>
-            <h5><Link onClick={click ? click : null} to={to}>{label}</Link></h5>
+            <h5 className="text-truncate"><Link title={label} onClick={click ? click : null} to={to}>{label}</Link></h5>
         </div>
     )
 }

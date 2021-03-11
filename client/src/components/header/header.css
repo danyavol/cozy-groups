@@ -93,6 +93,14 @@ header .logo h2 {
     color: var(--text-surface-secondary);
 }
 
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    display: inline-block;
+    white-space: nowrap;
+}
+
 .header-menu h6 {
     color: var(--text-surface-secondary);
     margin-left: 50px;
