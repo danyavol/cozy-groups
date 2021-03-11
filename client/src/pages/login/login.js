@@ -135,14 +135,6 @@ class Login extends Component {
 
     }
 
-    handleLoginOnChange(event) {
-        this.setState({ login : event.target.value })
-    }
-
-    handlePasswordOnChange(event) {
-        this.setState({ password : event.target.value })
-    }
-
     handleInputChange(e) {
         this.setState(
             {[e.target.name]: e.target.value},

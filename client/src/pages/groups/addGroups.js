@@ -73,7 +73,7 @@ class addGroups extends Component {
 
     createGroup(){
         let data = {name : this.state.groupName}
-        axios.post('http://localhost:3080/groups/create',data, {
+        axios.post('http://localhost:3080/groups/create', data, {
             headers: {
                 'Authorization': this.props.token
             }})

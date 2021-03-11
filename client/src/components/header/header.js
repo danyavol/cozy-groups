@@ -18,7 +18,6 @@ class Header extends Component {
         };
         this.exit = this.exit.bind(this);
         this.refreshGroups = this.refreshGroups.bind(this);
-        // this.GroupsList = this.GroupsList.bind(this);
     }
 
     changeRoute(path) {
@@ -60,10 +59,6 @@ class Header extends Component {
                                 <Link to={'/add-group'} ><FontAwesomeIcon icon={faPlusSquare} size='2x' /></Link>
                             </div>
                             <GroupsList myGroups={this.state.myGroups} />
-                            {/*<div id="myGroups">*/}
-
-                            {/*    <i className="close icon" onClick={this.refreshGroups}></i>*/}
-                            {/*</div>*/}
                         </div> 
                     </div>
                     <div className="menu-bottom">
@@ -122,9 +117,7 @@ function GroupsList(props) {
         console.log('выполняется');
         const listGroups = props.myGroups.map((group) =>
             <li key={group.id}>
-                <h5>
-                    <Link to={'/groups/' + group.id}>{group.name}</Link>
-                </h5>
+                <GroupsMenuLinks to={'/groups/' + group.id} label={group.name} />
             </li>
         );
 
@@ -147,7 +140,20 @@ function MenuLink({ icon, label, to, click }) {
     return (
         <div className={`header-link ${match ? 'active' : ''}`}>
             <FontAwesomeIcon icon={icon} size='2x' />
-            <h4><Link onClick ={click ? click : null} to={to}>{label}</Link></h4>
+            <h4><Link onClick={click ? click : null} to={to}>{label}</Link></h4>
+        </div>
+    )
+}
+
+function GroupsMenuLinks({ label, to, click }) {
+    let match = useRouteMatch({
+        path: to,
+        exact: true
+    });
+
+    return (
+        <div className={`groups-link ${match ? 'active' : ''}`}>
+            <h5><Link onClick={click ? click : null} to={to}>{label}</Link></h5>
         </div>
     )
 }
