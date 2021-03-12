@@ -19,6 +19,7 @@ module.exports = async function authorizedOnly(req, res, next) {
         } else {
             // Успешно авторизован
             res.locals.userId = tokenData.userId;
+            res.locals.token = tokenData.token;
             next();
         }
     }

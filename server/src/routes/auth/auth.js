@@ -6,14 +6,15 @@ module.exports = auth;
 const bcrypt = require('bcryptjs');
 const {v4: uuidv4} = require('uuid');
 const usersCollection = require('../database/users.js');
-const createToken = require('../../service/createToken.js');
+const { createToken, deleteToken } = require('../../service/createToken.js');
+const { response } = require('express');
 
 function isValidPassword(presentedPassword, userPassword) {
     return bcrypt.compareSync(presentedPassword, userPassword);
 }
 
 
-auth.post('/register', async (req, res, next) => {
+auth.post('/register', async (req, res) => {
     let { password, login, firstName, lastName } = req.body;
     const pass_Regexp = /[A-Za-z0-9!@#$%^&*]{4,20}/;
     const login_Regexp = /[A-Za-z0-9]{4,20}/;
@@ -85,7 +86,7 @@ auth.post('/register', async (req, res, next) => {
     res.json(response);
 });
 
-auth.post('/login', async (req, res, next) => {
+auth.post('/login', async (req, res) => {
     let {password, login} = req.body;
     let response = {};
 
@@ -126,6 +127,17 @@ auth.post('/login', async (req, res, next) => {
             }
         }
     }
+
+    res.json(response);
+});
+
+auth.delete('/logout', async (req, res) => {
+    await deleteToken(res.locals.token);
+
+    let response = {
+        ok: true,
+        message: 'Токен успешно удален'
+    };
 
     res.json(response);
 });
