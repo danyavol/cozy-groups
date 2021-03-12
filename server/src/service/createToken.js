@@ -4,7 +4,7 @@ const tokensCollection = require('../database/tokens.js');
 const {v4: uuidv4} = require('uuid');
 
 
-async function createToken(userId) {
+async function createToken(userId, req) {
     const tokenData = {
         userId: userId,
         token: 'token-' + uuidv4(),

@@ -5,9 +5,8 @@ module.exports = auth;
 
 const bcrypt = require('bcryptjs');
 const {v4: uuidv4} = require('uuid');
-const usersCollection = require('../database/users.js');
+const usersCollection = require('../../database/users.js');
 const { createToken, deleteToken } = require('../../service/createToken.js');
-const { response } = require('express');
 
 function isValidPassword(presentedPassword, userPassword) {
     return bcrypt.compareSync(presentedPassword, userPassword);
@@ -65,7 +64,7 @@ auth.post('/register', async (req, res) => {
             let savedUser = await usersCollection.insertUser(user);
 
             if (savedUser) {
-                let token = await createToken(user.id);
+                let token = await createToken(user.id, req);
 
                 res.status(200);
                 response.ok = true;
@@ -113,7 +112,7 @@ auth.post('/login', async (req, res) => {
         } else {
             if ( isValidPassword(password, user.password) ) {
                 // Пароль верный
-                let token = await createToken(user.id);
+                let token = await createToken(user.id, req);
     
                 res.status(200);
                 response.ok = true;
