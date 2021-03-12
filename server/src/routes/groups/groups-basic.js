@@ -44,9 +44,11 @@ groups.post('/create', async (req, res) => {
 
         res.status(200);
         response.ok = true;
-        response.groupId = group.id;
-        response.inviteCode = group.inviteCode;
         response.message = 'Группа успешно создана';
+        response.group = {
+            id: group.id,
+            name: group.name
+        };
     }
 
     res.json(response);
@@ -91,6 +93,10 @@ groups.post('/join', async (req, res) => {
             res.status(200);
             response.ok = true;
             response.message = 'Вы успешно присоединились к группе';
+            response.group = {
+                id: group.id,
+                name: group.name
+            };
         }
         
     }
