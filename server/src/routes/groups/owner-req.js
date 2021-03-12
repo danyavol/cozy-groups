@@ -8,32 +8,24 @@ module.exports = groups;
 const permissions = require('../../service/permissions.js');
 const groupsCollection = require('../../database/groups.js');
 const Text = require('../../service/responseMessages.js');
+const { sendResponse } = require('../../service/requestService.js');
 
 
 
 groups.post('/edit-role', async (req, res) => {
     let senderId = res.locals.userId;
     let { groupId, userId, newRole } = req.body;
-    let response = {};
 
     if ( !permissions[newRole] ) {
-        res.status(400);
-        response.ok = false;
-        response.message = Text.error.wrongRole;
-        return res.json(response);
+        return sendResponse(res, 400, Text.error.wrongRole);
     } else if (senderId == userId) {
-        res.status(400);
-        response.ok = false;
-        response.message = Text.error.changeSelfRole;
-        return res.json(response);
+        return sendResponse(res, 400, Text.error.changeSelfRole);
     }
 
     // #1 Поиск группы
     let group = await groupsCollection.findGroup({id: groupId});
     if (!group) {
-        res.status(400);
-        response.ok = false;
-        response.message = Text.error.findGroupById;
+        return sendResponse(res, 400, Text.error.findGroupById);
     } else {
         // #2 Поиск отправителя и получателя в группе, определение их ролей
         let senderRole = null;
@@ -47,25 +39,17 @@ groups.post('/edit-role', async (req, res) => {
         }
 
         if (!senderRole) {
-            res.status(400);
-            response.ok = false;
-            response.message = Text.error.notGroupMember;
+            return sendResponse(res, 400, Text.error.notGroupMember);
         } else if (!recipientRole) {
-            res.status(400);
-            response.ok = false;
-            response.message = Text.error.requestedUserNotGroupMember;
+            return sendResponse(res, 400, Text.error.requestedUserNotGroupMember);
         } else if (recipientRole == newRole) {
-            res.status(400);
-            response.ok = false;
-            response.message = Text.error.requestedUserAlreadyHaveRole;
+            return sendResponse(res, 400, Text.error.requestedUserAlreadyHaveRole);
         } else {
             // #3 Определение имеет ли отправитель право на данное действие
             let permission = recipientRole + '-set-' + newRole;
 
             if ( !permissions[senderRole].includes(permission) ) {
-                res.status(400);
-                response.ok = false;
-                response.message = Text.error.permissionDenied;
+                return sendResponse(res, 400, Text.error.permissionDenied);
             } else {
                 // Проверки пройдены, изменяем права пользователя
                 for (let user of group.users) {
@@ -76,12 +60,8 @@ groups.post('/edit-role', async (req, res) => {
 
                 await groupsCollection.updateGroup({id: groupId}, {$set: {users: group.users}});
 
-                res.status(200);
-                response.ok = true;
-                response.message = Text.success.userRoleChanged;
+                return sendResponse(res, 200, Text.success.userRoleChanged);
             }
         }
     }
-
-    res.json(response);
 });
