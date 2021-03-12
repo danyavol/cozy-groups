@@ -4,7 +4,6 @@ class Home extends Component {
     render() {
         return (
             <div>
-                
                 <div className="ui very padded text container segment">
                     <h2 className="ui header">Home page</h2>
                    </div>

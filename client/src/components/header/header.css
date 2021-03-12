@@ -64,6 +64,10 @@ header .logo h2 {
     color: var(--primary-color);
 }
 
+.groups-link.active, .groups-link.active a {
+    color: var(--primary-color);
+}
+
 .header-link a {
     color: var(--text-header);
     padding: 10px 10px 10px 50px;
@@ -84,14 +88,22 @@ header .logo h2 {
     flex-grow: 1;
 }
 
-.header-menu h5 {
+.header-menu h5, li {
     margin: 15px 0;
     color: var(--text-surface-secondary);
 }
 
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    display: inline-block;
+    white-space: nowrap;
+}
+
 .header-menu h6 {
     color: var(--text-surface-secondary);
-    margin-left: 20px;
+    margin-left: 50px;
 }
 
 .header-menu h3 {
