@@ -11,7 +11,7 @@ module.exports = groups;
 const generateCode = require('../../service/codeGenerator.js');
 const groupsCollection = require('../../database/groups.js');
 const usersCollection = require('../../database/users.js');
-const {v4: uuidv4} = require('uuid');
+const Text = require('../../service/responseMessages.js');
 
 
 groups.post('/create', async (req, res) => {
@@ -22,7 +22,7 @@ groups.post('/create', async (req, res) => {
     if (!name) {
         res.status(400);
         response.ok = false;
-        response.message = 'Введите название группы';
+        response.message = Text.error.emptyGroupName;
     } 
     // Создание группы
     else {
@@ -44,7 +44,7 @@ groups.post('/create', async (req, res) => {
 
         res.status(200);
         response.ok = true;
-        response.message = 'Группа успешно создана';
+        response.message = Text.success.groupCreated;
         response.group = {
             id: group.id,
             name: group.name
@@ -64,7 +64,7 @@ groups.post('/join', async (req, res) => {
     if (!group) {
         res.status(400);
         response.ok = false;
-        response.message = 'Группа с таким кодом приглашения не найдена'
+        response.message = Text.error.findGroupByInviteCode;
     } else {
         // Проверка, состоит ли пользователь уже в группе
         let alreadyMember = false;
@@ -78,7 +78,7 @@ groups.post('/join', async (req, res) => {
         if (alreadyMember) {
             res.status(400);
             response.ok = false;
-            response.message = 'Вы уже состоите в этой группе';
+            response.message = Text.error.alreadyGroupMember;
         } else {
             let userData = {
                 id: senderId,
@@ -92,7 +92,7 @@ groups.post('/join', async (req, res) => {
     
             res.status(200);
             response.ok = true;
-            response.message = 'Вы успешно присоединились к группе';
+            response.message = Text.success.userJoinedGroup;
             response.group = {
                 id: group.id,
                 name: group.name
@@ -118,15 +118,15 @@ groups.post('/leave', async (req, res) => {
     if (!group) {
         res.status(400);
         response.ok = false;
-        response.message = 'Группа не найдена';
+        response.message = Text.error.findGroupById;
     } else if (!userData.groups.includes(groupId)) {
         res.status(400);
         response.ok = false;
-        response.message = 'Вы не состоите в этой группе';
+        response.message = Text.error.notGroupMember;
     } else if ( group.users.filter(val => val.id == senderId)[0].role == 'owner' ) {
         res.status(400);
         response.ok = false;
-        response.message = 'Нельзя выйти из группы являясь ее владельцем. Сперва передайте свои права другому участнику';
+        response.message = Text.error.ownerTryingToLeave;
     } else {
         group.users = group.users.filter( val => val.id == senderId ? false : true );
 
@@ -137,7 +137,7 @@ groups.post('/leave', async (req, res) => {
 
         res.status(200);
         response.ok = true;
-        response.message = 'Вы успешно вышли из группы';
+        response.message = Text.success.userLeavedGroup;
     }
 
     res.json(response);
@@ -178,14 +178,14 @@ groups.get('/:id', async (req, res) => {
     if (!group) {
         res.status(400);
         response.ok = false;
-        response.message = 'Группа с таким id не найдена';
+        response.message = Text.error.findGroupById;
     } else {
         let memberData = group.users.filter(val => val.id == senderId)[0];
 
         if (!memberData) {
             res.status(400);
             response.ok = false;
-            response.message = 'Вы не являетесь участником этой группы';
+            response.message = Text.error.notGroupMember;
         } else {
             // Удаление лишних полей
             delete group._id;

@@ -7,6 +7,7 @@ module.exports = groups;
 
 const permissions = require('../../service/permissions.js');
 const groupsCollection = require('../../database/groups.js');
+const Text = require('../../service/responseMessages.js');
 
 
 
@@ -18,12 +19,12 @@ groups.post('/edit-role', async (req, res) => {
     if ( !permissions[newRole] ) {
         res.status(400);
         response.ok = false;
-        response.message = 'Неверное название роли. Доступные роли: member, editor, admin, owner.';
+        response.message = Text.error.wrongRole;
         return res.json(response);
     } else if (senderId == userId) {
         res.status(400);
         response.ok = false;
-        response.message = 'Нельзя изменить права самому себе';
+        response.message = Text.error.changeSelfRole;
         return res.json(response);
     }
 
@@ -32,7 +33,7 @@ groups.post('/edit-role', async (req, res) => {
     if (!group) {
         res.status(400);
         response.ok = false;
-        response.message = 'Неверный id группы';
+        response.message = Text.error.findGroupById;
     } else {
         // #2 Поиск отправителя и получателя в группе, определение их ролей
         let senderRole = null;
@@ -48,15 +49,15 @@ groups.post('/edit-role', async (req, res) => {
         if (!senderRole) {
             res.status(400);
             response.ok = false;
-            response.message = 'Вы не состоите в данной группе';
+            response.message = Text.error.notGroupMember;
         } else if (!recipientRole) {
             res.status(400);
             response.ok = false;
-            response.message = 'Запрашиваемый пользователь не состоит в группе';
+            response.message = Text.error.requestedUserNotGroupMember;
         } else if (recipientRole == newRole) {
             res.status(400);
             response.ok = false;
-            response.message = 'Пользователь уже имеет такие права';
+            response.message = Text.error.requestedUserAlreadyHaveRole;
         } else {
             // #3 Определение имеет ли отправитель право на данное действие
             let permission = recipientRole + '-set-' + newRole;
@@ -64,7 +65,7 @@ groups.post('/edit-role', async (req, res) => {
             if ( !permissions[senderRole].includes(permission) ) {
                 res.status(400);
                 response.ok = false;
-                response.message = 'У вас недостаточно прав для данного действия';
+                response.message = Text.error.permissionDenied;
             } else {
                 // Проверки пройдены, изменяем права пользователя
                 for (let user of group.users) {
@@ -77,7 +78,7 @@ groups.post('/edit-role', async (req, res) => {
 
                 res.status(200);
                 response.ok = true;
-                response.message = 'Права пользователя успешно изменены';
+                response.message = Text.success.userRoleChanged;
             }
         }
     }
