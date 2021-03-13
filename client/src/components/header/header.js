@@ -45,7 +45,7 @@ class Header extends Component {
         return (
             <header>
                 <div className="logo">
-                    <img src="/images/logo.svg" alt="site-logo" onClick={() => this.changeRoute('/')} />
+                    <img src="/images/logo-goat.svg" alt="site-logo" onClick={() => this.changeRoute('/')} />
                     <h2 onClick={() => this.changeRoute('/')}>COZY GROUPS</h2>
                 </div>
                 {/* Для не авторизованных пользователей */}
