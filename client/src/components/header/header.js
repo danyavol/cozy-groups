@@ -27,9 +27,18 @@ class Header extends Component {
     }
 
     exit() {
-        localStorage.removeItem('token');
-        this.props.history.push("/")
-        this.props.updateToken(null)
+        axios.delete('http://localhost:3080/auth/logout',{
+            headers:{
+                'Authorization': this.state.token
+            }
+        }).then(response => {
+            if(response.data.ok)
+            {
+                localStorage.removeItem('token');
+                this.props.history.push("/")
+                this.props.updateToken(null)
+            }
+        });
     }
 
     render() {
@@ -109,7 +118,7 @@ class Header extends Component {
                 }
             })
             .catch(err => {
-                console.log(err);
+                this.props.deleteToken(err);
             })
     }
 
