@@ -31,6 +31,7 @@ class App extends Component {
         }
 
         this.updateToken = this.updateToken.bind(this);
+        this.updateGroups = this.updateGroups.bind(this);
     }
 
     componentDidMount() {
@@ -59,7 +60,6 @@ class App extends Component {
                     console.log(err);
                 })
         }
-        // this.setState({loading: false});
         console.log(this.state.Groups, 'app.js');
     }
 
@@ -80,7 +80,7 @@ class App extends Component {
                                 <Register updateToken={this.updateToken} />
                             </Route>
                             <Route path ="/add-group">
-                                <AddGroups token={this.state.token} />
+                                <AddGroups updateGroups={this.updateGroups} token={this.state.token} myGroups = {this.state.Groups} />
                             </Route>
                             <Route path="/groups/:id" component={Group} />
                             <Route to="/*">
@@ -96,6 +96,12 @@ class App extends Component {
     updateToken(value) {
         console.log(123, value);
         this.setState({token: value});
+    }
+
+    updateGroups(value) {
+        let groups = this.state.Groups;
+        groups.push(value);
+        this.setState({Groups : groups});
     }
 }
 
