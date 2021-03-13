@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs');
 const {v4: uuidv4} = require('uuid');
 const usersCollection = require('../../database/users.js');
 const { createToken, deleteToken } = require('../../service/createToken.js');
+const authorizedOnly = require('../../service/authorizedOnly.js');
 
 function isValidPassword(presentedPassword, userPassword) {
     return bcrypt.compareSync(presentedPassword, userPassword);
@@ -130,7 +131,7 @@ auth.post('/login', async (req, res) => {
     res.json(response);
 });
 
-auth.delete('/logout', async (req, res) => {
+auth.delete('/logout', authorizedOnly, async (req, res) => {
     await deleteToken(res.locals.token);
 
     let response = {
