@@ -162,7 +162,7 @@ function GroupsMenuLinks({ label, to, click }) {
 
     return (
         <div className={`groups-link ${match ? 'active' : ''}`}>
-            <h5 className="text-truncate"><Link title={label} onClick={click ? click : null} to={to}>{label}</Link></h5>
+            <h5><Link className="text-truncate" title={label} onClick={click ? click : null} to={to}>{label}</Link></h5>
         </div>
     )
 }

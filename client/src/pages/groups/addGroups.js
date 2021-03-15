@@ -66,7 +66,7 @@ class addGroups extends Component {
                         </div>
                     </div>
                 </div>
-                <button>Да</button>
+                <button>Да, хуй на</button>
             </div>
         );
     }
