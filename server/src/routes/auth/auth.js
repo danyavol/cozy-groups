@@ -5,15 +5,16 @@ module.exports = auth;
 
 const bcrypt = require('bcryptjs');
 const {v4: uuidv4} = require('uuid');
-const tokensCollection = require('../database/tokens.js');
-const usersCollection = require('../database/users.js');
+const usersCollection = require('../../database/users.js');
+const { createToken, deleteToken } = require('../../service/createToken.js');
+const authorizedOnly = require('../../service/authorizedOnly.js');
 
 function isValidPassword(presentedPassword, userPassword) {
     return bcrypt.compareSync(presentedPassword, userPassword);
 }
 
 
-auth.post('/register', async (req, res, next) => {
+auth.post('/register', async (req, res) => {
     let { password, login, firstName, lastName } = req.body;
     const pass_Regexp = /[A-Za-z0-9!@#$%^&*]{4,20}/;
     const login_Regexp = /[A-Za-z0-9]{4,20}/;
@@ -64,19 +65,16 @@ auth.post('/register', async (req, res, next) => {
             let savedUser = await usersCollection.insertUser(user);
 
             if (savedUser) {
-                let tokenData = {
-                    userId: user.id,
-                    login: login,
-                    token: 'token-' + uuidv4(),
-                    'user-agent': req.headers['user-agent']
-                }
-
-                await tokensCollection.insertToken(tokenData);
+                let token = await createToken(user.id, req);
 
                 res.status(200);
                 response.ok = true;
                 response.message = 'Пользователь успешно зарегистрирован'
-                response.token = tokenData.token;
+                response.token = token;
+            } else {
+                res.status(500);
+                response.ok = false;
+                response.message = 'Ошибка создания пользователя';
             }
         } else {
             res.status(400);
@@ -88,7 +86,7 @@ auth.post('/register', async (req, res, next) => {
     res.json(response);
 });
 
-auth.post('/login', async (req, res, next) => {
+auth.post('/login', async (req, res) => {
     let {password, login} = req.body;
     let response = {};
 
@@ -115,20 +113,12 @@ auth.post('/login', async (req, res, next) => {
         } else {
             if ( isValidPassword(password, user.password) ) {
                 // Пароль верный
-                let data = {
-                    userId: user.id,
-                    login: login,
-                    token: 'token-' + uuidv4(),
-                    'user-agent': req.headers['user-agent']
-                };
-                
-                await tokensCollection.deleteToken({login: login});
-                await tokensCollection.insertToken(data);
+                let token = await createToken(user.id, req);
     
                 res.status(200);
                 response.ok = true;
                 response.message = 'Успешно авторизован';
-                response.token = data.token;
+                response.token = token;
             } else {
                 // Неверный пароль
                 res.status(400);
@@ -137,6 +127,17 @@ auth.post('/login', async (req, res, next) => {
             }
         }
     }
+
+    res.json(response);
+});
+
+auth.delete('/logout', authorizedOnly, async (req, res) => {
+    await deleteToken(res.locals.token);
+
+    let response = {
+        ok: true,
+        message: 'Токен успешно удален'
+    };
 
     res.json(response);
 });

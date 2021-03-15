@@ -27,16 +27,25 @@ class Header extends Component {
     }
 
     exit() {
-        localStorage.removeItem('token');
-        this.props.history.push("/")
-        this.props.updateToken(null)
+        axios.delete('http://localhost:3080/auth/logout',{
+            headers:{
+                'Authorization': this.state.token
+            }
+        }).then(response => {
+            if(response.data.ok)
+            {
+                localStorage.removeItem('token');
+                this.props.history.push("/")
+                this.props.updateToken(null)
+            }
+        });
     }
 
     render() {
         return (
             <header>
                 <div className="logo">
-                    <img src="/images/logo.svg" alt="site-logo" onClick={() => this.changeRoute('/')} />
+                    <img src="/images/logo-goat.svg" alt="site-logo" onClick={() => this.changeRoute('/')} />
                     <h2 onClick={() => this.changeRoute('/')}>COZY GROUPS</h2>
                 </div>
                 {/* Для не авторизованных пользователей */}
@@ -109,7 +118,7 @@ class Header extends Component {
                 }
             })
             .catch(err => {
-                console.log(err);
+                this.props.deleteToken(err);
             })
     }
 

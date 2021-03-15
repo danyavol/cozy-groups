@@ -6,7 +6,7 @@ const authorizedOnly = require('./service/authorizedOnly.js');
 
 
 // Авторизация
-router.use('/auth', require('./routes/auth.js'));
+router.use('/auth', require('./routes/auth/auth.js'));
 
 // Группы
 router.use('/groups', authorizedOnly, require('./routes/groups/index.js'));
