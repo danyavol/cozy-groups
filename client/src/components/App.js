@@ -13,6 +13,7 @@ import Error from '../pages/notFound/404.js'
 import Header from './header/header.js';
 import AddGroups from '../pages/groups/addGroups.js';
 import Group from '../pages/groups/group';
+import GroupsList from '../pages/groups/groupsList.js'
 
 import './App.css';
 
@@ -97,6 +98,13 @@ class App extends Component {
                                 />
                             </Route>
                             <Route path="/groups/:id" component={Group} />
+                            <Route path="/groups">
+                                <GroupsList
+                                    token={this.state.token}
+                                    myGroups={this.state.Groups}
+                                    loading={this.state.loading}
+                                 />
+                            </Route>
                             <Route to="/*">
                                 <Error />
                             </Route>
