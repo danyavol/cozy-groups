@@ -19,7 +19,7 @@ class Header extends Component {
             loading: false
         };
         this.exit = this.exit.bind(this);
-        this.refreshGroups = this.refreshGroups.bind(this);
+
     }
 
     changeRoute(path) {
@@ -104,34 +104,13 @@ class Header extends Component {
             console.log(this.state.myGroups, 'header');
         }
     }
-
-    refreshGroups() {
-        axios.get('http://localhost:3080/groups/', {
-            headers: {
-                'Authorization': this.state.token
-            }
-        })
-            .then(response => {
-                if (response.data.ok) {
-                    this.setState(this.state.myGroups = response.data.groups);
-                    console.log(this.state.myGroups);
-                }
-            })
-            .catch(err => {
-                this.props.deleteToken(err);
-            })
-    }
-
-
 }
 
 function GroupsList(props) {
-    console.log(props.state.myGroups);
     if (props.state.myGroups.length !== 0) {
-        console.log('выполняется');
         const listGroups = props.state.myGroups.map((group) =>
             <li key={group.id}>
-                <GroupsMenuLinks to={'/groups/' + group.id} label={group.name} />
+                <GroupsMenuLinks to={'/groups/' + group.id} label={group.name}/>
             </li>
         );
 
@@ -163,7 +142,7 @@ function MenuLink({ icon, label, to, click }) {
     )
 }
 
-function GroupsMenuLinks({ label, to, click }) {
+function GroupsMenuLinks({ label, to, click}) {
     let match = useRouteMatch({
         path: to,
         exact: true

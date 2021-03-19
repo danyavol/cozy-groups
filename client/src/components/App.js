@@ -96,7 +96,13 @@ class App extends Component {
                                     myGroups={this.state.Groups} 
                                 />
                             </Route>
-                            <Route path="/groups/:id" component={Group} />
+                            <Route path="/groups/:id"
+                                   render={(props) => (
+                                       <Group
+                                           {...props}
+                                           token={this.state.token}
+                                       />)}
+                            />
                             <Route to="/*">
                                 <Error />
                             </Route>
