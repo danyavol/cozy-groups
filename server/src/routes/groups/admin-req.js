@@ -18,6 +18,9 @@ groups.put('/invite-code', async (req, res) => {
     let { groupId } = req.body;
 
     let group = await groupsCollection.findGroup({id: groupId});
+    if (!group) {
+        return sendResponse(res, 400, Text.error.findGroupById);
+    }
 
     let senderRole;
     for (let user of group.users) {
@@ -40,5 +43,45 @@ groups.put('/invite-code', async (req, res) => {
         groupsCollection.updateGroup({id: groupId}, {$set: {inviteCode: inviteCode}})
         
         return sendResponse(res, 200, null, {inviteCode: inviteCode});
+    }
+});
+
+groups.delete('/kick-user', async (req, res) => {
+    let senderId = res.locals.userId;
+    let { groupId, userId } = req.body;
+
+    let group = await groupsCollection.findGroup({id: groupId});
+    if (!group) {
+        return sendResponse(res, 400, Text.error.findGroupById);
+    }
+
+    // Поиск в группе отправителя запроса и получателя
+    let sender;
+    let recipient;
+    for (let user of group.users) {
+        if (user.id == senderId) {
+            sender = user;
+        } 
+        else if (user.id == userId) {
+            recipient = user;
+        }
+    }
+
+    if (!sender) {
+        return sendResponse(res, 400, Text.error.notGroupMember);
+    } 
+    else if (!recipient) {
+        return sendResponse(res, 400, Text.error.requestedUserNotGroupMember); 
+    } 
+    else {
+        let permission = 'kick-' + recipient.role;
+        if (!permissions[sender.role].includes(permission)) {
+            return sendResponse(res, 400, Text.error.permissionDenied); 
+        } 
+        else {
+            // Все проверки пройдены, удаляем пользователя из группы
+            await groupsCollection.updateGroup( {id: groupId}, { $pull: {users: {id: recipient.id}} } );
+            return sendResponse(res, 200, Text.success.userDeleted);
+        }
     }
 });
