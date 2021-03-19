@@ -66,7 +66,7 @@ class Header extends Component {
                     <div className="menu-top">
                         <div className="myGroups">
                             <div className="title">
-                                <h3>Мои группы</h3>
+                                <Link to={'/groups'}><h3>Мои группы</h3></Link>
                                 <Link to={'/add-group'} ><FontAwesomeIcon icon={faPlusSquare} size='2x' /></Link>
                             </div>
                             <GroupsList state={this.state}  />
@@ -80,7 +80,7 @@ class Header extends Component {
                         />
                         <MenuLink
                             click={this.exit}
-                            to="/"
+                            to=""
                             label="Выйти"
                             icon={faSignOutAlt}
                         />
@@ -135,7 +135,7 @@ function MenuLink({ icon, label, to, click }) {
     });
 
     return (
-        <div className={`header-link ${match ? 'active' : ''}`}>
+        <div className={`header-link ${match && to ? 'active' : ''}`}>
             <FontAwesomeIcon icon={icon} size='2x' />
             <h4><Link onClick={click ? click : null} to={to}>{label}</Link></h4>
         </div>
