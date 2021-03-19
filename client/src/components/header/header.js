@@ -19,7 +19,7 @@ class Header extends Component {
             loading: false
         };
         this.exit = this.exit.bind(this);
-        this.refreshGroups = this.refreshGroups.bind(this);
+
     }
 
     changeRoute(path) {
@@ -27,16 +27,25 @@ class Header extends Component {
     }
 
     exit() {
-        localStorage.removeItem('token');
-        this.props.history.push("/")
-        this.props.updateToken(null)
+        axios.delete('http://localhost:3080/auth/logout',{
+            headers:{
+                'Authorization': this.state.token
+            }
+        }).then(response => {
+            if(response.data.ok)
+            {
+                localStorage.removeItem('token');
+                this.props.history.push("/")
+                this.props.updateToken(null)
+            }
+        });
     }
 
     render() {
         return (
             <header>
                 <div className="logo">
-                    <img src="/images/logo.svg" alt="site-logo" onClick={() => this.changeRoute('/')} />
+                    <img src="/images/logo-goat.svg" alt="site-logo" onClick={() => this.changeRoute('/')} />
                     <h2 onClick={() => this.changeRoute('/')}>COZY GROUPS</h2>
                 </div>
                 {/* Для не авторизованных пользователей */}
@@ -57,7 +66,7 @@ class Header extends Component {
                     <div className="menu-top">
                         <div className="myGroups">
                             <div className="title">
-                                <h3>Мои группы</h3>
+                                <Link to={'/groups'}><h3>Мои группы</h3></Link>
                                 <Link to={'/add-group'} ><FontAwesomeIcon icon={faPlusSquare} size='2x' /></Link>
                             </div>
                             <GroupsList state={this.state}  />
@@ -71,7 +80,7 @@ class Header extends Component {
                         />
                         <MenuLink
                             click={this.exit}
-                            to="/"
+                            to=""
                             label="Выйти"
                             icon={faSignOutAlt}
                         />
@@ -95,34 +104,13 @@ class Header extends Component {
             console.log(this.state.myGroups, 'header');
         }
     }
-
-    refreshGroups() {
-        axios.get('http://localhost:3080/groups/', {
-            headers: {
-                'Authorization': this.state.token
-            }
-        })
-            .then(response => {
-                if (response.data.ok) {
-                    this.setState(this.state.myGroups = response.data.groups);
-                    console.log(this.state.myGroups);
-                }
-            })
-            .catch(err => {
-                console.log(err);
-            })
-    }
-
-
 }
 
 function GroupsList(props) {
-    console.log(props.state.myGroups);
     if (props.state.myGroups.length !== 0) {
-        console.log('выполняется');
         const listGroups = props.state.myGroups.map((group) =>
             <li key={group.id}>
-                <GroupsMenuLinks to={'/groups/' + group.id} label={group.name} />
+                <GroupsMenuLinks to={'/groups/' + group.id} label={group.name}/>
             </li>
         );
 
@@ -147,14 +135,14 @@ function MenuLink({ icon, label, to, click }) {
     });
 
     return (
-        <div className={`header-link ${match ? 'active' : ''}`}>
+        <div className={`header-link ${match && to ? 'active' : ''}`}>
             <FontAwesomeIcon icon={icon} size='2x' />
             <h4><Link onClick={click ? click : null} to={to}>{label}</Link></h4>
         </div>
     )
 }
 
-function GroupsMenuLinks({ label, to, click }) {
+function GroupsMenuLinks({ label, to, click}) {
     let match = useRouteMatch({
         path: to,
         exact: true
@@ -162,7 +150,7 @@ function GroupsMenuLinks({ label, to, click }) {
 
     return (
         <div className={`groups-link ${match ? 'active' : ''}`}>
-            <h5 className="text-truncate"><Link title={label} onClick={click ? click : null} to={to}>{label}</Link></h5>
+            <h5><Link className="text-truncate" title={label} onClick={click ? click : null} to={to}>{label}</Link></h5>
         </div>
     )
 }

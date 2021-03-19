@@ -4,6 +4,7 @@ import {
     Switch,
     Route
 } from "react-router-dom";
+import {Link, useRouteMatch, withRouter} from "react-router-dom";
 
 import Home from '../pages/home/home.js';
 import Login from '../pages/login/login.js';
@@ -12,6 +13,7 @@ import Error from '../pages/notFound/404.js'
 import Header from './header/header.js';
 import AddGroups from '../pages/groups/addGroups.js';
 import Group from '../pages/groups/group';
+import GroupsList from '../pages/groups/groupsList.js'
 
 import './App.css';
 
@@ -31,6 +33,8 @@ class App extends Component {
         }
 
         this.updateToken = this.updateToken.bind(this);
+        this.updateGroups = this.updateGroups.bind(this);
+        this.deleteToken = this.deleteToken.bind(this);
     }
 
     componentDidMount() {
@@ -48,6 +52,7 @@ class App extends Component {
                 }
             })
                 .then(response => {
+                    console.log(response);
                     if (response.data.ok) {
                         this.setState({
                             Groups: response.data.groups,
@@ -56,10 +61,9 @@ class App extends Component {
                     }
                 })
                 .catch(err => {
-                    console.log(err);
+                    this.deleteToken(err);
                 })
         }
-        // this.setState({loading: false});
         console.log(this.state.Groups, 'app.js');
     }
 
@@ -67,7 +71,13 @@ class App extends Component {
         return (
             <Fragment>
                 <Router>
-                    <Header updateToken={this.updateToken} token={this.state.token} myGroups={this.state.Groups} loading={this.state.loading} />
+                    <Header 
+                        updateToken={this.updateToken}
+                        deleteToken={this.deleteToken}
+                        token={this.state.token} 
+                        myGroups={this.state.Groups} 
+                        loading={this.state.loading} 
+                    />
                     <main>
                         <Switch>
                             <Route exact path="/">
@@ -80,9 +90,28 @@ class App extends Component {
                                 <Register updateToken={this.updateToken} />
                             </Route>
                             <Route path ="/add-group">
-                                <AddGroups token={this.state.token} />
+                                <AddGroups 
+                                    updateGroups={this.updateGroups} 
+                                    deleteToken={this.deleteToken}
+                                    token={this.state.token} 
+                                    myGroups={this.state.Groups} 
+                                />
                             </Route>
+                            <Route path="/groups/:id"
+                                   render={(props) => (
+                                       <Group
+                                           {...props}
+                                           token={this.state.token}
+                                       />)}
+                            />
                             <Route path="/groups/:id" component={Group} />
+                            <Route path="/groups">
+                                <GroupsList
+                                    token={this.state.token}
+                                    myGroups={this.state.Groups}
+                                    loading={this.state.loading}
+                                 />
+                            </Route>
                             <Route to="/*">
                                 <Error />
                             </Route>
@@ -96,6 +125,19 @@ class App extends Component {
     updateToken(value) {
         console.log(123, value);
         this.setState({token: value});
+    }
+
+    deleteToken(error) {
+        if(error.response.status === 401) {
+            localStorage.removeItem('token');
+            this.updateToken(null);
+        }
+    }
+
+    updateGroups(value) {
+        let groups = this.state.Groups;
+        groups.push(value);
+        this.setState({Groups : groups});
     }
 }
 
