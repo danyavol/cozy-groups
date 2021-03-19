@@ -138,6 +138,7 @@ groups.get('/', async (req, res) => {
         outputGroups.push({
             id: group.id,
             name: group.name,
+            users_count: group.users.length
         });
     }
 

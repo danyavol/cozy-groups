@@ -19,6 +19,7 @@ module.exports = {
         groupCreated: 'Группа успешно создана',
         userJoinedGroup: 'Вы успешно присоединились к группе',
         userLeavedGroup: 'Вы успешно вышли из группы',
-        userRoleChanged: 'Права пользователя успешно изменены'
+        userRoleChanged: 'Права пользователя успешно изменены',
+        ownerRoleTransfered: 'Права владельца успешно переданы'
     }
 }
