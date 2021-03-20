@@ -5,3 +5,15 @@
 .header {
     margin-bottom: 20px;
 }
+
+.hidden {
+    display: none;
+}
+
+.holder {
+    height: 800px;
+}
+
+.holder .middle {
+    height: 100%;
+}

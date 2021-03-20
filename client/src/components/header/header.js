@@ -65,11 +65,12 @@ class Header extends Component {
                 <div className={`header-menu ${this.state.token ? '' : 'hidden'}`}>
                     <div className="menu-top">
                         <div className="myGroups">
-                            <div className="title">
-                                <Link to={'/groups'}><h3>Мои группы</h3></Link>
-                                <Link to={'/add-group'} ><FontAwesomeIcon icon={faPlusSquare} size='2x' /></Link>
-                            </div>
-                            <GroupsList state={this.state}  />
+                            {/*<div className="title">*/}
+                            {/*    <Link to={'/groups'}><h3>Мои группы</h3></Link>*/}
+                            {/*    <Link to={'/add-group'} ><FontAwesomeIcon icon={faPlusSquare} size='2x' /></Link>*/}
+                            {/*</div>*/}
+                            <HeaderGroups to="/groups" />
+                            <GroupsList state={this.state} />
                         </div> 
                     </div>
                     <div className="menu-bottom">
@@ -92,7 +93,7 @@ class Header extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         if (prevProps !== this.props) {
-            console.log('did update');
+            // console.log('did update');
             this.setState({
                 token: this.props.token,
                 loading: this.props.loading
@@ -101,9 +102,22 @@ class Header extends Component {
 
         if (this.props.myGroups !== prevProps.myGroups) {
             this.setState({myGroups: this.props.myGroups});
-            console.log(this.state.myGroups, 'header');
         }
     }
+}
+
+function HeaderGroups({to, click}) {
+    let match = useRouteMatch({
+        path: to,
+        exact: true
+    });
+
+    return (
+        <div className={`title ${match && to ? 'active' : ''}`}>
+            <h3><Link onClick={click ? click : null} to={'/groups'}>Мои группы</Link></h3>
+            <Link to={'/add-group'}><FontAwesomeIcon icon={faPlusSquare} size='2x' /></Link>
+        </div>
+    )
 }
 
 function GroupsList(props) {

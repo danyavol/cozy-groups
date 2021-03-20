@@ -68,6 +68,10 @@ header .logo h2 {
     color: var(--primary-color);
 }
 
+.title.active, .title.active a {
+    color: var(--primary-color);
+}
+
 .header-link a {
     color: var(--text-header);
     padding: 10px 10px 10px 50px;

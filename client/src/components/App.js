@@ -52,7 +52,6 @@ class App extends Component {
                 }
             })
                 .then(response => {
-                    console.log(response);
                     if (response.data.ok) {
                         this.setState({
                             Groups: response.data.groups,
@@ -64,7 +63,6 @@ class App extends Component {
                     this.deleteToken(err);
                 })
         }
-        console.log(this.state.Groups, 'app.js');
     }
 
     render() {
