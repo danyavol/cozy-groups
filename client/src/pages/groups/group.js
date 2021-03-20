@@ -1,5 +1,6 @@
 import React from 'react';
-import {Tab} from 'semantic-ui-react';
+import { Tab } from 'semantic-ui-react';
+import { Dropdown } from "semantic-ui-react";
 
 import './group.css';
 import axios from "axios";
@@ -12,8 +13,8 @@ class Group extends React.Component {
             id: '',
             name: '',
 
-            token: '',
-            loading: false
+            token: this.props.token,
+            loading: true
         }
     }
 
@@ -22,50 +23,39 @@ class Group extends React.Component {
         return (
 
             <div>
-                <div className="header">
-                    <div className="buttons">
-                        <button className="ui icon button"><i className="linkify icon"></i></button>
-                        <button className="ui icon button"><i className="cogs icon"></i></button>
+                <Loader loading={this.state.loading} />
+                {/*<div className={`ui ${this.state.loading ? 'active' : 'disabled'}  loader`}></div>*/}
+                {/*/!*<div className={`holder ${this.state.loading ? '' : 'hidden'}`}>*!/*/}
+                {/*/!*    <div className={`ui middle aligned grid`}>*!/*/}
+                {/*/!*        <div className="eight column wide">*!/*/}
+                {/*/!*            <div className={`ui active centered large text loader`}>Загрузка группы...</div>*!/*/}
+                {/*/!*        </div>*!/*/}
+                {/*/!*    </div>*!/*/}
+                {/*/!*</div>*!/*/}
+
+                <div className={this.state.loading ? 'hidden' : ''}>
+                    <div className="header">
+                        <div className="buttons">
+                            <LinkDropdown />
+                            <SettingsDropdown />
+                        </div>
+                        <div>
+                            <Title state={this.state} />
+                        </div>
                     </div>
                     <div>
-                        <GroupTitle state={this.state} />
+                        <Tabs state={this.state} />
                     </div>
-                </div>
-                <div>
-                    <Tabs state={this.state} />
                 </div>
             </div>
         )
     }
 
     componentDidMount() {
-        this.setState({token: this.props.token, loading: true});
-        this.setState({loading: true});
-        axios.get('http://localhost:3080/groups/' + this.props.match.params.id, {
-            headers: {
-                'Authorization': this.props.token
-            }
-        })
-            .then(response => {
-                if (response.data.ok) {
-                    this.setState({
-                        group: response.data.group,
-                        loading: false
-                    })
-                }
-            })
-            .catch(err => {
-                console.log(err);
-            })
-
-    }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.props.match.params.id !== prevProps.match.params.id) {
-            this.setState({loading: true});
+        if (this.state.token !== '') {
             axios.get('http://localhost:3080/groups/' + this.props.match.params.id, {
                 headers: {
-                    'Authorization': this.props.token
+                    'Authorization': this.state.token
                 }
             })
                 .then(response => {
@@ -83,24 +73,56 @@ class Group extends React.Component {
     }
 
 
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props.match.params.id !== prevProps.match.params.id) {
+            this.setState({token: this.props.token, loading: true});
+            axios.get('http://localhost:3080/groups/' + this.props.match.params.id, {
+                headers: {
+                    'Authorization': this.state.token
+                }
+            })
+                .then(response => {
+                    if (response.data.ok) {
+                        this.setState({
+                            group: response.data.group,
+                            loading: false
+                        })
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        }
+
+        if (this.props !== prevProps) {
+            this.setState({token: this.props.token});
+            axios.get('http://localhost:3080/groups/' + this.props.match.params.id, {
+                headers: {
+                    'Authorization': this.state.token
+                }
+            })
+                .then(response => {
+                    if (response.data.ok) {
+                        this.setState({
+                            group: response.data.group,
+                            loading: false
+                        })
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        }
+    }
+
+
 }
 
-function GroupTitle(props) {
-    if (props.state.loading) {
-        return (
-            <div className="ui placeholder">
-                <div className="header">
-                    <div className="full line"></div>
-                </div>
-            </div>
-        )
-    } else if (props.state.group.length !== 0) {
-        return (
-            <h1>{props.state.group.name}</h1>
-        )
-    } else {
-        return (<div></div>)
-    }
+function Title(props) {
+    return (
+        <h1>{props.state.group.name}</h1>
+    )
 }
 
 function Tabs(props) {
@@ -143,7 +165,7 @@ function UsersMenu(props) {
                     <th>Роль</th>
                 </tr>
                 </thead>
-                <UsersRows users={props.state.group.users}/>
+                <UsersRows state={props.state}/>
             </table>
         )
     } else {
@@ -154,9 +176,8 @@ function UsersMenu(props) {
 }
 
 function UsersRows(props) {
-    console.log(props.users);
-    if (props.users.length !== 0) {
-        const users = props.users;
+    if (!props.state.loading) {
+        const users = props.state.group.users;
         const userRow = users.map((user) =>
             <tr key={user.id}>
                 <td>{user.login}</td>
@@ -173,6 +194,57 @@ function UsersRows(props) {
             <tr></tr>
         )
     }
+}
+
+function SettingsDropdown() {
+    return (
+        <Dropdown
+            icon="settings"
+            floating
+            button
+            direction="left"
+            className="icon"
+        >
+            <Dropdown.Menu>
+                <Dropdown.Header  content="Настройки" />
+                <Dropdown.Divider />
+                <Dropdown.Item>Элемент</Dropdown.Item>
+                <Dropdown.Item>Элемент</Dropdown.Item>
+                <Dropdown.Item>Гейский элемент</Dropdown.Item>
+                <Dropdown.Item>Элемент</Dropdown.Item>
+            </Dropdown.Menu>
+        </Dropdown>
+    )
+}
+
+function LinkDropdown() {
+    return (
+        <Dropdown
+            icon="settings"
+            floating
+            button
+            direction="left"
+            className="icon"
+        >
+            <Dropdown.Menu>
+                <Dropdown.Header  content="Тут инвайт код" />
+                <Dropdown.Divider />
+                <Dropdown.Item>Скопировать</Dropdown.Item>
+                <Dropdown.Item>Обновить</Dropdown.Item>
+            </Dropdown.Menu>
+        </Dropdown>
+    )
+}
+function Loader(props) {
+    return (
+        <div className={`holder ${props.loading ? '' : 'hidden'}`}>
+            <div className={`ui middle aligned grid`}>
+                <div className="eight column wide">
+                    <div className={`ui active centered large text loader`}>Загрузка группы...</div>
+                </div>
+            </div>
+        </div>
+    );
 }
 
 export default Group;
