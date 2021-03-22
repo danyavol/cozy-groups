@@ -34,6 +34,7 @@ class App extends Component {
 
         this.updateToken = this.updateToken.bind(this);
         this.updateGroups = this.updateGroups.bind(this);
+        this.updateDeleteGroups=this.updateDeleteGroups.bind(this);
         this.deleteToken = this.deleteToken.bind(this);
     }
 
@@ -72,6 +73,7 @@ class App extends Component {
                     <Header 
                         updateToken={this.updateToken}
                         deleteToken={this.deleteToken}
+                        updateGroups={this.updateGroups}
                         token={this.state.token} 
                         myGroups={this.state.Groups} 
                         loading={this.state.loading} 
@@ -100,6 +102,8 @@ class App extends Component {
                                        <Group
                                            {...props}
                                            token={this.state.token}
+                                           updateDeleteGroups={this.updateDeleteGroups}
+                                           deleteToken={this.deleteToken}
                                        />)}
                             />
                             <Route path="/groups/:id" component={Group} />
@@ -132,6 +136,12 @@ class App extends Component {
         }
     }
 
+    updateDeleteGroups(value) {
+        let groups = this.state.Groups;
+        let index =groups.indexOf(groups.find(group => group.id === value));
+        groups.splice(index,1);
+        this.setState({Groups:groups});
+    }
     updateGroups(value) {
         let groups = this.state.Groups;
         groups.push(value);

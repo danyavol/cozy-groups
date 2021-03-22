@@ -10,14 +10,21 @@ class Modal extends Component {
         return (
             <Fragment>
                 <Transition visible={this.props.visible} animation='scale' duration={500}>
-                <div className={`ui modal ${this.props.visible ? 'active' : ''}`}>
-                    <div className="header">{this.props.header}
-                        <i onClick={this.props.updateVisible} className="close black icon float-right"></i>
+                    <div className={`ui modal modal-properties ${this.props.visible ? 'active' : ''}`}>
+                        <div className="header">{this.props.header}
+                            <i onClick={this.props.updateVisible} className="close black icon float-right"></i>
+                        </div>
+                        <div className="content">
+                            {this.props.element}
+                        </div>
+                        <div className="actions">
+                            <div onClick={this.props.updateVisible} className="ui black deny button">Отменить</div>
+                            <div onClick={this.props.function} className="ui positive right labeled icon button">
+                                Подтвердить
+                                <i  className="checkmark icon"></i>
+                            </div>
+                        </div>
                     </div>
-                    <div className="content">
-                        {this.props.element}
-                    </div>
-                </div>
                 </Transition> 
             </Fragment>
         );
