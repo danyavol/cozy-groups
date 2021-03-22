@@ -1,6 +1,8 @@
 import React from 'react';
-import { Tab } from 'semantic-ui-react';
+import { Dimmer, Tab } from 'semantic-ui-react';
 import { Dropdown } from "semantic-ui-react";
+import { withRouter } from "react-router-dom";
+import Modal from '../../components/modal/modal.js';
 import { CopyToClipboard } from "react-copy-to-clipboard/lib/Component";
 
 import './group.css';
@@ -15,14 +17,24 @@ class Group extends React.Component {
             name: '',
 
             token: this.props.token,
-            loading: true
+            loading: true,
+            loaderText:'Загрузка группы...',
+
+            dimmer:false,
+            visibleLeaveModal: false,
+            visibleErrorModal: false,
+
+            text:''
         }
+
+        this.leave = this.leave.bind(this);
+        this.updateVisibleLeaveModal = this.updateVisibleLeaveModal.bind(this);
+        this.updateVisibleErrorModal = this.updateVisibleErrorModal.bind(this);
+        this.openLeaveModal = this.openLeaveModal.bind(this);
     }
 
     render() {
-
         return (
-
             <div>
                 <Loader loading={this.state.loading} />
                 <div className={this.state.loading ? 'hidden' : ''}>
@@ -38,9 +50,83 @@ class Group extends React.Component {
                         <Tabs state={this.state} />
                     </div>
                 </div>
+                <Modal
+                    header={'Ошибка'}
+                    visible={this.state.visibleErrorModal}
+                    element={<div>{this.text}</div>}
+                    updateVisible={this.updateVisibleErrorModal}
+                    function={this.updateVisibleErrorModal}
+                />
+                <Modal
+                    header={'Выход'}
+                    visible={this.state.visibleLeaveModal}
+                    element={this.state.text}
+                    updateVisible={this.updateVisibleLeaveModal}
+                    function={this.leave}
+                />
+                <Loader loading={this.state.loading} text={this.state.loaderText} />
+                <Dimmer.Dimmable dimmed={this.state.dimmer} >
+                    <Dimmer className='position' simple  />
+                        <div className={this.state.loading ? 'hidden' : ''}>
+                            <div className="header">
+                                <div className="buttons">
+                                    <LinkDropdown />
+                                    <SettingsDropdown leave={this.openLeaveModal} />
+                                </div>
+                                <div>
+                                    <Title state={this.state} />
+                                </div>
+                            </div>
+                            <div>
+                                <Tabs state={this.state} />
+                            </div>
+                        </div>
+                </Dimmer.Dimmable>
             </div>
         )
     }
+
+    openLeaveModal() {
+        if(this.state.visibleLeaveModal) {
+            this.setState({visibleLeaveModal : false, dimmer : false });
+        }
+        else {
+            this.setState({visibleLeaveModal : true, dimmer : true, text:'Вы действительно хотите выйти из группы?' });
+        }
+    }
+
+    updateVisibleErrorModal() {
+        this.setState({visibleErrorModal : false, dimmer : false});
+    }
+    updateVisibleLeaveModal() {
+        this.setState({visibleLeaveModal : false, dimmer : false});
+    }
+
+    leave() {
+        this.setState({loading : true, loaderText : 'Выход из группы...', visibleLeaveModal : false, dimmer : false});
+        let data = {groupId : this.state.group.id};
+        axios.post('http://localhost:3080/groups/leave',data, {
+            headers:{
+                'Authorization':this.state.token
+            }
+        }).
+        then(response => {
+            if(response.data.ok) {
+                console.log('Вы вышли из группы!');
+                this.props.updateDeleteGroups(this.props.match.params.id);
+                this.props.history.push("/");
+            }
+        })
+        .catch((err) => {
+            this.setState({loading : false,visibleErrorModal : true});
+            this.props.deleteToken(err);
+            if (err.response) this.setState({text : err.response.data.message });
+            else this.setState({text :'Ошибка соединения с сервером.' });
+            setTimeout(() => {this.props.history.push("/");},3000);
+        })
+    }
+
+
 
     componentDidMount() {
         if (this.state.token !== '') {
@@ -228,8 +314,7 @@ function UsersRows(props) {
     }
 }
 
-
-function SettingsDropdown() {
+function SettingsDropdown(props) {
     return (
         <Dropdown
             icon="settings"
@@ -241,10 +326,9 @@ function SettingsDropdown() {
             <Dropdown.Menu>
                 <Dropdown.Header  content="Настройки" />
                 <Dropdown.Divider />
-                <Dropdown.Item>Элемент</Dropdown.Item>
-                <Dropdown.Item>Элемент</Dropdown.Item>
-                <Dropdown.Item>Гейский элемент</Dropdown.Item>
-                <Dropdown.Item>Элемент</Dropdown.Item>
+                <Dropdown.Item>Изменить название группы</Dropdown.Item>
+                <Dropdown.Item>Передать права владельца</Dropdown.Item>
+                <Dropdown.Item onClick={props.leave}>Выйти из группы</Dropdown.Item>
             </Dropdown.Menu>
         </Dropdown>
     )
@@ -257,12 +341,21 @@ function Loader(props) {
         <div className={`holder ${props.loading ? '' : 'hidden'}`}>
             <div className={`ui middle aligned grid`}>
                 <div className="eight column wide">
-                    <div className={`ui active centered large text loader`}>Загрузка группы...</div>
+                    <div className={`ui active centered large text loader`}>{props.text}</div>
                 </div>
             </div>
         </div>
     );
 }
 
-export default Group;
+                {/*<div className={`ui ${this.state.loading ? 'active' : 'disabled'}  loader`}></div>*/}
+                {/*/!*<div className={`holder ${this.state.loading ? '' : 'hidden'}`}>*!/*/}
+                {/*/!*    <div className={`ui middle aligned grid`}>*!/*/}
+                {/*/!*        <div className="eight column wide">*!/*/}
+                {/*/!*            <div className={`ui active centered large text loader`}>Загрузка группы...</div>*!/*/}
+                {/*/!*        </div>*!/*/}
+                {/*/!*    </div>*!/*/}
+                {/*/!*</div>*!/*/}
+
+export default withRouter(Group);
 

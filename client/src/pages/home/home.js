@@ -30,7 +30,10 @@ class Home extends Component {
                      />
         return (
             <Fragment>
+                <div>
                 {modal}
+                </div>
+                
                 <Dimmer.Dimmable dimmed={this.state.visible} >
                     <Dimmer className='position' simple onClickOutside={this.openModal} />
                     <div>
