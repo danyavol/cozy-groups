@@ -17,3 +17,24 @@
 .holder .middle {
     height: 100%;
 }
+
+.inviteCard {
+    position: relative;
+    width: 500px;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+.inviteCard .content h1 {
+    font-size: 50pt;
+    display: inline-block;
+}
+
+.inviteCard .content h2 {
+    display: inline-block;
+    font-size: 20pt;
+}
+
+.inviteCard .content h2:hover {
+    color: var(--text-surface);
+}
