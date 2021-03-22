@@ -35,6 +35,7 @@ class App extends Component {
         this.updateToken = this.updateToken.bind(this);
         this.updateGroups = this.updateGroups.bind(this);
         this.updateDeleteGroups=this.updateDeleteGroups.bind(this);
+        this.clearGroups=this.clearGroups.bind(this);
         this.deleteToken = this.deleteToken.bind(this);
     }
 
@@ -74,6 +75,7 @@ class App extends Component {
                         updateToken={this.updateToken}
                         deleteToken={this.deleteToken}
                         updateGroups={this.updateGroups}
+                        clearGroups={this.clearGroups}
                         token={this.state.token} 
                         myGroups={this.state.Groups} 
                         loading={this.state.loading} 
@@ -92,6 +94,7 @@ class App extends Component {
                             <Route path ="/add-group">
                                 <AddGroups 
                                     updateGroups={this.updateGroups} 
+                                    clearGroups={this.clearGroups}
                                     deleteToken={this.deleteToken}
                                     token={this.state.token} 
                                     myGroups={this.state.Groups} 
@@ -103,6 +106,7 @@ class App extends Component {
                                            {...props}
                                            token={this.state.token}
                                            updateDeleteGroups={this.updateDeleteGroups}
+                                           clearGroups={this.clearGroups}
                                            deleteToken={this.deleteToken}
                                        />)}
                             />
@@ -132,6 +136,7 @@ class App extends Component {
     deleteToken(error) {
         if(error.response.status === 401) {
             localStorage.removeItem('token');
+            this.props.clearGroups();
             this.updateToken(null);
         }
     }
@@ -146,6 +151,9 @@ class App extends Component {
         let groups = this.state.Groups;
         groups.push(value);
         this.setState({Groups : groups});
+    }
+    clearGroups() {
+        this.setState({Groups : []})
     }
 }
 

@@ -35,9 +35,10 @@ class Header extends Component {
             if(response.data.ok)
             {
                 localStorage.removeItem('token');
-                this.props.updateGroups([]);
-                this.props.history.push("/")
                 this.props.updateToken(null)
+                this.props.clearGroups();
+                this.props.history.push("/")
+                
             }
         });
     }
