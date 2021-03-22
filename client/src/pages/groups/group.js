@@ -36,20 +36,6 @@ class Group extends React.Component {
     render() {
         return (
             <div>
-                <Loader loading={this.state.loading} />
-                <div className={this.state.loading ? 'hidden' : ''}>
-                    <div className="header">
-                        <div className="buttons">
-                            <SettingsDropdown />
-                        </div>
-                        <div>
-                            <Title state={this.state} />
-                        </div>
-                    </div>
-                    <div>
-                        <Tabs state={this.state} />
-                    </div>
-                </div>
                 <Modal
                     header={'Ошибка'}
                     visible={this.state.visibleErrorModal}
@@ -70,7 +56,6 @@ class Group extends React.Component {
                         <div className={this.state.loading ? 'hidden' : ''}>
                             <div className="header">
                                 <div className="buttons">
-                                    <LinkDropdown />
                                     <SettingsDropdown leave={this.openLeaveModal} />
                                 </div>
                                 <div>
@@ -98,6 +83,7 @@ class Group extends React.Component {
     updateVisibleErrorModal() {
         this.setState({visibleErrorModal : false, dimmer : false});
     }
+
     updateVisibleLeaveModal() {
         this.setState({visibleLeaveModal : false, dimmer : false});
     }
@@ -126,8 +112,6 @@ class Group extends React.Component {
         })
     }
 
-
-
     componentDidMount() {
         if (this.state.token !== '') {
             axios.get('http://localhost:3080/groups/' + this.props.match.params.id, {
@@ -148,8 +132,6 @@ class Group extends React.Component {
                 })
         }
     }
-
-
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props.match.params.id !== prevProps.match.params.id) {
@@ -230,9 +212,7 @@ function Tabs(props) {
         <Tab menu={{secondary: true, pointing: true}} panes={panes} />
     );
 
-    return (
-            <GroupTabs />
-        );
+    return (<GroupTabs />);
 }
 
 
@@ -267,8 +247,6 @@ class InviteTab extends React.Component {
 
         );
     }
-
-
 }
 
 function UsersMenu(props) {
@@ -314,6 +292,7 @@ function UsersRows(props) {
     }
 }
 
+
 function SettingsDropdown(props) {
     return (
         <Dropdown
@@ -335,7 +314,6 @@ function SettingsDropdown(props) {
 }
 
 
-
 function Loader(props) {
     return (
         <div className={`holder ${props.loading ? '' : 'hidden'}`}>
@@ -347,15 +325,6 @@ function Loader(props) {
         </div>
     );
 }
-
-                {/*<div className={`ui ${this.state.loading ? 'active' : 'disabled'}  loader`}></div>*/}
-                {/*/!*<div className={`holder ${this.state.loading ? '' : 'hidden'}`}>*!/*/}
-                {/*/!*    <div className={`ui middle aligned grid`}>*!/*/}
-                {/*/!*        <div className="eight column wide">*!/*/}
-                {/*/!*            <div className={`ui active centered large text loader`}>Загрузка группы...</div>*!/*/}
-                {/*/!*        </div>*!/*/}
-                {/*/!*    </div>*!/*/}
-                {/*/!*</div>*!/*/}
 
 export default withRouter(Group);
 
