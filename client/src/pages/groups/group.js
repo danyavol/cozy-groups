@@ -377,9 +377,30 @@ function RoleDropdown(props) {
 }
 
 function KickUserButton(props) {
+    function userKick(event, userId, groupId, token) {
+        event.preventDefault();
+        console.log("userId: " + userId + "groupId: " + groupId);
+        axios.delete('http://localhost:3080/groups/kick-user', {
+            headers: {
+                'Authorization': token
+            },
+            body: {
+                groupId: groupId,
+                userId: userId
+            }
+        }).
+        then(response => {
+            if(response.data.ok) {
+            }
+        })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+
     if (props.role !== "owner") {
         return (
-            <h2><i className="kickButton user times icon" ></i></h2>
+            <h2 onClick={(event) => userKick(event, props.userId, props.groupId, props.token)}><i className="kickButton user times icon" ></i></h2>
         );
     } else {
         return (
@@ -388,24 +409,6 @@ function KickUserButton(props) {
     }
 }
 
-function userKick(userId, groupId, token) {
-    axios.delete('http://localhost:3080/groups/kick-user', {
-        headers: {
-            'Authorization': token
-        },
-        data: {
-            groupId: groupId,
-            userId: userId
-        }
-    }).
-    then(response => {
-        if(response.data.ok) {
-        }
-    })
-        .catch((err) => {
-            console.log(err);
-        });
-}
 
 function SettingsDropdown(props) {
     return (
