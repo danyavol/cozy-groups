@@ -1,9 +1,8 @@
 import React from 'react';
-import { Dimmer, Tab } from 'semantic-ui-react';
-import { Dropdown } from "semantic-ui-react";
-import { withRouter } from "react-router-dom";
+import {Dimmer, Dropdown, Tab} from 'semantic-ui-react';
+import {withRouter} from "react-router-dom";
 import Modal from '../../components/modal/modal.js';
-import { CopyToClipboard } from "react-copy-to-clipboard/lib/Component";
+import {CopyToClipboard} from "react-copy-to-clipboard/lib/Component";
 
 import './group.css';
 import axios from "axios";
@@ -18,19 +17,22 @@ class Group extends React.Component {
 
             token: this.props.token,
             loading: true,
-            loaderText:'Загрузка группы...',
+            loaderText: 'Загрузка группы...',
 
-            dimmer:false,
+            dimmer: false,
             visibleLeaveModal: false,
             visibleErrorModal: false,
+            visibleCreatePostModal: false,
 
-            text:''
+            text: ''
         }
 
         this.leave = this.leave.bind(this);
         this.updateVisibleLeaveModal = this.updateVisibleLeaveModal.bind(this);
         this.updateVisibleErrorModal = this.updateVisibleErrorModal.bind(this);
+        this.updateVisibleCreateModal = this.updateVisibleCreateModal.bind(this);
         this.openLeaveModal = this.openLeaveModal.bind(this);
+        this.openCreatePostModal = this.openCreatePostModal.bind(this);
     }
 
     render() {
@@ -50,6 +52,12 @@ class Group extends React.Component {
                     updateVisible={this.updateVisibleLeaveModal}
                     function={this.leave}
                 />
+                <Modal
+                    header={'Создать пост'}
+                    visible={this.state.visibleCreatePostModal}
+                    element={this.state.text}
+                    updateVisible={this.updateVisibleCreateModal}
+                />
                 <Loader loading={this.state.loading} text={this.state.loaderText} />
                 <Dimmer.Dimmable dimmed={this.state.dimmer} >
                     <Dimmer className='position' simple  />
@@ -63,7 +71,7 @@ class Group extends React.Component {
                                 </div>
                             </div>
                             <div>
-                                <Tabs state={this.state} />
+                                <Tabs state={this.state} createPost={this.openCreatePostModal}/>
                             </div>
                         </div>
                 </Dimmer.Dimmable>
@@ -72,20 +80,31 @@ class Group extends React.Component {
     }
 
     openLeaveModal() {
-        if(this.state.visibleLeaveModal) {
-            this.setState({visibleLeaveModal : false, dimmer : false });
+        if (this.state.visibleLeaveModal) {
+            this.setState({visibleLeaveModal: false, dimmer: false });
+        } else {
+            this.setState({visibleLeaveModal: true, dimmer: true, text: 'Вы действительно хотите выйти из группы?' });
         }
-        else {
-            this.setState({visibleLeaveModal : true, dimmer : true, text:'Вы действительно хотите выйти из группы?' });
+    }
+
+    openCreatePostModal() {
+        if (this.state.visibleCreatePostModal) {
+            this.setState({visibleCreatePostModal: false, dimmer: false});
+        } else {
+            this.setState({visibleCreatePostModal: true, dimmer: true, text: 'Создать пост?'});
         }
     }
 
     updateVisibleErrorModal() {
-        this.setState({visibleErrorModal : false, dimmer : false});
+        this.setState({visibleErrorModal: false, dimmer: false});
     }
 
     updateVisibleLeaveModal() {
-        this.setState({visibleLeaveModal : false, dimmer : false});
+        this.setState({visibleLeaveModal: false, dimmer: false});
+    }
+
+    updateVisibleCreateModal() {
+                this.setState({visibleCreatePostModal: false, dimmer: false});
     }
 
     leave() {
@@ -106,8 +125,10 @@ class Group extends React.Component {
         .catch((err) => {
             this.setState({loading : false,visibleErrorModal : true});
             this.props.deleteToken(err);
-            if (err.response) this.setState({text : err.response.data.message });
-            else this.setState({text :'Ошибка соединения с сервером.' });
+            if (err.response)
+                this.setState({text : err.response.data.message });
+            else
+                this.setState({text :'Ошибка соединения с сервером.' });
             setTimeout(() => {this.props.history.push("/");},3000);
         })
     }
@@ -174,8 +195,6 @@ class Group extends React.Component {
                 });
         }
     }
-
-
 }
 
 function Title(props) {
@@ -188,8 +207,8 @@ function Tabs(props) {
     const panes = [
         {
             menuItem:
-                {key: 'notes', icon: 'sticky note', content: 'Все записи'},
-            render: () => <Tab.Pane attached={false}>Все записи</Tab.Pane>
+                {key: 'posts', icon: 'sticky note', content: 'Все записи'},
+            render: () => <PostsTab createPost={props.createPost} />
         },
         {
             menuItem:
@@ -215,7 +234,34 @@ function Tabs(props) {
     return (<GroupTabs />);
 }
 
+// Вкладка постов.
+function PostsTab(props) {
+    return (
+        <div className="postTab">
+            <Tab.Pane attached={false}>Записи</Tab.Pane>
+            <CreatePostButton />
+        </div>
+    );
+}
 
+function CreatePostButton() {
+    return (
+        <div className="createPost">
+            <Dropdown
+                icon={{name: "big plus", size: "huge"}}
+                className="icon"
+                direction="left"
+            >
+                <Dropdown.Menu>
+                    <Dropdown.Item text="Создать пост" />
+                    <Dropdown.Item text="Создать опрос" />
+                </Dropdown.Menu>
+            </Dropdown>
+        </div>
+    )
+}
+
+// Инвайт вкладка.
 class InviteTab extends React.Component {
     constructor(props) {
         super(props);
@@ -232,7 +278,10 @@ class InviteTab extends React.Component {
                         <div className="center aligned description">
                             <h1 id="inviteCode">
                                 {this.props.inviteCode}
-                                <CopyToClipboard text={this.props.inviteCode} onCopy={() => this.setState({copied: true})}>
+                                <CopyToClipboard
+                                    text={this.props.inviteCode}
+                                    onCopy={() => this.setState({copied: true})}
+                                >
                                     <h2><i className={`copy ${this.state.copied ? '' : 'disabled'} icon`}></i></h2>
                                 </CopyToClipboard>
                             </h1>
@@ -249,18 +298,11 @@ class InviteTab extends React.Component {
     }
 }
 
+// Вкладка пользователей.
 function UsersMenu(props) {
     if (props.state.group.length !== 0){
         return (
-            <table className="ui celled table">
-                <thead>
-                <tr>
-                    <th>Логин</th>
-                    <th>Имя</th>
-                    <th>Фамилия</th>
-                    <th>Роль</th>
-                </tr>
-                </thead>
+            <table className="ui very basic collapsed single line table">
                 <UsersRows state={props.state}/>
             </table>
         )
@@ -276,10 +318,23 @@ function UsersRows(props) {
         const users = props.state.group.users;
         const userRow = users.map((user) =>
             <tr key={user.id}>
-                <td>{user.login}</td>
-                <td>{user.firstName}</td>
-                <td>{user.lastName}</td>
-                <td>{user.role}</td>
+                <td>
+                    <div className="content">
+                        <h2>{user.firstName} {user.lastName}</h2>
+                        <div className="sub header">{user.login}</div>
+                    </div>
+                </td>
+                <td className="center aligned">
+                    <h2><RoleDropdown role={user.role} /></h2>
+                </td>
+                <td className="center aligned">
+                    <KickUserButton
+                        role={user.role}
+                        token={props.state.token}
+                        userId={user.id}
+                        groupId={props.state.group.id}
+                    />
+                </td>
             </tr>
         );
         return (
@@ -292,6 +347,65 @@ function UsersRows(props) {
     }
 }
 
+function RoleDropdown(props) {
+    const roles = [
+        {
+            key: "admin",
+            text: "Admin",
+            value: "admin",
+        },
+        {
+            key: "member",
+            text: "Member",
+            value: "member"
+        }
+    ];
+
+    if (props.role === "owner") {
+        return (
+            <div>Owner</div>
+        );
+    } else {
+        return (
+            <Dropdown
+                inline
+                options={roles}
+                defaultValue={props.role}
+            />
+        );
+    }
+}
+
+function KickUserButton(props) {
+    if (props.role !== "owner") {
+        return (
+            <h2><i className="kickButton user times icon" ></i></h2>
+        );
+    } else {
+        return (
+            <div></div>
+        );
+    }
+}
+
+function userKick(userId, groupId, token) {
+    axios.delete('http://localhost:3080/groups/kick-user', {
+        headers: {
+            'Authorization': token
+        },
+        data: {
+            groupId: groupId,
+            userId: userId
+        }
+    }).
+    then(response => {
+        if(response.data.ok) {
+        }
+    })
+        .catch((err) => {
+            console.log(err);
+        });
+}
 
 function SettingsDropdown(props) {
     return (

@@ -67,10 +67,6 @@ class Header extends Component {
                 <div className={`header-menu ${this.state.token ? '' : 'hidden'}`}>
                     <div className="menu-top">
                         <div className="myGroups">
-                            {/*<div className="title">*/}
-                            {/*    <Link to={'/groups'}><h3>Мои группы</h3></Link>*/}
-                            {/*    <Link to={'/add-group'} ><FontAwesomeIcon icon={faPlusSquare} size='2x' /></Link>*/}
-                            {/*</div>*/}
                             <HeaderGroups to="/groups" />
                             <GroupsList state={this.state} />
                         </div> 
