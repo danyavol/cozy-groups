@@ -33,6 +33,7 @@ class Group extends React.Component {
         this.updateVisibleCreateModal = this.updateVisibleCreateModal.bind(this);
         this.openLeaveModal = this.openLeaveModal.bind(this);
         this.openCreatePostModal = this.openCreatePostModal.bind(this);
+        this.handleKickUser = this.handleKickUser.bind(this);
     }
 
     render() {
@@ -71,12 +72,16 @@ class Group extends React.Component {
                                 </div>
                             </div>
                             <div>
-                                <Tabs state={this.state} createPost={this.openCreatePostModal}/>
+                                <Tabs state={this.state} createPost={this.openCreatePostModal} kickUser={this.handleKickUser} />
                             </div>
                         </div>
                 </Dimmer.Dimmable>
             </div>
         )
+    }
+
+    handleKickUser() {
+        this.setState({group: ''});
     }
 
     openLeaveModal() {
@@ -218,7 +223,7 @@ function Tabs(props) {
         {
             menuItem:
                 {key: 'users', icon: 'users', content: 'Пользователи'},
-            render: () => <Tab.Pane attached={false}><UsersMenu state={props.state} /></Tab.Pane>
+            render: () => <Tab.Pane attached={false}><UsersMenu state={props.state} kickUser={props.kickUser} /></Tab.Pane>
         },
         {
             menuItem:
@@ -303,7 +308,7 @@ function UsersMenu(props) {
     if (props.state.group.length !== 0){
         return (
             <table className="ui very basic collapsed single line table">
-                <UsersRows state={props.state}/>
+                <UsersRows state={props.state} kickUser={props.kickUser}/>
             </table>
         )
     } else {
@@ -333,17 +338,18 @@ function UsersRows(props) {
                         token={props.state.token}
                         userId={user.id}
                         groupId={props.state.group.id}
+                        kickUser={props.kickUser}
                     />
                 </td>
             </tr>
         );
         return (
             <tbody>{userRow}</tbody>
-        )
+        );
     } else {
         return (
             <tr></tr>
-        )
+        );
     }
 }
 
@@ -377,30 +383,38 @@ function RoleDropdown(props) {
 }
 
 function KickUserButton(props) {
-    function userKick(event, userId, groupId, token) {
+    function userKick(event) {
         event.preventDefault();
-        console.log("userId: " + userId + "groupId: " + groupId);
+        console.log("userId: " + props.userId + " groupId: " + props.groupId);
         axios.delete('http://localhost:3080/groups/kick-user', {
             headers: {
-                'Authorization': token
+                'Authorization': props.token
             },
-            body: {
-                groupId: groupId,
-                userId: userId
+            data: {
+                groupId: props.groupId,
+                userId: props.userId
             }
         }).
         then(response => {
             if(response.data.ok) {
+                console.log("Пользователь удален");
+                props.kickUser();
             }
         })
             .catch((err) => {
                 console.log(err);
+
             });
     }
 
     if (props.role !== "owner") {
         return (
-            <h2 onClick={(event) => userKick(event, props.userId, props.groupId, props.token)}><i className="kickButton user times icon" ></i></h2>
+            <h2
+                onClick={(event) =>
+                    userKick(event)}
+            >
+                <i className="kickButton user times icon" ></i>
+            </h2>
         );
     } else {
         return (
