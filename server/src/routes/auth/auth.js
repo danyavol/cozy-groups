@@ -8,7 +8,7 @@ const {v4: uuidv4} = require('uuid');
 const usersCollection = require('../../database/users.js');
 const { createToken, deleteToken } = require('../../service/createToken.js');
 const authorizedOnly = require('../../service/authorizedOnly.js');
-const validator = require('../../service/validator.js');
+const Validator = require('../../service/validator.js');
 const { sendResponse } = require('../../service/requestService.js');
 const Text = require('../../service/responseMessages.js');
 
@@ -20,16 +20,16 @@ function isValidPassword(presentedPassword, userPassword) {
 auth.post('/register', async (req, res) => {
     let { password, login, firstName, lastName } = req.body;
 
-    if ( !validator.login(login) ) {
+    if ( !Validator.login(login) ) {
         return sendResponse(res, 400, Text.error.validation.login);
     } 
-    else if ( !validator.password(password) ) {
+    else if ( !Validator.password(password) ) {
         return sendResponse(res, 400, Text.error.validation.password);
     } 
-    else if ( !validator.userName(firstName) ) {
+    else if ( !Validator.userName(firstName) ) {
         return sendResponse(res, 400, Text.error.validation.firstName);
     } 
-    else if (lastName && !validator.userName(lastName)) {
+    else if (lastName && !Validator.userName(lastName)) {
         return sendResponse(res, 400, Text.error.validation.lastName);
     } 
     else {

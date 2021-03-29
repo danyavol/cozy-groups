@@ -11,6 +11,7 @@ const groupsCollection = require('../../database/groups.js');
 const generateCode = require('../../service/codeGenerator.js');
 const Text = require('../../service/responseMessages.js')
 const { sendResponse } = require('../../service/requestService.js');
+const Validator = require('../../service/validator.js');
 
 
 groups.put('/invite-code', async (req, res) => {
@@ -104,7 +105,11 @@ groups.put('/group-name', async (req, res) => {
 
     if (!sender) {
         return sendResponse(res, 400, Text.error.notGroupMember);
-    } else {
+    } 
+    else if ( !Validator.groupName(groupName) ) {
+        return sendResponse(res, 400, Text.error.validation.groupName); 
+    }
+    else {
         if (!permissions[sender.role].includes('editGroupInfo')) {
             return sendResponse(res, 400, Text.error.permissionDenied); 
         } 
