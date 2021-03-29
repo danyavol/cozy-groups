@@ -38,3 +38,27 @@
 .inviteCard .content h2:hover {
     color: var(--text-surface);
 }
+
+.createPost {
+    position: absolute;
+    float: right;
+    z-index: 3;
+    bottom: 0;
+    right: 0;
+    size: 20pt;
+    margin: 30px;
+}
+
+.postTab {
+    position: relative;
+    height: 85vh;
+}
+
+table h2 {
+    font-size: 16pt;
+    margin-bottom: 0;
+}
+
+table .kickButton {
+    color: red;
+}

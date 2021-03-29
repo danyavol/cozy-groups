@@ -1,9 +1,8 @@
 import React from 'react';
-import { Dimmer, Tab } from 'semantic-ui-react';
-import { Dropdown } from "semantic-ui-react";
-import { withRouter } from "react-router-dom";
+import {Dimmer, Dropdown, Tab} from 'semantic-ui-react';
+import {withRouter} from "react-router-dom";
 import Modal from '../../components/modal/modal.js';
-import { CopyToClipboard } from "react-copy-to-clipboard/lib/Component";
+import {CopyToClipboard} from "react-copy-to-clipboard/lib/Component";
 
 import './group.css';
 import axios from "axios";
@@ -18,7 +17,7 @@ class Group extends React.Component {
 
             token: this.props.token,
             loading: true,
-            loaderText:'Загрузка группы...',
+            loaderText: 'Загрузка группы...',
 
             open:false,
             dimmer:false,
@@ -165,8 +164,6 @@ class Group extends React.Component {
                 });
         }
     }
-
-
 }
 
 function Title(props) {
@@ -179,8 +176,8 @@ function Tabs(props) {
     const panes = [
         {
             menuItem:
-                {key: 'notes', icon: 'sticky note', content: 'Все записи'},
-            render: () => <Tab.Pane attached={false}>Все записи</Tab.Pane>
+                {key: 'posts', icon: 'sticky note', content: 'Все записи'},
+            render: () => <PostsTab createPost={props.createPost} />
         },
         {
             menuItem:
@@ -206,7 +203,34 @@ function Tabs(props) {
     return (<GroupTabs />);
 }
 
+// Вкладка постов.
+function PostsTab(props) {
+    return (
+        <div className="postTab">
+            <Tab.Pane attached={false}>Записи</Tab.Pane>
+            <CreatePostButton />
+        </div>
+    );
+}
 
+function CreatePostButton() {
+    return (
+        <div className="createPost">
+            <Dropdown
+                icon={{name: "big plus", size: "huge"}}
+                className="icon"
+                direction="left"
+            >
+                <Dropdown.Menu>
+                    <Dropdown.Item text="Создать пост" />
+                    <Dropdown.Item text="Создать опрос" />
+                </Dropdown.Menu>
+            </Dropdown>
+        </div>
+    )
+}
+
+// Инвайт вкладка.
 class InviteTab extends React.Component {
     constructor(props) {
         super(props);
@@ -240,18 +264,11 @@ class InviteTab extends React.Component {
     }
 }
 
+// Вкладка пользователей.
 function UsersMenu(props) {
     if (props.state.group.length !== 0){
         return (
-            <table className="ui celled table">
-                <thead>
-                <tr>
-                    <th>Логин</th>
-                    <th>Имя</th>
-                    <th>Фамилия</th>
-                    <th>Роль</th>
-                </tr>
-                </thead>
+            <table className="ui very basic collapsed single line table">
                 <UsersRows state={props.state}/>
             </table>
         )
@@ -267,10 +284,23 @@ function UsersRows(props) {
         const users = props.state.group.users;
         const userRow = users.map((user) =>
             <tr key={user.id}>
-                <td>{user.login}</td>
-                <td>{user.firstName}</td>
-                <td>{user.lastName}</td>
-                <td>{user.role}</td>
+                <td>
+                    <div className="content">
+                        <h2>{user.firstName} {user.lastName}</h2>
+                        <div className="sub header">{user.login}</div>
+                    </div>
+                </td>
+                <td className="center aligned">
+                    <h2><RoleDropdown role={user.role} /></h2>
+                </td>
+                <td className="center aligned">
+                    <KickUserButton
+                        role={user.role}
+                        token={props.state.token}
+                        userId={user.id}
+                        groupId={props.state.group.id}
+                    />
+                </td>
             </tr>
         );
         return (
@@ -283,6 +313,65 @@ function UsersRows(props) {
     }
 }
 
+function RoleDropdown(props) {
+    const roles = [
+        {
+            key: "admin",
+            text: "Admin",
+            value: "admin",
+        },
+        {
+            key: "member",
+            text: "Member",
+            value: "member"
+        }
+    ];
+
+    if (props.role === "owner") {
+        return (
+            <div>Owner</div>
+        );
+    } else {
+        return (
+            <Dropdown
+                inline
+                options={roles}
+                defaultValue={props.role}
+            />
+        );
+    }
+}
+
+function KickUserButton(props) {
+    if (props.role !== "owner") {
+        return (
+            <h2><i className="kickButton user times icon" ></i></h2>
+        );
+    } else {
+        return (
+            <div></div>
+        );
+    }
+}
+
+function userKick(userId, groupId, token) {
+    axios.delete('http://localhost:3080/groups/kick-user', {
+        headers: {
+            'Authorization': token
+        },
+        data: {
+            groupId: groupId,
+            userId: userId
+        }
+    }).
+    then(response => {
+        if(response.data.ok) {
+        }
+    })
+        .catch((err) => {
+            console.log(err);
+        });
+}
 
 function SettingsDropdown(props) {
     return (
