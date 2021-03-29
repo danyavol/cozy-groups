@@ -54,5 +54,20 @@ module.exports = {
             await client.close();
         }
         return result;
+    },
+    
+    deleteGroup: async (query) => {
+        const client = new MongoClient(uri, dbParams);
+        let result;
+        try {
+            await client.connect();
+            const collection = client.db("cozydata").collection("groups");
+    
+            result = await collection.deleteOne(query);
+    
+        } finally {
+            await client.close();
+        }
+        return result;
     }
 };
