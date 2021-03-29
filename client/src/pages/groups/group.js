@@ -20,76 +20,60 @@ class Group extends React.Component {
             loading: true,
             loaderText:'Загрузка группы...',
 
+            open:false,
             dimmer:false,
-            visibleLeaveModal: false,
-            visibleErrorModal: false,
-
-            text:''
+            header:'Выход',
+            text:'',
+            type:'',
+            function:null,
         }
 
         this.leave = this.leave.bind(this);
-        this.updateVisibleLeaveModal = this.updateVisibleLeaveModal.bind(this);
-        this.updateVisibleErrorModal = this.updateVisibleErrorModal.bind(this);
-        this.openLeaveModal = this.openLeaveModal.bind(this);
+        this.openModal = this.openModal.bind(this);
     }
 
     render() {
         return (
             <div>
-                <Modal
-                    header={'Ошибка'}
-                    visible={this.state.visibleErrorModal}
-                    element={<div>{this.text}</div>}
-                    updateVisible={this.updateVisibleErrorModal}
-                    function={this.updateVisibleErrorModal}
-                />
-                <Modal
-                    header={'Выход'}
-                    visible={this.state.visibleLeaveModal}
-                    element={this.state.text}
-                    updateVisible={this.updateVisibleLeaveModal}
-                    function={this.leave}
-                />
                 <Loader loading={this.state.loading} text={this.state.loaderText} />
-                <Dimmer.Dimmable dimmed={this.state.dimmer} >
-                    <Dimmer className='position' simple  />
+                    <Modal
+                         header={this.state.header}
+                         visible={this.state.open}
+                         element={this.state.text}
+                         updateVisible={this.openModal}
+                         function={this.state.function}
+                         dimmer={this.state.dimmer}
+                         type={this.state.type}
+                    >
                         <div className={this.state.loading ? 'hidden' : ''}>
                             <div className="header">
                                 <div className="buttons">
-                                    <SettingsDropdown leave={this.openLeaveModal} />
+                                    <SettingsDropdown leave={() => this.openModal(`Выход`,`Хотите выйти из группы`,this.leave,'action')} />
                                 </div>
                                 <div>
                                     <Title state={this.state} />
                                 </div>
                             </div>
                             <div>
-                                <Tabs state={this.state} />
+                                <Tabs openModal={this.openModal} state={this.state} />
                             </div>
-                        </div>
-                </Dimmer.Dimmable>
+                        </div>                        
+                    </Modal>
             </div>
         )
     }
 
-    openLeaveModal() {
-        if(this.state.visibleLeaveModal) {
-            this.setState({visibleLeaveModal : false, dimmer : false });
+    openModal( header, text, func, type) {
+        if(this.state.open) {
+            this.setState({open : false, dimmer : false });
         }
         else {
-            this.setState({visibleLeaveModal : true, dimmer : true, text:'Вы действительно хотите выйти из группы?' });
+            this.setState({open : true, dimmer : true, header:header, text: text, type : type, function: func});
         }
-    }
-
-    updateVisibleErrorModal() {
-        this.setState({visibleErrorModal : false, dimmer : false});
-    }
-
-    updateVisibleLeaveModal() {
-        this.setState({visibleLeaveModal : false, dimmer : false});
     }
 
     leave() {
-        this.setState({loading : true, loaderText : 'Выход из группы...', visibleLeaveModal : false, dimmer : false});
+        this.setState({loading : true, loaderText : 'Выход из группы...', open : false, dimmer : false});
         let data = {groupId : this.state.group.id};
         axios.post('http://localhost:3080/groups/leave',data, {
             headers:{
@@ -104,11 +88,14 @@ class Group extends React.Component {
             }
         })
         .catch((err) => {
-            this.setState({loading : false,visibleErrorModal : true});
+            this.setState({loading : false,open : true});
             this.props.deleteToken(err);
-            if (err.response) this.setState({text : err.response.data.message });
-            else this.setState({text :'Ошибка соединения с сервером.' });
-            setTimeout(() => {this.props.history.push("/");},3000);
+            if (err.response) this.setState({header:`Ошибка`,text : `${err.response.data.message}`,type: `${`error`}`, function:this.openModal });
+            else
+            {
+                this.setState({text :'Ошибка соединения с сервером.' });
+                setTimeout(() => {this.props.history.push("/");},3000);
+            } 
         })
     }
 
@@ -134,6 +121,10 @@ class Group extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
+        if(this.state.text !== prevState.text) {
+            let sometext = this.state.text;
+            this.setState({text : sometext});
+        }
         if (this.props.match.params.id !== prevProps.match.params.id) {
             this.setState({token: this.props.token, loading: true});
             axios.get('http://localhost:3080/groups/' + this.props.match.params.id, {
@@ -204,7 +195,7 @@ function Tabs(props) {
         {
             menuItem:
                 {key: 'invite', icon: 'linkify', content: 'Ссылка для приглашения'},
-            render: () => <InviteTab inviteCode={props.state.group.inviteCode} copied={props.state.copied} />
+            render: () => <InviteTab inviteCode={props.state.group.inviteCode} copied={props.state.copied} openModal={props.openModal} />
         }
     ];
 
@@ -232,7 +223,7 @@ class InviteTab extends React.Component {
                         <div className="center aligned description">
                             <h1 id="inviteCode">
                                 {this.props.inviteCode}
-                                <CopyToClipboard text={this.props.inviteCode} onCopy={() => this.setState({copied: true})}>
+                                <CopyToClipboard text={this.props.inviteCode}  onCopy={() => {this.setState({copied: true});this.props.openModal('Уведомление','Код успешно скопирован!','','notification')}}>
                                     <h2><i className={`copy ${this.state.copied ? '' : 'disabled'} icon`}></i></h2>
                                 </CopyToClipboard>
                             </h1>
