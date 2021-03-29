@@ -22,6 +22,7 @@ module.exports = {
         userRoleChanged: 'Права пользователя успешно изменены',
         ownerRoleTransfered: 'Права владельца успешно переданы',
         userDeleted: 'Пользователь успешно удален',
-        groupNameUpdated: 'Название группы успешно изменено'
+        groupNameUpdated: 'Название группы успешно изменено',
+        groupDeleted: 'Группа успешно удалена'
     }
 }
