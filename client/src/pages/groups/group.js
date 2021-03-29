@@ -47,7 +47,7 @@ class Group extends React.Component {
                         <div className={this.state.loading ? 'hidden' : ''}>
                             <div className="header">
                                 <div className="buttons">
-                                    <SettingsDropdown leave={() => this.openModal(`Выход`,`Хотите выйти из группы`,this.leave,'action')} />
+                                    <SettingsDropdown leave={() => this.openModal(`Выход`,`Хотите выйти из группы "${this.state.group.name}"?`,this.leave,"action")} />
                                 </div>
                                 <div>
                                     <Title state={this.state} />

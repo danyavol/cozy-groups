@@ -29,11 +29,11 @@ class Modal extends Component {
             return (
                 <Fragment>
                     <Transition visible={this.props.visible} animation='scale' duration={500}>
-                        <div className={`ui modal modal-properties ${this.props.visible ? 'active' : ''}`}>
+                        <div className={`ui ${this.props.size} modal modal-properties ${this.props.visible ? 'active' : ''}`}>
                             <div className="header">{this.props.header}
                                 <i onClick={this.props.updateVisible} className="close black icon float-right"></i>
                             </div>
-                            <div className="content">
+                            <div className={`${this.props.scrolling ? 'scrolling' : ''} content color`}>
                                 {this.props.element}
                             </div>
                             <div className="actions">
