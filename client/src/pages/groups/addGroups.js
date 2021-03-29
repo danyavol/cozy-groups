@@ -136,6 +136,7 @@ class addGroups extends Component {
             this.setState({loadingJoin : false, loadingCreate : false})
             let errorText;
             this.props.deleteToken(err);
+            this.props.clearGroups();
             if (err.response) errorText = err.response.data.message;
             else errorText = 'Ошибка соединения с сервером';
             this.setState({
@@ -178,6 +179,7 @@ class addGroups extends Component {
             this.setState({loadingJoin : false, loadingCreate : false})
             let errorText;
             this.props.deleteToken(err);
+            this.props.clearGroups();
             if (err.response) errorText = err.response.data.message;
             else errorText = 'Ошибка соединения с сервером';
             this.setState({
