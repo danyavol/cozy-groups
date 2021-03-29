@@ -21,6 +21,7 @@ module.exports = {
         userLeavedGroup: 'Вы успешно вышли из группы',
         userRoleChanged: 'Права пользователя успешно изменены',
         ownerRoleTransfered: 'Права владельца успешно переданы',
-        userDeleted: 'Пользователь успешно удален'
+        userDeleted: 'Пользователь успешно удален',
+        groupNameUpdated: 'Название группы успешно изменено'
     }
 }
