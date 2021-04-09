@@ -9,10 +9,11 @@ const groups = express.Router();
 module.exports = groups;
 
 const generateCode = require('../../service/codeGenerator.js');
-const groupsCollection = require('../../database/groups.js');
-const usersCollection = require('../../database/users.js');
 const Text = require('../../service/responseMessages.js');
 const { sendResponse } = require('../../service/requestService.js');
+
+const groupsCollection = require('../../database/database.js')('groups');
+const usersCollection = require('../../database/database.js')('users');
 
 
 groups.post('/create', async (req, res) => {
@@ -23,7 +24,7 @@ groups.post('/create', async (req, res) => {
         return sendResponse(res, 400, Text.error.emptyGroupName);
     }
     else {
-        let allGroups = await groupsCollection.findGroup(null, true);
+        let allGroups = await groupsCollection.find(null, true);
         
         let group = {
             id: generateCode(allGroups, 'id'),
@@ -35,8 +36,8 @@ groups.post('/create', async (req, res) => {
         }
 
         await Promise.all([
-            groupsCollection.insertGroup(group),
-            usersCollection.updateUser( {id: senderId}, {$push: {groups: group.id}} )
+            groupsCollection.insertOne(group),
+            usersCollection.updateOne( {id: senderId}, {$push: {groups: group.id}} )
         ]);
 
         let responseData = {
@@ -54,7 +55,7 @@ groups.post('/join', async (req, res) => {
     let senderId = res.locals.userId;
     let { inviteCode } = req.body;
 
-    let group = await groupsCollection.findGroup({inviteCode: inviteCode});
+    let group = await groupsCollection.find({inviteCode: inviteCode});
     if (!group) {
         return sendResponse(res, 400, Text.error.findGroupByInviteCode);
     } 
@@ -78,8 +79,8 @@ groups.post('/join', async (req, res) => {
             };
 
             await Promise.all([
-                groupsCollection.updateGroup( {id: group.id}, {$push: {users: userData}} ),
-                usersCollection.updateUser( {id: senderId}, {$push: {groups: group.id}} )
+                groupsCollection.updateOne( {id: group.id}, {$push: {users: userData}} ),
+                usersCollection.updateOne( {id: senderId}, {$push: {groups: group.id}} )
             ]);
     
             let responseData = {
@@ -100,8 +101,8 @@ groups.post('/leave', async (req, res) => {
 
     let group, userData;
     await Promise.all([
-        groupsCollection.findGroup( {id: groupId} ),
-        usersCollection.findUser( {id: senderId} )
+        groupsCollection.find( {id: groupId} ),
+        usersCollection.find( {id: senderId} )
     ]).then(result => { group = result[0]; userData = result[1] });
 
     if (!group) {
@@ -117,8 +118,8 @@ groups.post('/leave', async (req, res) => {
         group.users = group.users.filter( val => val.id == senderId ? false : true );
 
         await Promise.all([
-            usersCollection.updateUser( {id: senderId}, {$pull: {groups: groupId}} ),
-            groupsCollection.updateGroup( {id: groupId}, {$set: {users: group.users}} )
+            usersCollection.updateOne( {id: senderId}, {$pull: {groups: groupId}} ),
+            groupsCollection.updateOne( {id: groupId}, {$set: {users: group.users}} )
         ]);
 
         return sendResponse(res, 200, Text.success.userLeavedGroup);
@@ -130,8 +131,8 @@ groups.post('/leave', async (req, res) => {
 groups.get('/', async (req, res) => {
     let senderId = res.locals.userId;
 
-    let user = await usersCollection.findUser( {id: senderId} );
-    let groups = await groupsCollection.findGroup( {id: {$in: user.groups || []}}, true );
+    let user = await usersCollection.find( {id: senderId} );
+    let groups = await groupsCollection.find( {id: {$in: user.groups || []}}, true );
 
     let outputGroups = [];
     for (let group of groups) {
@@ -151,7 +152,7 @@ groups.get('/:id', async (req, res) => {
     let senderId = res.locals.userId;
     let groupId = req.params.id;
 
-    let group = await groupsCollection.findGroup( {id: groupId} );
+    let group = await groupsCollection.find( {id: groupId} );
 
     if (!group) {
         return sendResponse(res, 400, Text.error.findGroupById);
@@ -171,7 +172,7 @@ groups.get('/:id', async (req, res) => {
 
             // Поиск подробной информации об участниках в коллекции users
             let membersId = group.users.map(val => val.id);
-            let members = await usersCollection.findUser({id: {$in: membersId}}, true);
+            let members = await usersCollection.find({id: {$in: membersId}}, true);
 
             // Добавление в объект group подробных данных участников
             for (let groupUser of group.users) {
