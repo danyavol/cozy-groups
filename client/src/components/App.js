@@ -19,6 +19,7 @@ import './App.css';
 
 import 'semantic-ui-css/semantic.min.css'
 import axios from "axios";
+import GroupHooks from "../pages/groups/groupHooks";
 
 
 class App extends Component {
@@ -102,7 +103,7 @@ class App extends Component {
                             </Route>
                             <Route path="/groups/:id"
                                    render={(props) => (
-                                       <Group
+                                       <GroupHooks
                                            {...props}
                                            token={this.state.token}
                                            updateDeleteGroups={this.updateDeleteGroups}
@@ -110,7 +111,7 @@ class App extends Component {
                                            deleteToken={this.deleteToken}
                                        />)}
                             />
-                            <Route path="/groups/:id" component={Group} />
+                            {/*<Route path="/groups/:id" component={GroupHooks} />*/}
                             <Route path="/groups">
                                 <GroupsList
                                     token={this.state.token}

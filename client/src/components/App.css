@@ -2,9 +2,14 @@ html, body {
     height: 100%;
 }
 
+::-webkit-scrollbar {
+    display: none;
+}
+
 #root {
     display: flex;
     height: 100%;
+
 }
 
 main {
