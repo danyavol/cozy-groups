@@ -11,6 +11,7 @@ const groupsCollection = require('../../database/groups.js');
 const generateCode = require('../../service/codeGenerator.js');
 const Text = require('../../service/responseMessages.js')
 const { sendResponse } = require('../../service/requestService.js');
+const Validator = require('../../service/validator.js');
 
 
 groups.put('/invite-code', async (req, res) => {
@@ -85,3 +86,38 @@ groups.delete('/kick-user', async (req, res) => {
         }
     }
 });
+
+groups.put('/group-name', async (req, res) => {
+    let senderId = res.locals.userId;
+    let { groupId, groupName } = req.body;
+
+    let group = await groupsCollection.findGroup({id: groupId});
+    if (!group) {
+        return sendResponse(res, 400, Text.error.findGroupById);
+    }
+
+    let sender;
+    for (let user of group.users) {
+        if (user.id == senderId) {
+            sender = user;
+        }
+    }
+
+    if (!sender) {
+        return sendResponse(res, 400, Text.error.notGroupMember);
+    } 
+    else if ( !Validator.groupName(groupName) ) {
+        return sendResponse(res, 400, Text.error.validation.groupName); 
+    }
+    else {
+        if (!permissions[sender.role].includes('editGroupInfo')) {
+            return sendResponse(res, 400, Text.error.permissionDenied); 
+        } 
+        else {
+            // Все проверки пройдены, изменяем название группы
+            group.name = groupName;
+            await groupsCollection.updateGroup( {id: groupId}, {$set: {name: groupName}} );
+            return sendResponse(res, 200, Text.success.groupNameUpdated);
+        }
+    }
+})

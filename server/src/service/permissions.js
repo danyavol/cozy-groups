@@ -4,9 +4,9 @@ const memberPermissions = ['commentPost', 'voteQuiz'];
 
 const editorPermissions = ['createPost', 'createQuiz'].concat(memberPermissions);
 
-const adminPermissions = ['kick-member', 'kick-editor', 'member-set-editor', 'editor-set-member', 'editGroup', 'updateInviteCode'].concat(editorPermissions);
+const adminPermissions = ['kick-member', 'kick-editor', 'member-set-editor', 'editor-set-member', 'editGroupInfo', 'updateInviteCode'].concat(editorPermissions);
 
-const ownerPermissions = ['kick-admin', 'member-set-admin', 'editor-set-admin', 'admin-set-editor', 'admin-set-member', 'transferOwnerRights'].concat(adminPermissions);
+const ownerPermissions = ['kick-admin', 'member-set-admin', 'editor-set-admin', 'admin-set-editor', 'admin-set-member', 'transferOwnerRights', 'deleteGroup'].concat(adminPermissions);
 
 module.exports = {
     member: memberPermissions,

@@ -99,3 +99,34 @@ groups.post('/transfer-owner-rights', async (req, res) => {
     }
 
 });
+
+groups.delete('/:groupId', async (req, res) => {
+    let senderId = res.locals.userId;
+    let { groupId } = req.params;
+
+    // Поиск группы
+    let group = await groupsCollection.findGroup({id: groupId});
+    if (!group) {
+        return sendResponse(res, 400, Text.error.findGroupById);
+    }
+
+    let sender;
+    for (let user of group.users) {
+        if (user.id == senderId) {
+            sender = user;
+        }
+    }
+
+    if (!sender) {
+        return sendResponse(res, 400, Text.error.notGroupMember);
+    } else {
+        if (!permissions[sender.role].includes('deleteGroup')) {
+            return sendResponse(res, 400, Text.error.permissionDenied); 
+        } 
+        else {
+            // Все проверки пройдены, удаляем группу
+            await groupsCollection.deleteGroup( {id: groupId} );
+            return sendResponse(res, 200, Text.success.groupDeleted);
+        }
+    }
+});

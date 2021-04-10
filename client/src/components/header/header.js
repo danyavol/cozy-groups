@@ -5,6 +5,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSignInAlt, faSignOutAlt, faUnlockAlt, faUserCog} from '@fortawesome/free-solid-svg-icons';
 import {faPlusSquare} from '@fortawesome/free-regular-svg-icons'
 
+import Modal from '../../components/modal/modal.js';
 import "./header.css";
 import axios from "axios";
 
@@ -16,9 +17,17 @@ class Header extends Component {
             token: null,
             myGroups: [],
 
-            loading: false
+            loading: false,
+
+            open:false,
+            dimmer:false,
+            header:'',
+            text:'',
+            type:'',
+            function:null,
         };
         this.exit = this.exit.bind(this);
+        this.openModal = this.openModal.bind(this);
 
     }
 
@@ -27,6 +36,7 @@ class Header extends Component {
     }
 
     exit() {
+        this.setState({ open : false, dimmer : false});
         axios.delete('http://localhost:3080/auth/logout',{
             headers:{
                 'Authorization': this.state.token
@@ -46,6 +56,16 @@ class Header extends Component {
     render() {
         return (
             <header>
+                <Modal
+                    header={this.state.header}
+                    visible={this.state.open}
+                    element={this.state.text}
+                    updateVisible={this.openModal}
+                    function={this.state.function}
+                    dimmer={this.state.dimmer}
+                    type={this.state.type}
+                    size='mini'
+                >
                 <div className="logo">
                     <img src="/images/logo-goat.svg" alt="site-logo" onClick={() => this.changeRoute('/')} />
                     <h2 onClick={() => this.changeRoute('/')}>COZY GROUPS</h2>
@@ -78,13 +98,14 @@ class Header extends Component {
                             icon={faUserCog}
                         />
                         <MenuLink
-                            click={this.exit}
+                            click={() => this.openModal('Выход','Вы действительно хотите выйти из аккаунта?',this.exit,'action')}
                             to=""
                             label="Выйти"
                             icon={faSignOutAlt}
                         />
                     </div>
                 </div>
+                </Modal>
             </header>
         );
     }
@@ -100,6 +121,15 @@ class Header extends Component {
 
         if (this.props.myGroups !== prevProps.myGroups) {
             this.setState({myGroups: this.props.myGroups});
+        }
+    }
+
+    openModal( header, text, func, type) {
+        if(this.state.open) {
+            this.setState({open : false, dimmer : false });
+        }
+        else {
+            this.setState({open : true, dimmer : true, header : header, text : text, type : type, function : func});
         }
     }
 }
