@@ -10,7 +10,7 @@ function GroupHooks(props) {
     const [token, setToken] = useState("")
     const [title, setTitle] = useState("");
     const [group, setGroup] = useState({});
-    const [loading, setLoader] = useState(true);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         setTitle(group.name);
@@ -21,7 +21,7 @@ function GroupHooks(props) {
     });
 
     useEffect(() => {
-        setLoader(true);
+        setLoading(true);
         setToken(props.token);
         axios.get('http://localhost:3080/groups/' + props.match.params.id, {
             headers: {
@@ -31,12 +31,13 @@ function GroupHooks(props) {
             .then(response => {
                 if (response.data.ok) {
                     setGroup(response.data.group);
-                    setLoader(false);
+                    setLoading(false);
+                    console.log("token: " + token);
                 }
             })
             .catch(err => {
                 console.log(err);
-            })
+            });
     }, [props.token, props.match.params.id]);
 
     return (
@@ -52,7 +53,7 @@ function GroupHooks(props) {
                     </div>
                 </div>
                 <div>
-                    <GroupsTabs token={token} group={group} />
+                    <GroupsTabs token={props.token} group={group} />
                 </div>
             </div>
         </div>

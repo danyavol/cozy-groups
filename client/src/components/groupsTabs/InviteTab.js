@@ -9,6 +9,7 @@ export default class InviteTab extends React.Component {
         }
     }
     render() {
+        console.log(this.props);
         return (
             <div className="inviteCard">
                 <div className="ui fluid centered card inviteCard">

@@ -5,6 +5,7 @@ import InviteTab from "./InviteTab";
 import UsersTab from "./usersTab/UsersTab";
 
 export default function Tabs(props) {
+    console.log(props);
     const panes = [
         {
             menuItem:
@@ -19,12 +20,12 @@ export default function Tabs(props) {
         {
             menuItem:
                 {key: 'users', icon: 'users', content: 'Пользователи'},
-            render: () => <UsersTab group={props.group} />
+            render: () => <UsersTab token={props.token} group={props.group} />
         },
         {
             menuItem:
                 {key: 'invite', icon: 'linkify', content: 'Ссылка для приглашения'},
-            render: () => <InviteTab inviteCode={props.group.inviteCode} />
+            render: () => <InviteTab inviteCode={props.group.inviteCode} token={props.token} />
         }
     ];
 
