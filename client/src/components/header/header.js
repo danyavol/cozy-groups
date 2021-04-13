@@ -4,8 +4,6 @@ import {Link, useRouteMatch, withRouter} from "react-router-dom";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSignInAlt, faSignOutAlt, faUnlockAlt, faUserCog} from '@fortawesome/free-solid-svg-icons';
 import {faPlusSquare} from '@fortawesome/free-regular-svg-icons'
-
-import Modal from '../../components/modal/modal.js';
 import "./header.css";
 import axios from "axios";
 
@@ -16,18 +14,9 @@ class Header extends Component {
         this.state = {
             token: null,
             myGroups: [],
-
             loading: false,
-
-            open:false,
-            dimmer:false,
-            header:'',
-            text:'',
-            type:'',
-            function:null,
         };
         this.exit = this.exit.bind(this);
-        this.openModal = this.openModal.bind(this);
 
     }
 
@@ -56,16 +45,6 @@ class Header extends Component {
     render() {
         return (
             <header>
-                <Modal
-                    header={this.state.header}
-                    visible={this.state.open}
-                    element={this.state.text}
-                    updateVisible={this.openModal}
-                    function={this.state.function}
-                    dimmer={this.state.dimmer}
-                    type={this.state.type}
-                    size='mini'
-                >
                 <div className="logo">
                     <img src="/images/logo-goat.svg" alt="site-logo" onClick={() => this.changeRoute('/')} />
                     <h2 onClick={() => this.changeRoute('/')}>COZY GROUPS</h2>
@@ -98,14 +77,13 @@ class Header extends Component {
                             icon={faUserCog}
                         />
                         <MenuLink
-                            click={() => this.openModal('Выход','Вы действительно хотите выйти из аккаунта?',this.exit,'action')}
+                            click={() => this.props.updateModal('Выход','Вы действительно хотите выйти из аккаунта?',this.exit,'action')}
                             to=""
                             label="Выйти"
                             icon={faSignOutAlt}
                         />
                     </div>
                 </div>
-                </Modal>
             </header>
         );
     }
