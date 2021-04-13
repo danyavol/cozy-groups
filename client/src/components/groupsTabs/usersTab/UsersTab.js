@@ -4,12 +4,13 @@ import {Tab} from "semantic-ui-react";
 import "./usersTab.css";
 import RoleDropdown from "./RoleDropdown";
 import KickUserButton from "./KickUserButton";
+import Loader from "../../loader/Loader";
 
 export default function UsersTab(props) {
     return (
         <Tab.Pane attached={false}>
             <table className="ui very basic collapsed single line table">
-                <UsersRows group={props.group}/>
+                <UsersRows group={props.group} token={props.token} />
             </table>
         </Tab.Pane>
     );
@@ -18,10 +19,13 @@ export default function UsersTab(props) {
 function UsersRows(props) {
     const [users, setUsers] = useState([]);
     const [usersRows, setUsersRows] = useState([]);
+    const [loading, setLoading] = useState(false);
+    console.log(props);
 
     useEffect(() => {
         setUsers(props.group.users);
     }, [props.group]);
+
 
     useEffect(() => {
         setUsersRows(
@@ -34,15 +38,18 @@ function UsersRows(props) {
                         </div>
                     </td>
                     <td className="center aligned">
-                        <h2><RoleDropdown role={user.role} /></h2>
+                        <h2><RoleDropdown role={user.role}/></h2>
                     </td>
                     <td className="center aligned">
                         <KickUserButton
-                            role={user.role}
                             token={props.token}
-                            userId={user.id}
+                            user={user}
                             groupId={props.group.id}
-                            kickUser={props.kickUser}
+
+                            users={props.group.users}
+
+                            loaderChange={handlerLoaderChange}
+                            usersChange={handlerUsersChange}
                         />
                     </td>
                 </tr>
@@ -50,7 +57,27 @@ function UsersRows(props) {
         );
     }, [users]);
 
+    const handlerLoaderChange = (value) => {
+        setLoading(value);
+    }
+
+    const handlerUsersChange = (deleteUserId) => {
+        console.log(deleteUserId);
+        const newUsers = [];
+        users.map(user => {
+            if (user.id !== deleteUserId)
+                newUsers.push(user);
+        });
+        setUsers(newUsers);
+    }
+
+    if (loading) {
+        return (
+            <Loader loading={loading} text="Загрузка пользователей..." />
+        )
+    }
     return (
-        <tbody>{usersRows}</tbody>
+        <tbody className={loading ? 'hidden' : ''} >{usersRows}</tbody>
     );
+
 }

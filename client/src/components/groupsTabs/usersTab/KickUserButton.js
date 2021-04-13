@@ -1,36 +1,34 @@
 import axios from "axios";
-import React, {useState} from "react";
+import React from "react";
 
 export default function KickUserButton(props) {
-    function userKick(event) {
-        event.preventDefault();
-        console.log("userId: " + props.userId + " groupId: " + props.groupId);
+
+    function userKick() {
+        props.loaderChange(true);
         axios.delete('http://localhost:3080/groups/kick-user', {
             headers: {
                 'Authorization': props.token
             },
             data: {
                 groupId: props.groupId,
-                userId: props.userId
+                userId: props.user.id
             }
-        }).
-        then(response => {
+        }).then(response => {
             if(response.data.ok) {
                 console.log("Пользователь удален");
-                props.kickUser();
+                props.usersChange(props.user.id);
+                props.loaderChange(false);
             }
-        })
-            .catch((err) => {
-                console.log(err);
-
-            });
+        }).catch((err) => {
+            console.log(err);
+        });
     }
 
-    if (props.role !== "owner") {
+
+    if (props.user.role !== "owner") {
         return (
             <h2
-                onClick={(event) =>
-                    userKick(event)}
+                onClick={userKick}
             >
                 <i className="kickButton user times icon" ></i>
             </h2>

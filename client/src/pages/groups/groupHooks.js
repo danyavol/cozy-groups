@@ -11,7 +11,7 @@ function GroupHooks(props) {
     const [token, setToken] = useState("")
     const [title, setTitle] = useState("");
     const [group, setGroup] = useState({});
-    const [loading, setLoader] = useState(true);
+    const [loading, setLoading] = useState(true);
     const [loaderText, setLoaderText] = useState("Загрузка группы...")
 
     useEffect(() => {
@@ -23,7 +23,7 @@ function GroupHooks(props) {
     });
 
     useEffect(() => {
-        setLoader(true);
+        setLoading(true);
         setToken(props.token);
         axios.get('http://localhost:3080/groups/' + props.match.params.id, {
             headers: {
@@ -33,16 +33,17 @@ function GroupHooks(props) {
             .then(response => {
                 if (response.data.ok) {
                     setGroup(response.data.group);
-                    setLoader(false);
+                    setLoading(false);
+                    console.log("token: " + token);
                 }
             })
             .catch(err => {
                 console.log(err);
-            })
+            });
     }, [props.token, props.match.params.id]);
 
     const deleteGroup = () => {
-        setLoader(true);
+        setLoading(true);
         setLoaderText("Удаление группы...");
         props.updateModal();
         axios.delete('http://localhost:3080/groups/'+props.match.params.id,{
@@ -51,14 +52,14 @@ function GroupHooks(props) {
             }
         }).then(response => {
             if(response.data.ok) {
-                setLoader(false);
+                setLoading(false);
                 console.log('Вы удалили группу!');
                 props.updateDeleteGroups(props.match.params.id);
                 props.history.push("/"); 
             }
         })
         .catch((err) => {
-            setLoader(false);
+            setLoading(false);
             if (err.response) {
                 props.updateMainModal("Ошибка",err.response.data.message,"error");
             }
@@ -74,7 +75,7 @@ function GroupHooks(props) {
     };
     
     const leave = () => {
-        setLoader(true);
+        setLoading(true);
         setLoaderText("Выход из группы...");
         props.updateModal();
         let data = {groupId : group.id};
@@ -92,7 +93,7 @@ function GroupHooks(props) {
         })
         .catch((err) => {
             console.log(err.response.data.message);
-            setLoader(false);
+            setLoading(false);
             if (err.response) {
                props.updateMainModal("Ошибка",err.response.data.message,"error");
             } 
@@ -122,7 +123,7 @@ function GroupHooks(props) {
                     </div>
                 </div>
                 <div>
-                    <GroupsTabs token={token} group={group} />
+                    <GroupsTabs token={props.token} group={group} />
                 </div>
             </div>
         </div>
