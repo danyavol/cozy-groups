@@ -4,7 +4,6 @@ import {Link, useRouteMatch, withRouter} from "react-router-dom";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSignInAlt, faSignOutAlt, faUnlockAlt, faUserCog} from '@fortawesome/free-solid-svg-icons';
 import {faPlusSquare} from '@fortawesome/free-regular-svg-icons'
-
 import "./header.css";
 import axios from "axios";
 
@@ -15,8 +14,7 @@ class Header extends Component {
         this.state = {
             token: null,
             myGroups: [],
-
-            loading: false
+            loading: false,
         };
         this.exit = this.exit.bind(this);
 
@@ -27,6 +25,7 @@ class Header extends Component {
     }
 
     exit() {
+        this.setState({ open : false, dimmer : false});
         axios.delete('http://localhost:3080/auth/logout',{
             headers:{
                 'Authorization': this.state.token
@@ -78,7 +77,7 @@ class Header extends Component {
                             icon={faUserCog}
                         />
                         <MenuLink
-                            click={this.exit}
+                            click={() => this.props.updateModal('Выход','Вы действительно хотите выйти из аккаунта?',this.exit,'action')}
                             to=""
                             label="Выйти"
                             icon={faSignOutAlt}
@@ -100,6 +99,15 @@ class Header extends Component {
 
         if (this.props.myGroups !== prevProps.myGroups) {
             this.setState({myGroups: this.props.myGroups});
+        }
+    }
+
+    openModal( header, text, func, type) {
+        if(this.state.open) {
+            this.setState({open : false, dimmer : false });
+        }
+        else {
+            this.setState({open : true, dimmer : true, header : header, text : text, type : type, function : func});
         }
     }
 }

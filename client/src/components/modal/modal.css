@@ -10,3 +10,6 @@
     left:50%;
     transform: translate(-50%);
 }
+.color {
+    color: var(--text-surface);
+}
