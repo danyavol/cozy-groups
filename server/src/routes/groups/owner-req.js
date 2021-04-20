@@ -6,9 +6,10 @@ const groups = express.Router();
 module.exports = groups;
 
 const permissions = require('../../service/permissions.js');
-const groupsCollection = require('../../database/groups.js');
 const Text = require('../../service/responseMessages.js');
 const { sendResponse } = require('../../service/requestService.js');
+
+const groupsCollection = require('../../database/database.js')('groups');
 
 
 
@@ -23,7 +24,7 @@ groups.post('/edit-role', async (req, res) => {
     }
 
     // #1 Поиск группы
-    let group = await groupsCollection.findGroup({id: groupId});
+    let group = await groupsCollection.find({id: groupId});
     if (!group) {
         return sendResponse(res, 400, Text.error.findGroupById);
     } else {
@@ -50,7 +51,7 @@ groups.post('/edit-role', async (req, res) => {
                 // Проверки пройдены, изменяем права пользователя
                 recipient.role = newRole;
 
-                await groupsCollection.updateGroup({id: groupId}, {$set: {users: group.users}});
+                await groupsCollection.updateOne({id: groupId}, {$set: {users: group.users}});
 
                 return sendResponse(res, 200, Text.success.userRoleChanged);
             }
@@ -67,7 +68,7 @@ groups.post('/transfer-owner-rights', async (req, res) => {
     }
 
     // Поиск группы
-    let group = await groupsCollection.findGroup({id: groupId});
+    let group = await groupsCollection.find({id: groupId});
     if (!group) {
         return sendResponse(res, 400, Text.error.findGroupById);
     } else {
@@ -92,7 +93,7 @@ groups.post('/transfer-owner-rights', async (req, res) => {
             sender.role = 'admin';
             recipient.role = 'owner';
 
-            await groupsCollection.updateGroup({id: groupId}, {$set: {users: group.users}});
+            await groupsCollection.updateOne({id: groupId}, {$set: {users: group.users}});
 
             return sendResponse(res, 200, Text.success.ownerRoleTransfered);
         }
@@ -105,7 +106,7 @@ groups.delete('/:groupId', async (req, res) => {
     let { groupId } = req.params;
 
     // Поиск группы
-    let group = await groupsCollection.findGroup({id: groupId});
+    let group = await groupsCollection.find({id: groupId});
     if (!group) {
         return sendResponse(res, 400, Text.error.findGroupById);
     }
@@ -125,7 +126,7 @@ groups.delete('/:groupId', async (req, res) => {
         } 
         else {
             // Все проверки пройдены, удаляем группу
-            await groupsCollection.deleteGroup( {id: groupId} );
+            await groupsCollection.deleteOne( {id: groupId} );
             return sendResponse(res, 200, Text.success.groupDeleted);
         }
     }
