@@ -47,8 +47,7 @@ auth.post('/register', async (req, res) => {
                 login: login,
                 password: bcrypt.hashSync(password, bcrypt.genSaltSync(10), null),
                 firstName: capitalize(firstName),
-                lastName: capitalize(lastName),
-                groups: []
+                lastName: capitalize(lastName)
             }
 
             await usersCollection.insertOne(user);

@@ -34,11 +34,8 @@ groups.post('/create', async (req, res) => {
                 { id: senderId, role: 'owner' }
             ]
         }
-
-        await Promise.all([
-            groupsCollection.insertOne(group),
-            usersCollection.updateOne( {id: senderId}, {$push: {groups: group.id}} )
-        ]);
+      
+        await groupsCollection.insertOne(group);
 
         let responseData = {
             group: {
@@ -78,10 +75,7 @@ groups.post('/join', async (req, res) => {
                 role: 'member'
             };
 
-            await Promise.all([
-                groupsCollection.updateOne( {id: group.id}, {$push: {users: userData}} ),
-                usersCollection.updateOne( {id: senderId}, {$push: {groups: group.id}} )
-            ]);
+            await groupsCollection.updateOne( {id: group.id}, {$push: {users: userData}} );
     
             let responseData = {
                 group: {
@@ -99,28 +93,22 @@ groups.post('/leave', async (req, res) => {
     let senderId = res.locals.userId;
     let { groupId } = req.body;
 
-    let group, userData;
-    await Promise.all([
-        groupsCollection.find( {id: groupId} ),
-        usersCollection.find( {id: senderId} )
-    ]).then(result => { group = result[0]; userData = result[1] });
+    let group = await groupsCollection.find( {id: groupId} );
+    let filteredUsers = group.users.filter(u => u.id === senderId);
 
     if (!group) {
         return sendResponse(res, 400, Text.error.findGroupById);
     } 
-    else if (!userData.groups.includes(groupId)) {
+    else if (!filteredUsers.length) {
         return sendResponse(res, 400, Text.error.notGroupMember);
-    } 
-    else if ( group.users.filter(val => val.id == senderId)[0].role == 'owner' ) {
+    }
+    else if ( filteredUsers[0].role === 'owner' ) {
         return sendResponse(res, 400, Text.error.ownerTryingToLeave);
     } 
     else {
-        group.users = group.users.filter( val => val.id == senderId ? false : true );
+        group.users = group.users.filter( u => u.id !== senderId );
 
-        await Promise.all([
-            usersCollection.updateOne( {id: senderId}, {$pull: {groups: groupId}} ),
-            groupsCollection.updateOne( {id: groupId}, {$set: {users: group.users}} )
-        ]);
+        await groupsCollection.updateOne( {id: groupId}, {$set: {users: group.users}} )
 
         return sendResponse(res, 200, Text.success.userLeavedGroup);
     }
@@ -131,16 +119,19 @@ groups.post('/leave', async (req, res) => {
 groups.get('/', async (req, res) => {
     let senderId = res.locals.userId;
 
-    let user = await usersCollection.find( {id: senderId} );
-    let groups = await groupsCollection.find( {id: {$in: user.groups || []}}, true );
+    let groups = await groupsCollection.find( null, true );
 
     let outputGroups = [];
     for (let group of groups) {
-        outputGroups.push({
-            id: group.id,
-            name: group.name,
-            users_count: group.users.length
-        });
+        for (let user of group.users) {
+            if (user.id === senderId) {
+                outputGroups.push({
+                    id: group.id,
+                    name: group.name,
+                    users_count: group.users.length
+                });
+            }
+        }
     }
 
     return sendResponse(res, 200, null, {groups: outputGroups});
