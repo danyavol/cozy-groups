@@ -7,18 +7,19 @@ const groups = express.Router();
 module.exports = groups;
 
 const permissions = require('../../service/permissions.js');
-const groupsCollection = require('../../database/groups.js');
 const generateCode = require('../../service/codeGenerator.js');
 const Text = require('../../service/responseMessages.js')
 const { sendResponse } = require('../../service/requestService.js');
 const Validator = require('../../service/validator.js');
+
+const groupsCollection = require('../../database/database.js')('groups');
 
 
 groups.put('/invite-code', async (req, res) => {
     let senderId = res.locals.userId;
     let { groupId } = req.body;
 
-    let group = await groupsCollection.findGroup({id: groupId});
+    let group = await groupsCollection.find({id: groupId});
     if (!group) {
         return sendResponse(res, 400, Text.error.findGroupById);
     }
@@ -37,11 +38,11 @@ groups.put('/invite-code', async (req, res) => {
         return sendResponse(res, 400, Text.error.permissionDenied)
     } 
     else {
-        let allGroups = await groupsCollection.findGroup(null, true);
+        let allGroups = await groupsCollection.find(null, true);
         
         let inviteCode = generateCode(allGroups, 'inviteCode');
 
-        groupsCollection.updateGroup({id: groupId}, {$set: {inviteCode: inviteCode}})
+        groupsCollection.updateOne({id: groupId}, {$set: {inviteCode: inviteCode}})
         
         return sendResponse(res, 200, null, {inviteCode: inviteCode});
     }
@@ -51,7 +52,7 @@ groups.delete('/kick-user', async (req, res) => {
     let senderId = res.locals.userId;
     let { groupId, userId } = req.body;
 
-    let group = await groupsCollection.findGroup({id: groupId});
+    let group = await groupsCollection.find({id: groupId});
     if (!group) {
         return sendResponse(res, 400, Text.error.findGroupById);
     }
@@ -81,7 +82,7 @@ groups.delete('/kick-user', async (req, res) => {
         } 
         else {
             // Все проверки пройдены, удаляем пользователя из группы
-            await groupsCollection.updateGroup( {id: groupId}, { $pull: {users: {id: recipient.id}} } );
+            await groupsCollection.updateOne( {id: groupId}, { $pull: {users: {id: recipient.id}} } );
             return sendResponse(res, 200, Text.success.userDeleted);
         }
     }
@@ -91,7 +92,7 @@ groups.put('/group-name', async (req, res) => {
     let senderId = res.locals.userId;
     let { groupId, groupName } = req.body;
 
-    let group = await groupsCollection.findGroup({id: groupId});
+    let group = await groupsCollection.find({id: groupId});
     if (!group) {
         return sendResponse(res, 400, Text.error.findGroupById);
     }
@@ -116,7 +117,7 @@ groups.put('/group-name', async (req, res) => {
         else {
             // Все проверки пройдены, изменяем название группы
             group.name = groupName;
-            await groupsCollection.updateGroup( {id: groupId}, {$set: {name: groupName}} );
+            await groupsCollection.updateOne( {id: groupId}, {$set: {name: groupName}} );
             return sendResponse(res, 200, Text.success.groupNameUpdated);
         }
     }

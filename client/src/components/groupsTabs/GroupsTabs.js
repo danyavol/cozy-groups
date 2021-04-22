@@ -25,7 +25,11 @@ export default function Tabs(props) {
         {
             menuItem:
                 {key: 'invite', icon: 'linkify', content: 'Ссылка для приглашения'},
-            render: () => <InviteTab inviteCode={props.group.inviteCode} token={props.token} />
+            render: () => <InviteTab 
+                                groupId={props.group.id}
+                                inviteCode={props.group.inviteCode} 
+                                token={props.token} 
+                          />
         }
     ];
 

@@ -16,6 +16,7 @@ export default function SettingsDropdown(props) {
                 <Dropdown.Item>Изменить название группы</Dropdown.Item>
                 <Dropdown.Item>Передать права владельца</Dropdown.Item>
                 <Dropdown.Item onClick={props.leave}>Выйти из группы</Dropdown.Item>
+                <Dropdown.Item onClick={props.delete}>Удалить группу</Dropdown.Item>
             </Dropdown.Menu>
         </Dropdown>
     )
