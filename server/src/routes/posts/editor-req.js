@@ -38,12 +38,17 @@ posts.post('/:groupId/default', async (req, res) => {
             id: genPostId(),
             groupId: groupId,
             author: senderId,
+            createdAt: Date.now(),
             type: 'default',
             title: title,
             description: description || ''       
         }
 
         await postsCollection.insertOne(post);
-        return sendResponse(res, 200, Text.success.postCreated);
+        
+        delete post._id;
+        delete post.groupId;
+        
+        return sendResponse(res, 200, Text.success.postCreated, {post: post});
     }
 });
