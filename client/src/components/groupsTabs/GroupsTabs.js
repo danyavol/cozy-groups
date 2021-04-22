@@ -20,7 +20,7 @@ export default function Tabs(props) {
         {
             menuItem:
                 {key: 'users', icon: 'users', content: 'Пользователи'},
-            render: () => <UsersTab token={props.token} group={props.group} />
+            render: () => <UsersTab token={props.token} group={props.group} changeUsers={props.changeUsers} />
         },
         {
             menuItem:

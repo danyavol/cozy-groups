@@ -40,6 +40,12 @@ function GroupHooks(props) {
             });
     }, [props.token, props.match.params.id]);
 
+    const handleUserChange = (newUsers) => {
+        let newGroup = group;
+        newGroup.users = newUsers;
+        setGroup(newGroup);
+    }
+
     return (
         <div>
             <Loader loading={loading} text="Загрузка группы..." />
@@ -53,7 +59,7 @@ function GroupHooks(props) {
                     </div>
                 </div>
                 <div>
-                    <GroupsTabs token={props.token} group={group} />
+                    <GroupsTabs token={props.token} group={group} changeUsers={handleUserChange} />
                 </div>
             </div>
         </div>

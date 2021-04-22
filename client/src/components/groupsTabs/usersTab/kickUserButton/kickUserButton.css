@@ -1,0 +1,7 @@
+table .kickButton {
+    color: red;
+}
+
+table .kickButton:hover {
+    color: darkred;
+}
