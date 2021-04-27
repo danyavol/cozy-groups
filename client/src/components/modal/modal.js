@@ -4,18 +4,36 @@ import { Dimmer } from 'semantic-ui-react';
 import './modal.css';
 
 export default function Modal(props) {
+    
+    const errorModal = <Fragment>
+                            <div className={`ui error message ${props.visible ? 'active' : ''}`}>
+                                <div className="header">{props.header}
+                                    <i onClick={props.updateVisible} className="close black icon float-right"></i>
+                                </div>
+                                <div className="content">
+                                    {props.element}
+                                </div>
+                            </div>
+                        </Fragment>;
+
+    const notificationModal = <Fragment>
+                                    <div className={`ui success message ${props.visible ? 'active' : ''}`}>
+                                        <div className="header">{props.header}
+                                            <i onClick={props.updateVisible} className="close black icon float-right"></i>
+                                        </div>
+                                        <div className="content">
+                                            {props.element}
+                                        </div>
+                                    </div>
+                                </Fragment>;
+
+    const timeout = (modal) => {
+        setTimeout(props.updateVisible,3000);
+        return modal;
+    }
     if(props.type === "error") {
         return (
-            <Fragment>
-                <div className={`ui error message ${props.visible ? 'active' : ''}`}>
-                    <div className="header">{props.header}
-                        <i onClick={props.updateVisible} className="close black icon float-right"></i>
-                    </div>
-                    <div className="content">
-                        {props.element}
-                    </div>
-                </div>
-            </Fragment>
+            timeout(errorModal)
         );
     }
     if(props.type === "action") {
@@ -44,16 +62,7 @@ export default function Modal(props) {
     }
     if(props.type === "notification") {
         return (
-            <Fragment>
-                <div className={`ui success message ${props.visible ? 'active' : ''}`}>
-                    <div className="header">{props.header}
-                        <i onClick={props.updateVisible} className="close black icon float-right"></i>
-                    </div>
-                    <div className="content">
-                        {props.element}
-                    </div>
-                </div>
-            </Fragment>
+            timeout(notificationModal)
         );
     } 
     else {

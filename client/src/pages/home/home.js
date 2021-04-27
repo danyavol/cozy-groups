@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import {withRouter} from "react-router-dom";
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import "./home.css";
@@ -11,31 +12,10 @@ import { Dimmer } from 'semantic-ui-react';
 class Home extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            visible : false
-        }
-        this.openModal = this.openModal.bind(this);
-        this.updateVisible = this.updateVisible.bind(this);
     }
+
     render() {
-        const element = <div>
-            <button>Кнопка</button>
-            <button>Кнопка</button>
-        </div>
-        const modal = <Modal 
-                        header={'Моё модальное окно'} 
-                        visible={this.state.visible} 
-                        element={element} 
-                        updateVisible={this.updateVisible}
-                     />
-        return (
-            <Fragment>
-                <div>
-                {modal}
-                </div>
-                
-                <Dimmer.Dimmable dimmed={this.state.visible} >
-                    <Dimmer className='position' simple onClickOutside={this.openModal} />
+        return (     
                     <div>
                         <div className="ui vertical stripe segment">
                             <div className="ui middle aligned stackable grid container">
@@ -114,39 +94,26 @@ class Home extends Component {
                                 </div>
                                 <div className="row">
                                     <div className="center aligned column">
-                                    <a className="ui huge button">Перейти на GitHub</a>
+                                    <a className="ui huge button" href="https://github.com/danyavol/cozy-groups">Перейти на GitHub</a>
                                     </div>
                                 </div>
-                                <div className="row">
+                                <div className="row" className={this.state.token ? 'hidden' : ''}>
                                     <div className="sixteen wide aligned center column">
-                                        <h1 className="logo-text">JOIN US</h1>
+                                        <h1 className="logo-text" className={this.state.token !== null ? 'hidden' : ''}>JOIN US</h1>
                                     </div>
                                 </div>
-                                <div className="row">
+                                <div className="row" className={this.state.token ? 'hidden' : ''}>
                                     <div className="center aligned column">
-                                    <a className="ui huge button" onClick={this.openModal}>Зарегистрироваться</a>
+                                    <a className="ui huge button" className={this.state.token !== null ? 'hidden' : ''} href="/register">Зарегистрироваться</a>
                                     </div>
                                 </div>                       
                             </div>
                         </div>
                     </div>
-                </Dimmer.Dimmable>
-            </Fragment>
         );
     }
 
-    openModal() {
-        if(this.state.visible) {
-            this.setState({visible : false });
-        }
-        else {
-            this.setState({visible : true });
-        }
-    }
-    updateVisible() {
-        this.setState({visible : false});
-    }
 }
 
-export default Home;
+export default withRouter(Home);
 

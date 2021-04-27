@@ -123,7 +123,7 @@ class App extends Component {
                         />
                         <Switch>
                             <Route exact path="/">
-                                <Home  />
+                                <Home token = {this.state.token}/>
                             </Route>
                             <Route path="/login">
                                 <Login updateToken={this.updateToken} />
@@ -180,14 +180,13 @@ class App extends Component {
     }
 
     updateToken(value) {
-        console.log(123, value);
         this.setState({token: value});
     }
 
     deleteToken(error) {
-        if(error.response.status === 401) {
+        if(error.response.status === 401 || error.response.status === undefined) {
             localStorage.removeItem('token');
-            this.props.clearGroups();
+            this.clearGroups();
             this.updateToken(null);
         }
     }

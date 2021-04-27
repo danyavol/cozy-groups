@@ -92,7 +92,6 @@ function GroupHooks(props) {
             }
         })
         .catch((err) => {
-            console.log(err.response.data.message);
             setLoading(false);
             if (err.response) {
                props.updateMainModal("Ошибка",err.response.data.message,"error");
