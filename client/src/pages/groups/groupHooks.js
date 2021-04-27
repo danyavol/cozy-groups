@@ -55,7 +55,7 @@ function GroupHooks(props) {
                 setLoading(false);
                 console.log('Вы удалили группу!');
                 props.updateDeleteGroups(props.match.params.id);
-                props.history.push("/"); 
+                props.history.push("/");
             }
         })
         .catch((err) => {
@@ -70,10 +70,10 @@ function GroupHooks(props) {
                     //props.updateMainModal();
                     props.history.push("/");
                 },3000);
-            } 
+            }
         });
     };
-    
+
     const leave = () => {
         setLoading(true);
         setLoaderText("Выход из группы...");
@@ -95,16 +95,22 @@ function GroupHooks(props) {
             setLoading(false);
             if (err.response) {
                props.updateMainModal("Ошибка",err.response.data.message,"error");
-            } 
+            }
             else
             {
                 setTimeout(() => {
                     props.history.push("/");
                     props.close();
             },3000);
-            } 
+            }
         })
     };
+
+    const handleUserChange = (newUsers) => {
+        let newGroup = group;
+        newGroup.users = newUsers;
+        setGroup(newGroup);
+    }
 
     return (
         <div>
@@ -112,9 +118,9 @@ function GroupHooks(props) {
             <div className={loading ? 'hidden' : ''}>
                 <div className="header">
                     <div className="buttons">
-                        <SettingsDropdown 
+                        <SettingsDropdown
                             leave={() => props.updateModal(`Выход`,`Хотите выйти из группы "${group.name}"?`,leave,"action")}
-                            delete={() => props.updateModal(`Удаление`,`Вы действительно хотите удалить группу "${group.name}"? Это безвозвратное действие!`,deleteGroup,"action")} 
+                            delete={() => props.updateModal(`Удаление`,`Вы действительно хотите удалить группу "${group.name}"? Это безвозвратное действие!`,deleteGroup,"action")}
                         />
                     </div>
                     <div>
@@ -122,7 +128,7 @@ function GroupHooks(props) {
                     </div>
                 </div>
                 <div>
-                    <GroupsTabs token={props.token} group={group} />
+                    <GroupsTabs token={props.token} group={group} changeUsers={handleUserChange} />
                 </div>
             </div>
         </div>

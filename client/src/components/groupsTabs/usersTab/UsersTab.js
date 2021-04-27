@@ -2,15 +2,15 @@ import {useEffect, useState} from "react";
 import {Tab} from "semantic-ui-react";
 
 import "./usersTab.css";
-import RoleDropdown from "./RoleDropdown";
-import KickUserButton from "./KickUserButton";
+import RoleDropdown from "./roleDropdown/RoleDropdown";
+import KickUserButton from "./kickUserButton/KickUserButton";
 import Loader from "../../loader/Loader";
 
 export default function UsersTab(props) {
     return (
         <Tab.Pane attached={false}>
             <table className="ui very basic collapsed single line table">
-                <UsersRows group={props.group} token={props.token} />
+                <UsersRows group={props.group} token={props.token} changeUsers={props.changeUsers} />
             </table>
         </Tab.Pane>
     );
@@ -68,6 +68,7 @@ function UsersRows(props) {
             if (user.id !== deleteUserId)
                 newUsers.push(user);
         });
+        props.changeUsers(newUsers);
         setUsers(newUsers);
     }
 

@@ -5,12 +5,13 @@ module.exports = auth;
 
 const bcrypt = require('bcryptjs');
 const {v4: uuidv4} = require('uuid');
-const usersCollection = require('../../database/users.js');
 const { createToken, deleteToken } = require('../../service/createToken.js');
 const authorizedOnly = require('../../service/authorizedOnly.js');
 const Validator = require('../../service/validator.js');
 const { sendResponse } = require('../../service/requestService.js');
 const Text = require('../../service/responseMessages.js');
+
+const usersCollection = require('../../database/database.js')('users');
 
 function isValidPassword(presentedPassword, userPassword) {
     return bcrypt.compareSync(presentedPassword, userPassword);
@@ -34,7 +35,7 @@ auth.post('/register', async (req, res) => {
     } 
     else {
         // Поиск такого логина в БД
-        let user = await usersCollection.findUser({login: login});
+        let user = await usersCollection.find({login: login});
 
         if (user) {
             return sendResponse(res, 400, Text.error.loginAlreadyTaken);
@@ -46,11 +47,10 @@ auth.post('/register', async (req, res) => {
                 login: login,
                 password: bcrypt.hashSync(password, bcrypt.genSaltSync(10), null),
                 firstName: capitalize(firstName),
-                lastName: capitalize(lastName),
-                groups: []
+                lastName: capitalize(lastName)
             }
 
-            await usersCollection.insertUser(user);
+            await usersCollection.insertOne(user);
             
             let token = await createToken(user.id, req);
 
@@ -72,7 +72,7 @@ auth.post('/login', async (req, res) => {
     } 
     // Попытка авторизации
     else {
-        let user = await usersCollection.findUser({login: login});
+        let user = await usersCollection.find({login: login});
         if (!user) {
             // Пользователь не найден
             return sendResponse(res, 400, Text.error.findUserByLogin);

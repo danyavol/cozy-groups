@@ -1,7 +1,8 @@
 import {Dropdown} from "semantic-ui-react";
-import React from "react";
+import React, {useState} from "react";
 
 export default function RoleDropdown(props) {
+    const [currentRole, setCurrentRole] = useState(props.role);
     const roles = [
         {
             key: "admin",
@@ -15,6 +16,10 @@ export default function RoleDropdown(props) {
         }
     ];
 
+    const handleChangeRole = (data) => {
+        console.log(data.target.innerText);
+    }
+
     if (props.role === "owner") {
         return (
             <div>Owner</div>
@@ -24,7 +29,8 @@ export default function RoleDropdown(props) {
             <Dropdown
                 inline
                 options={roles}
-                defaultValue={props.role}
+                defaultValue={currentRole}
+                onChange={handleChangeRole}
             />
         );
     }

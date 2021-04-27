@@ -1,8 +1,8 @@
-const tokensCollection = require('../database/tokens.js');
+const tokensCollection = require('../database/database.js')('tokens');
 
 // Доступ к ресурсам, имеющим этот middleware, могут получить толька авторизованные пользователи
 module.exports = async function authorizedOnly(req, res, next) {
-    let tokenData = await tokensCollection.findToken({token: req.headers.authorization});
+    let tokenData = await tokensCollection.find({token: req.headers.authorization});
 
     if (!tokenData) {
         // Неверный токен
@@ -12,7 +12,7 @@ module.exports = async function authorizedOnly(req, res, next) {
     } else {
         if (tokenData.maxAge < Date.now()) {
             // Срок жизни токена истек
-            await tokensCollection.deleteToken({token: tokenData.token});
+            await tokensCollection.deleteOne({token: tokenData.token});
             let error = new Error('Данный токен больше недействителен');
             error.status = 401;
             next(error);

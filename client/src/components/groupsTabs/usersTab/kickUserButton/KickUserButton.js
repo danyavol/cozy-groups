@@ -1,6 +1,8 @@
 import axios from "axios";
 import React from "react";
 
+import "./kickUserButton.css";
+
 export default function KickUserButton(props) {
 
     function userKick() {
