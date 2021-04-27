@@ -67,7 +67,6 @@ function GroupHooks(props) {
             {
                 props.updateMainModal("Ошибка",err.response.data.message,"error");
                 setTimeout(() => {
-                    //props.updateMainModal();
                     props.history.push("/");
                 },3000);
             }

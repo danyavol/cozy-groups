@@ -97,14 +97,14 @@ class Home extends Component {
                                     <a className="ui huge button" href="https://github.com/danyavol/cozy-groups">Перейти на GitHub</a>
                                     </div>
                                 </div>
-                                <div className="row" className={this.state.token ? 'hidden' : ''}>
+                                <div className={this.props.token !== null ? 'hidden' : 'row'}>
                                     <div className="sixteen wide aligned center column">
-                                        <h1 className="logo-text" className={this.state.token !== null ? 'hidden' : ''}>JOIN US</h1>
+                                        <h1 className={this.props.token !== null ? 'hidden' : 'logo-text'}>JOIN US</h1>
                                     </div>
                                 </div>
-                                <div className="row" className={this.state.token ? 'hidden' : ''}>
+                                <div className={this.props.token !== null ? 'hidden' : 'row'}>
                                     <div className="center aligned column">
-                                    <a className="ui huge button" className={this.state.token !== null ? 'hidden' : ''} href="/register">Зарегистрироваться</a>
+                                    <a className={this.props.token !== null  ? 'hidden' : 'ui huge button'} href="/register">Зарегистрироваться</a>
                                     </div>
                                 </div>                       
                             </div>
