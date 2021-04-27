@@ -53,8 +53,10 @@ auth.post('/register', async (req, res) => {
             await usersCollection.insertOne(user);
             
             let token = await createToken(user.id, req);
+            delete user.password;
+            delete user._id;
 
-            return sendResponse(res, 200, Text.success.userCreated, {token: token});
+            return sendResponse(res, 200, Text.success.userCreated, {token: token, user: user});
         }
     }
 });
@@ -85,8 +87,9 @@ auth.post('/login', async (req, res) => {
             else {
                 // Пароль верный
                 let token = await createToken(user.id, req);
-
-                return sendResponse(res, 200, Text.success.userAuthorized, {token: token});
+                delete user.password;
+                delete user._id;
+                return sendResponse(res, 200, Text.success.userAuthorized, {token: token, user: user});
             }
         }
     }
