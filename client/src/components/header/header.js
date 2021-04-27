@@ -73,7 +73,6 @@ class Header extends Component {
                         />
                         <MenuLink
                             click={() => this.props.updateModal('Выход','Вы действительно хотите выйти из аккаунта?',this.exit,'action')}
-                            to=""
                             label="Выйти"
                             icon={faSignOutAlt}
                         />
