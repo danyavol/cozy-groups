@@ -20,7 +20,12 @@ function GroupHooks(props) {
     }, [group]);
 
     useEffect(() => {
-        document.title = title;
+        if(title === undefined) {
+            document.title = "Группа";
+        }
+        else {
+            document.title = title;
+        }
     });
 
     useEffect(() => {

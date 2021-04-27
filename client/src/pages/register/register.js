@@ -35,6 +35,10 @@ class Register extends Component {
         this.hideGlobalError = this.hideGlobalError.bind(this);
     }
 
+    componentDidMount() {
+        document.title = "Регистрация"
+    }
+
     changeRoute(path) {
         this.props.history.push(path)
     }
@@ -180,7 +184,7 @@ class Register extends Component {
                 localStorage.setItem('user', JSON.stringify(response.data.user))
 
                 this.props.updateUser(response.data.user);
-                
+
                 this.props.updateToken(response.data.token);
 
                 this.changeRoute('/');

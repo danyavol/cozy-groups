@@ -8,6 +8,10 @@ class GroupsList extends Component {
         this.toGroup=this.toGroup.bind(this);
     }
 
+    componentDidMount() {
+      document.title = "Группы";
+    }
+
     toGroup(id) {
         this.props.history.push('/groups/'+id)
     }
