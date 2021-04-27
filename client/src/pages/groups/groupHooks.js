@@ -8,7 +8,8 @@ import GroupsTabs from "../../components/groupsTabs/GroupsTabs";
 
 
 function GroupHooks(props) {
-    const [token, setToken] = useState("")
+    const [role, setRole] = useState("");
+    const [token, setToken] = useState("");
     const [title, setTitle] = useState("");
     const [group, setGroup] = useState({});
     const [loading, setLoading] = useState(true);
@@ -32,8 +33,11 @@ function GroupHooks(props) {
         })
             .then(response => {
                 if (response.data.ok) {
+                    let currentUser = response.data.group.users.find(user => user.id === props.user.id)
                     setGroup(response.data.group);
                     setLoading(false);
+                    setRole(currentUser.role);
+                    console.log(role);
                     console.log("token: " + token);
                 }
             })
@@ -118,6 +122,7 @@ function GroupHooks(props) {
                 <div className="header">
                     <div className="buttons">
                         <SettingsDropdown
+                            role={role}
                             leave={() => props.updateModal(`Выход`,`Хотите выйти из группы "${group.name}"?`,leave,"action")}
                             delete={() => props.updateModal(`Удаление`,`Вы действительно хотите удалить группу "${group.name}"? Это безвозвратное действие!`,deleteGroup,"action")}
                         />
@@ -127,7 +132,7 @@ function GroupHooks(props) {
                     </div>
                 </div>
                 <div>
-                    <GroupsTabs token={props.token} group={group} changeUsers={handleUserChange} />
+                    <GroupsTabs role={role} token={props.token} group={group} changeUsers={handleUserChange} />
                 </div>
             </div>
         </div>
