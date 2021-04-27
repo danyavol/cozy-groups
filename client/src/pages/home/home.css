@@ -6,3 +6,6 @@
 .hidden {
     display: none;
 }
+.homepage-logo path{
+    fill: var(--text-surface)
+}
