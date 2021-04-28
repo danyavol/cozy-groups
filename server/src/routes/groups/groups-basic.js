@@ -40,7 +40,8 @@ groups.post('/create', async (req, res) => {
         let responseData = {
             group: {
                 id: group.id,
-                name: group.name
+                name: group.name,
+                users_count: group.users.length
             }
         };
         return sendResponse(res, 200, Text.success.groupCreated, responseData);
@@ -80,7 +81,8 @@ groups.post('/join', async (req, res) => {
             let responseData = {
                 group: {
                     id: group.id,
-                    name: group.name
+                    name: group.name,
+                    users_count: group.users.length
                 }
             };
             return sendResponse(res, 200, Text.success.userJoinedGroup, responseData);

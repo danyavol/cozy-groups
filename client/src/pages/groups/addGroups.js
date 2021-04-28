@@ -29,6 +29,10 @@ class addGroups extends Component {
         this.handleInviteCodeChange = this.handleInviteCodeChange.bind(this);
         this.hideGlobalError = this.hideGlobalError.bind(this);
     }
+
+    componentDidMount() {
+        document.title = "Добавить группу";
+    }
     
     render() {
         return (

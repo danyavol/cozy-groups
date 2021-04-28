@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 
 class Error extends Component {
+    componentDidMount(){
+        document.title="Ошибка";
+    }
     render() {
         return (
             <div>

@@ -58,3 +58,14 @@ table h2 {
     font-size: 16pt;
     margin-bottom: 0;
 }
+
+table .kickButton {
+    color: red;
+}
+
+table .kickButton:hover {
+    color: darkred;
+}
+.groupsList {
+    margin-top: 25px;
+}

@@ -28,6 +28,7 @@ class App extends Component {
     constructor() {
         super();
         this.state = {
+            user: null,
             token: null,
             Groups: [],
 
@@ -50,6 +51,7 @@ class App extends Component {
             functionMain:null
         }
 
+        this.updateUser = this.updateUser.bind(this);
         this.updateToken = this.updateToken.bind(this);
         this.updateGroups = this.updateGroups.bind(this);
         this.updateDeleteGroups=this.updateDeleteGroups.bind(this);
@@ -60,10 +62,11 @@ class App extends Component {
     }
 
     componentDidMount() {
-        this.setState( {token: localStorage.getItem('token')} );
-
-
+        this.setState( {token : localStorage.getItem('token')} );
+        this.setState( {user : JSON.parse(localStorage.getItem('user'))});
+        console.log(this.state.user);
     }
+
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if ((this.state.token !== prevState.token) && this.state.token !== null) {
@@ -123,13 +126,19 @@ class App extends Component {
                         />
                         <Switch>
                             <Route exact path="/">
-                                <Home  />
+                                <Home token = {this.state.token}/>
                             </Route>
                             <Route path="/login">
-                                <Login updateToken={this.updateToken} />
+                                <Login 
+                                    updateUser={this.updateUser}
+                                    updateToken={this.updateToken}
+                                 />
                             </Route>
                             <Route path = "/register">
-                                <Register updateToken={this.updateToken} />
+                                <Register 
+                                    updateUser={this.updateUser}
+                                    updateToken={this.updateToken} 
+                                />
                             </Route>
                             <Route path ="/add-group">
                                 <AddGroups 
@@ -144,6 +153,7 @@ class App extends Component {
                                    render={(props) => (
                                        <GroupHooks
                                            {...props}
+                                           user={this.state.user}
                                            token={this.state.token}
                                            updateDeleteGroups={this.updateDeleteGroups}
                                            clearGroups={this.clearGroups}
@@ -180,14 +190,17 @@ class App extends Component {
     }
 
     updateToken(value) {
-        console.log(123, value);
-        this.setState({token: value});
+        this.setState({token : value});
+    }
+
+    updateUser(value) {
+        this.setState({user : value})
     }
 
     deleteToken(error) {
-        if(error.response.status === 401) {
+        if(error.response.status === 401 || error.response.status === undefined) {
             localStorage.removeItem('token');
-            this.props.clearGroups();
+            this.clearGroups();
             this.updateToken(null);
         }
     }

@@ -25,19 +25,14 @@ class Header extends Component {
     }
 
     exit() {
-        this.setState({ open : false, dimmer : false});
+        this.props.updateModal();
+        localStorage.removeItem('token');
+        this.props.updateToken(null)
+        this.props.clearGroups();
+        this.props.history.push("/")
         axios.delete('http://localhost:3080/auth/logout',{
             headers:{
                 'Authorization': this.state.token
-            }
-        }).then(response => {
-            if(response.data.ok)
-            {
-                localStorage.removeItem('token');
-                this.props.updateToken(null)
-                this.props.clearGroups();
-                this.props.history.push("/")
-                
             }
         });
     }
@@ -78,7 +73,6 @@ class Header extends Component {
                         />
                         <MenuLink
                             click={() => this.props.updateModal('Выход','Вы действительно хотите выйти из аккаунта?',this.exit,'action')}
-                            to=""
                             label="Выйти"
                             icon={faSignOutAlt}
                         />
@@ -99,15 +93,6 @@ class Header extends Component {
 
         if (this.props.myGroups !== prevProps.myGroups) {
             this.setState({myGroups: this.props.myGroups});
-        }
-    }
-
-    openModal( header, text, func, type) {
-        if(this.state.open) {
-            this.setState({open : false, dimmer : false });
-        }
-        else {
-            this.setState({open : true, dimmer : true, header : header, text : text, type : type, function : func});
         }
     }
 }

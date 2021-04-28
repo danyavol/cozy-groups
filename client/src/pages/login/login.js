@@ -27,6 +27,9 @@ class Login extends Component {
         this.props.history.push(path)
     }
 
+    componentDidMount(){
+        document.title = "Авторизация";
+    }
 
     render() {
         return (
@@ -112,6 +115,10 @@ class Login extends Component {
 
                 if (response.data.ok) {
                     localStorage.setItem('token', response.data.token);
+
+                    localStorage.setItem('user',JSON.stringify(response.data.user))
+
+                    this.props.updateUser(response.data.user);
 
                     this.props.updateToken(response.data.token);
 
