@@ -1,18 +1,14 @@
 import {useEffect, useState} from "react";
-import {Tab} from "semantic-ui-react";
 
 import "./usersTab.css";
 import RoleDropdown from "./roleDropdown/RoleDropdown";
 import KickUserButton from "./kickUserButton/KickUserButton";
 import Loader from "../../loader/Loader";
+import UserLoader from "../../loader/UserLoader";
 
 export default function UsersTab(props) {
     return (
-        <Tab.Pane attached={false}>
-            <table className="ui very basic collapsed single line table">
-                <UsersRows group={props.group} token={props.token} changeUsers={props.changeUsers} />
-            </table>
-        </Tab.Pane>
+        <UsersRows group={props.group} token={props.token} changeUsers={props.changeUsers} />
     );
 }
 
@@ -20,7 +16,7 @@ function UsersRows(props) {
     const [users, setUsers] = useState([]);
     const [usersRows, setUsersRows] = useState([]);
     const [loading, setLoading] = useState(false);
-    console.log(props);
+    const [userLoading, setUserLoading] = useState([]);
 
     useEffect(() => {
         setUsers(props.group.users);
@@ -30,32 +26,81 @@ function UsersRows(props) {
     useEffect(() => {
         setUsersRows(
             users.map((user) =>
-                <tr key={user.id}>
-                    <td>
-                        <div className="content">
-                            <h2>{user.firstName} {user.lastName}</h2>
-                            <div className="sub header">{user.login}</div>
+                <div className="ui segment" key={user.id}>
+                    <div className={`content ${userLoading.toString().indexOf(user.id) > -1 ? 'hidden' : ''}`}>
+                        <div className="userName">
+                            <h2 className="">{user.firstName} {user.lastName}</h2>
+                            <div className="">{user.login}</div>
                         </div>
-                    </td>
-                    <td className="center aligned">
-                        <h2><RoleDropdown role={user.role}/></h2>
-                    </td>
-                    <td className="center aligned">
-                        <KickUserButton
-                            token={props.token}
-                            user={user}
-                            groupId={props.group.id}
+                        <div className="userRole">
+                            <h2>
+                                <RoleDropdown
+                                    role={user.role}
+                                    id={user.id}
+                                    groupId={props.group.id}
+                                    token={props.token}
 
-                            users={props.group.users}
+                                    addLoadingUser={handlerAddLoadingUser}
+                                    deleteLoadingUser={handlerDeleteLoadingUser}
+                                />
+                            </h2>
+                        </div>
+                        <div className="userKick">
+                            <KickUserButton
+                                token={props.token}
+                                user={user}
+                                groupId={props.group.id}
+                                users={props.group.users}
 
-                            loaderChange={handlerLoaderChange}
-                            usersChange={handlerUsersChange}
-                        />
-                    </td>
-                </tr>
+                                loaderChange={handlerLoaderChange}
+                                usersChange={handlerUsersChange}
+                            />
+                        </div>
+                    </div>
+                    <div className={userLoading.toString().indexOf(user.id) > -1 ? '' : 'hidden'}>
+                        <UserLoader />
+                    </div>
+                </div>
             )
         );
-    }, [users]);
+    }, [users, userLoading]);
+
+    const userIsLoading = (id) => {
+        if (typeof userLoading === 'object')
+            userLoading.forEach(obj => {
+                if (obj.id === id)
+                    return true
+            });
+        else
+            return false;
+    }
+
+    const handlerDeleteLoadingUser = (id) => {
+
+        let users = [];
+        userLoading.forEach(elem => users.push(elem));
+        const index = users.toString().indexOf(id);
+        console.log("Index: " + index);
+        if (index > -1) {
+            users.splice(index, 1);
+            setUserLoading(users);
+            console.log("Slice: " + users);
+        } else {
+            setUserLoading(users);
+        }
+    }
+
+    const handlerAddLoadingUser = (id) => {
+        if (typeof userLoading === 'object') {
+            let users = [];
+            userLoading.forEach(elem => users.push(elem));
+            users.push(id);
+            setUserLoading(users);
+        }
+        console.log(userLoading);
+        console.log(users);
+        console.log(usersRows);
+    }
 
     const handlerLoaderChange = (value) => {
         setLoading(value);
@@ -75,10 +120,10 @@ function UsersRows(props) {
     if (loading) {
         return (
             <Loader loading={loading} text="Загрузка пользователей..." />
-        )
+        );
+    } else {
+        return (
+            <div className={`row ${loading ? 'hidden' : ''}`}>{usersRows}</div>
+        );
     }
-    return (
-        <tbody className={loading ? 'hidden' : ''} >{usersRows}</tbody>
-    );
-
 }
