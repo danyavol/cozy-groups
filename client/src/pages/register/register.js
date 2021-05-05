@@ -3,14 +3,16 @@ import { Link, withRouter } from "react-router-dom";
 
 import axios from 'axios';
 
+import "./register.css"
+
 class Register extends Component {
 
     constructor(props){
         super(props);
         this.state = {
-            passRegex: /[A-Za-z0-9!@#$%^&*]{4,20}/,
-            loginRegex: /[A-Za-z0-9]{4,20}/,
-            nameRegex: /^([A-Za-z]+|[А-Яа-я]+)$/,
+            passRegex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[\d\w\W]{4,}$/,
+            loginRegex: /^[\w\d]{2,15}$/,
+            nameRegex: /^([A-Za-z]{2,20}|[А-Яа-я]{2,20})$/,
 
             globalErrorTitle: '',
             globalError: '',
@@ -56,7 +58,11 @@ class Register extends Component {
                     </div>
 
                     <div className={`field required ${this.state.loginError ? 'error' : ''}`}>
-                        <label>Логин</label>
+                        <label className="promt">
+                            <div data-position="top left" data-tooltip="Логин до 15 символов.">
+                                Логин
+                            </div>
+                        </label>
                         <input
                             type="text"
                             name="login"
@@ -70,7 +76,11 @@ class Register extends Component {
     
                     <div className="two fields">
                         <div className={`field required ${this.state.firstNameError ? 'error' : ''}`}>
-                            <label>Имя</label>
+                            <label className="promt">
+                                <div data-position="top left" data-tooltip="Имя и фамилия на русском\английском языке до 20 символов.">
+                                    Имя
+                                </div>
+                            </label>
                             <input
                                 type="text"
                                 name="firstName"
@@ -82,7 +92,11 @@ class Register extends Component {
                             <div className={`ui basic red pointing prompt label ${this.state.firstNameError === 'regExp' ? 'visible' : 'hidden'}`}>Неверный формат имени</div>
                         </div>
                         <div className={`field ${this.state.lastNameError ? 'error' : ''}`}>
-                            <label>Фамилия</label>
+                            <label className="promt">
+                                <div data-position="top left" data-tooltip="Имя и фамилия на русском\английском языке до 20 символов.">
+                                    Фамилия
+                                </div>
+                            </label>
                             <input
                                 type="text"
                                 name="lastName"
@@ -95,7 +109,11 @@ class Register extends Component {
                     </div>
                     
                     <div className="field required">
-                        <label>Пароль</label>
+                        <label className="promt">
+                            <div data-position="top left" data-tooltip="Пароль должен быть длинной не менее 4 символов, содержать буквы, минимум 1 заглавную букву, и цифры">
+                                Пароль
+                            </div>
+                        </label>
                         <div className="two fields">
                             <div className={`field ${this.state.passwordError ? 'error' : ''}`}>
                                 <input
