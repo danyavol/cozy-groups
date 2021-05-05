@@ -16,6 +16,7 @@ import Group from '../pages/groups/group';
 import GroupsList from '../pages/groups/groupsList.js';
 import Modal from '../components/modal/modal';
 
+
 import './App.css';
 
 import 'semantic-ui-css/semantic.min.css'
@@ -54,6 +55,7 @@ class App extends Component {
         this.updateUser = this.updateUser.bind(this);
         this.updateToken = this.updateToken.bind(this);
         this.updateGroups = this.updateGroups.bind(this);
+        this.updateGroup = this.updateGroup.bind(this);
         this.updateDeleteGroups=this.updateDeleteGroups.bind(this);
         this.updateModal=this.updateModal.bind(this);
         this.updateMainModal=this.updateMainModal.bind(this);
@@ -156,6 +158,7 @@ class App extends Component {
                                            user={this.state.user}
                                            token={this.state.token}
                                            updateDeleteGroups={this.updateDeleteGroups}
+                                           updateGroup={this.updateGroup}
                                            clearGroups={this.clearGroups}
                                            deleteToken={this.deleteToken}
                                            updateModal={this.updateModal}
@@ -215,6 +218,12 @@ class App extends Component {
         let groups = this.state.Groups;
         groups.push(value);
         this.setState({Groups : groups});
+    }
+    updateGroup(id, name) {
+        let groups = this.state.Groups;
+        let index =groups.indexOf(groups.find(group => group.id === id));
+        groups[index].name = name;
+        this.setState({Groups:groups});
     }
     clearGroups() {
         this.setState({Groups : []})

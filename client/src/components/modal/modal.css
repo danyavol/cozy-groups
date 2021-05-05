@@ -13,3 +13,6 @@
 .color {
     color: var(--text-surface);
 }
+.input-properties {
+    margin-top: 10px;
+}

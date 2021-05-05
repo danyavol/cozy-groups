@@ -1,3 +1,16 @@
 .promt {
     display: flex !important;
 }
+.advice {
+    width: 100px;
+    
+}
+data-tooltip {
+    width: 100px;
+}
+ [data-position="top left"][data-tooltip]:after {
+    width: 300px !important;
+}
+[data-tooltip]:after {
+    white-space: pre-wrap !important;
+}

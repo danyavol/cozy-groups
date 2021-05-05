@@ -114,6 +114,39 @@ function GroupHooks(props) {
         })
     };
 
+    const change = (newName) => {
+        setLoading(true);
+        setLoaderText("Обновление названия группы...");
+        props.updateModal();
+        let data ={groupId : group.id, groupName : newName}
+        axios.put('http://localhost:3080/groups/group-name',data, {
+            headers:{
+                'Authorization': props.token
+            }
+        }).
+        then(response => {
+            if(response.data.ok) {
+                setLoading(false);
+                setTitle(newName);
+                props.updateMainModal('Уведомление',response.data.message,"notification")
+                props.updateGroup(props.match.params.id,newName);
+            }
+        })
+        .catch((err) => {
+            setLoading(false);
+            if (err.response) {
+               props.updateMainModal("Ошибка",err.response.data.message,"error");
+            }
+            else
+            {
+                setTimeout(() => {
+                    props.history.push("/");
+                    props.close();
+            },3000);
+            }
+        })
+    }
+
     const handleUserChange = (newUsers) => {
         let newGroup = group;
         newGroup.users = newUsers;
@@ -128,6 +161,7 @@ function GroupHooks(props) {
                     <div className="buttons">
                         <SettingsDropdown
                             role={role}
+                            change={() => props.updateModal(`Изменение названия группы`,`Введите новое название группы:`,change,"input")}
                             leave={() => props.updateModal(`Выход`,`Хотите выйти из группы "${group.name}"?`,leave,"action")}
                             delete={() => props.updateModal(`Удаление`,`Вы действительно хотите удалить группу "${group.name}"? Это безвозвратное действие!`,deleteGroup,"action")}
                         />
