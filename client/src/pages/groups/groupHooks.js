@@ -87,9 +87,9 @@ function GroupHooks(props) {
         setLoaderText("Выход из группы...");
         props.updateModal();
         let data = {groupId : group.id};
-        axios.post('http://localhost:3080/groups/leave',data, {
+        axios.post('http://localhost:3080/groups/leave', data, {
             headers:{
-                'Authorization': props.token
+                'Authorization' : props.token
             }
         }).
         then(response => {

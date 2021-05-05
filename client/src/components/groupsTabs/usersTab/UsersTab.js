@@ -1,64 +1,102 @@
 import {useEffect, useState} from "react";
-import {Tab} from "semantic-ui-react";
 
 import "./usersTab.css";
 import RoleDropdown from "./roleDropdown/RoleDropdown";
 import KickUserButton from "./kickUserButton/KickUserButton";
-import Loader from "../../loader/Loader";
+import UserLoader from "../../loader/UserLoader";
 
 export default function UsersTab(props) {
     return (
-        <Tab.Pane attached={false}>
-            <table className="ui very basic collapsed single line table">
-                <UsersRows group={props.group} token={props.token} changeUsers={props.changeUsers} />
-            </table>
-        </Tab.Pane>
+        <UsersRows group={props.group} token={props.token} changeUsers={props.changeUsers} />
     );
 }
 
 function UsersRows(props) {
     const [users, setUsers] = useState([]);
     const [usersRows, setUsersRows] = useState([]);
-    const [loading, setLoading] = useState(false);
-    console.log(props);
+    const [userLoading, setUserLoading] = useState([]);
+    const [totalUserRole, setTotalUserRole] = useState('');
 
     useEffect(() => {
         setUsers(props.group.users);
+        props.group.users.forEach(user => {
+            if (JSON.parse(localStorage.user).login === user.login)
+                setTotalUserRole(user.role);
+        });
+        console.log(totalUserRole);
     }, [props.group]);
-
 
     useEffect(() => {
         setUsersRows(
             users.map((user) =>
-                <tr key={user.id}>
-                    <td>
-                        <div className="content">
-                            <h2>{user.firstName} {user.lastName}</h2>
-                            <div className="sub header">{user.login}</div>
+                <div key={user.id} className="ui segment userSegmentRow ">
+                    <div className={`userSegment ${userLoading.toString().indexOf(user.id) > -1 ? 'hidden' : ''}`}>
+                        <div className={`contentRow `}>
+                            <div className="userName">
+                                <h2>{user.firstName} {user.lastName}</h2>
+                                <div>{user.login}</div>
+                            </div>
+                            <div className="userRole">
+                                <h2>
+                                    <RoleDropdown
+                                        role={user.role}
+                                        id={user.id}
+                                        groupId={props.group.id}
+                                        token={props.token}
+
+                                        totalUserRole={totalUserRole}
+
+                                        addLoadingUser={handlerAddLoadingUser}
+                                        deleteLoadingUser={handlerDeleteLoadingUser}
+                                    />
+                                </h2>
+                            </div>
+                            <div className="userKick">
+                                <KickUserButton
+                                    token={props.token}
+                                    user={user}
+                                    groupId={props.group.id}
+                                    users={props.group.users}
+
+                                    totalUserRole={totalUserRole}
+
+                                    addLoadingUser={handlerAddLoadingUser}
+                                    deleteLoadingUser={handlerDeleteLoadingUser}
+                                    usersChange={handlerUsersChange}
+                                />
+                            </div>
                         </div>
-                    </td>
-                    <td className="center aligned">
-                        <h2><RoleDropdown role={user.role}/></h2>
-                    </td>
-                    <td className="center aligned">
-                        <KickUserButton
-                            token={props.token}
-                            user={user}
-                            groupId={props.group.id}
+                    </div>
+                    <div className={userLoading.toString().indexOf(user.id) > -1 ? '' : 'hidden'}>
+                        <UserLoader />
+                    </div>
+                </div>
 
-                            users={props.group.users}
-
-                            loaderChange={handlerLoaderChange}
-                            usersChange={handlerUsersChange}
-                        />
-                    </td>
-                </tr>
             )
         );
-    }, [users]);
+    }, [users, userLoading]);
 
-    const handlerLoaderChange = (value) => {
-        setLoading(value);
+    const handlerDeleteLoadingUser = (id) => {
+        let users = [];
+        userLoading.forEach(elem => users.push(elem));
+        const index = users.toString().indexOf(id);
+        console.log("Index: " + index);
+        if (index > -1) {
+            users.splice(index, 1);
+            setUserLoading(users);
+            console.log("Slice: " + users);
+        } else {
+            setUserLoading(users);
+        }
+    }
+
+    const handlerAddLoadingUser = (id) => {
+        if (typeof userLoading === 'object') {
+            let users = [];
+            userLoading.forEach(elem => users.push(elem));
+            users.push(id);
+            setUserLoading(users);
+        }
     }
 
     const handlerUsersChange = (deleteUserId) => {
@@ -72,13 +110,8 @@ function UsersRows(props) {
         setUsers(newUsers);
     }
 
-    if (loading) {
-        return (
-            <Loader loading={loading} text="Загрузка пользователей..." />
-        )
-    }
-    return (
-        <tbody className={loading ? 'hidden' : ''} >{usersRows}</tbody>
-    );
 
+    return (
+        <div>{usersRows}</div>
+    );
 }

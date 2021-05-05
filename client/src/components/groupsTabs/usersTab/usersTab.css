@@ -6,3 +6,40 @@ table h2 {
 .hidden {
     display: none;
 }
+.userSegment {
+    display: flex;
+    justify-content: flex-start;
+
+}
+
+.userSegmentRow {
+    height: 100px;
+}
+
+.row {
+    display: flex;
+    flex-direction: column;
+}
+
+.contentRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.userName {
+    width: 400px;
+}
+
+.userRole {
+    display: flex;
+    justify-content: flex-start;
+    margin-left: 300px;
+    width: 300px;
+
+}
+
+.userKick {
+    margin-right: 50px;
+    margin-left: 150px;
+}
