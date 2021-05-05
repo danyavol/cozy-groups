@@ -32,6 +32,7 @@ class App extends Component {
             user: null,
             token: null,
             Groups: [],
+            group: null,
 
             loading: false,
 
@@ -104,6 +105,7 @@ class App extends Component {
                         function={this.state.function}
                         dimmer={this.state.dimmer}
                         type={this.state.type}
+                        group={this.state.group}
                      />
                     <Header 
                         updateToken={this.updateToken}
@@ -188,8 +190,9 @@ class App extends Component {
         this.setState({openMain : true, headerMain : header, typeMain : type, textMain : text});
 
     }
-    updateModal(header,text,func,type) {  
-        this.setState({open : true, dimmer : true, header : header, text : text, type : type, function : func});
+    updateModal(header,text,func,type, group) {  
+        let newGroup = group;
+        this.setState({open : true, dimmer : true, header : header, text : text, type : type, function : func, group : newGroup});
     }
 
     updateToken(value) {

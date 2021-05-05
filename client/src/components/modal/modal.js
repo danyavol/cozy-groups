@@ -1,12 +1,15 @@
 import React, { Component, Fragment, useEffect, useState } from 'react';
 import { Transition } from 'semantic-ui-react';
 import { Dimmer } from 'semantic-ui-react';
+import Users from '../users/users';
 import './modal.css';
+import { withRouter } from "react-router-dom";
 
-export default function Modal(props) {
+export default withRouter(function Modal(props) {
     
     const [inputModal,setInputModal] = useState("");
     const [inputErrorModal,setInputErrorModal] = useState(null);
+
 
     const timeout = (modal) => {
         setTimeout(props.updateVisible,3000);
@@ -106,6 +109,27 @@ export default function Modal(props) {
             </Fragment>
         );
     }
+    if(props.type === "users") {
+        return (
+            <Fragment>
+                <div className={`ui ${props.size} modal modal-properties ${props.visible ? 'active' : ''}`}>
+                    <div className="header">{props.header}
+                        <i onClick={() => {props.updateVisible();}} className="close black icon float-right"></i>
+                    </div>
+                    <div className={`${props.scrolling ? 'scrolling' : ''} content color`}>
+                        {props.element}
+                        <Users
+                            group={props.group}
+                            function={props.function}
+                        />
+                    </div>
+                </div>
+                <Dimmer.Dimmable dimmed={props.dimmer} >
+                    <Dimmer className='position' simple  />
+                </Dimmer.Dimmable>
+            </Fragment>
+        );
+    }
     if(props.type === "action") {
         return (
             <Fragment>
@@ -138,5 +162,4 @@ export default function Modal(props) {
         );
     }
 
-}
-
+})

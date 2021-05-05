@@ -16,7 +16,12 @@ function GroupHooks(props) {
     const [loaderText, setLoaderText] = useState("Загрузка группы...")
 
     useEffect(() => {
+        setRole(role);
+    }, [role]);
+
+    useEffect(() => {
         setTitle(group.name);
+        setGroup(group);
     }, [group]);
 
     useEffect(() => {
@@ -114,6 +119,44 @@ function GroupHooks(props) {
         })
     };
 
+    const transfer = (userId) => {
+        setLoading(true);
+        setLoaderText("Обновление владельца группы...");
+        props.updateModal();
+        let data ={groupId : group.id, userId : userId }
+        axios.post('http://localhost:3080/groups/transfer-owner-rights',data, {
+            headers:{
+                'Authorization': props.token
+            }
+        }).
+        then(response => {
+            if(response.data.ok) {
+                setLoading(false);
+                setRole("admin")
+                let newGroup = group;
+                let newOwner = newGroup.users.indexOf(newGroup.users.find(user => user.id === userId));
+                let oldOwner = newGroup.users.indexOf(newGroup.users.find(user => user.id === props.user.id));
+                newGroup.users[newOwner].role="owner";
+                newGroup.users[oldOwner].role="admin";
+                setGroup(newGroup);
+                props.updateMainModal('Уведомление',response.data.message,"notification")
+            }
+        })
+        .catch((err) => {
+            setLoading(false);
+            if (err.response) {
+               props.updateMainModal("Ошибка",err.response.data.message,"error");
+            }
+            else
+            {
+                setTimeout(() => {
+                    props.history.push("/");
+                    props.close();
+            },3000);
+            }
+        })
+    }
+
     const change = (newName) => {
         setLoading(true);
         setLoaderText("Обновление названия группы...");
@@ -161,6 +204,7 @@ function GroupHooks(props) {
                     <div className="buttons">
                         <SettingsDropdown
                             role={role}
+                            transfer={() => props.updateModal(`Передача прав владельца группы "${group.name}"`,`Выберите из списка пользователя для передачи прав`,transfer,"users",group)}
                             change={() => props.updateModal(`Изменение названия группы`,`Введите новое название группы:`,change,"input")}
                             leave={() => props.updateModal(`Выход`,`Хотите выйти из группы "${group.name}"?`,leave,"action")}
                             delete={() => props.updateModal(`Удаление`,`Вы действительно хотите удалить группу "${group.name}"? Это безвозвратное действие!`,deleteGroup,"action")}
