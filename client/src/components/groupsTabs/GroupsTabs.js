@@ -25,11 +25,7 @@ export default function Tabs(props) {
         {
             menuItem:
                 {key: 'invite', icon: 'linkify', content: 'Код приглашения'},
-            render: () => <InviteTab 
-                                groupId={props.group.id}
-                                inviteCode={props.group.inviteCode} 
-                                token={props.token} 
-                          />
+            render: () => <InviteTab groupId={props.group.id} inviteCode={props.group.inviteCode} token={props.token} />
         }
     ];
 
@@ -38,6 +34,6 @@ export default function Tabs(props) {
     }
 
     return (
-        <Tab menu={{secondary: true, pointing: true}} panes={panes} />
+        <Tab menu={{secondary: true, pointing: true}} panes={panes}/>
     );
 }

@@ -17,17 +17,21 @@ function UsersRows(props) {
     const [usersRows, setUsersRows] = useState([]);
     const [loading, setLoading] = useState(false);
     const [userLoading, setUserLoading] = useState([]);
+    const [totalUserRole, setTotalUserRole] = useState('');
 
     useEffect(() => {
         setUsers(props.group.users);
+        props.group.users.forEach(user => {
+            if (JSON.parse(localStorage.user).login === user.login)
+                setTotalUserRole(user.role);
+        });
     }, [props.group]);
-
 
     useEffect(() => {
         setUsersRows(
             users.map((user) =>
-                <div className="ui segment" key={user.id}>
-                    <div className={`content ${userLoading.toString().indexOf(user.id) > -1 ? 'hidden' : ''}`}>
+                <div className="ui segment userSegment" key={user.id}>
+                    <div className={`contentRow ${userLoading.toString().indexOf(user.id) > -1 ? 'hidden' : ''}`}>
                         <div className="userName">
                             <h2 className="">{user.firstName} {user.lastName}</h2>
                             <div className="">{user.login}</div>
@@ -40,6 +44,8 @@ function UsersRows(props) {
                                     groupId={props.group.id}
                                     token={props.token}
 
+                                    totalUserRole={totalUserRole}
+
                                     addLoadingUser={handlerAddLoadingUser}
                                     deleteLoadingUser={handlerDeleteLoadingUser}
                                 />
@@ -51,6 +57,8 @@ function UsersRows(props) {
                                 user={user}
                                 groupId={props.group.id}
                                 users={props.group.users}
+
+                                totalUserRole={totalUserRole}
 
                                 loaderChange={handlerLoaderChange}
                                 usersChange={handlerUsersChange}
@@ -65,15 +73,15 @@ function UsersRows(props) {
         );
     }, [users, userLoading]);
 
-    const userIsLoading = (id) => {
-        if (typeof userLoading === 'object')
-            userLoading.forEach(obj => {
-                if (obj.id === id)
-                    return true
-            });
-        else
-            return false;
-    }
+    // const userIsLoading = (id) => {
+    //     if (typeof userLoading === 'object')
+    //         userLoading.forEach(obj => {
+    //             if (obj.id === id)
+    //                 return true
+    //         });
+    //     else
+    //         return false;
+    // }
 
     const handlerDeleteLoadingUser = (id) => {
 

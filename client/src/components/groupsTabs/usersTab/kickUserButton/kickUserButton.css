@@ -2,6 +2,14 @@
     color: red;
 }
 
+.userKickButton {
+    display: flex;
+    justify-content: center;
+    width: 40px;
+    font-size: 30px;
+}
+
 .kickButton:hover {
     color: darkred;
 }
+

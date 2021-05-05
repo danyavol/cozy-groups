@@ -27,17 +27,33 @@ export default function KickUserButton(props) {
     }
 
 
-    if (props.user.role !== "owner") {
-        return (
-            <h2
-                onClick={userKick}
-            >
-                <i className="kickButton user times icon" ></i>
-            </h2>
-        );
-    } else {
-        return (
-            <div></div>
-        );
+    switch (props.totalUserRole) {
+        case "owner":
+            switch (props.user.role) {
+                case "owner":
+                    return <div></div>
+                default:
+                    return (
+                        <div className="userKickButton" onClick={userKick}>
+                            <i className="kickButton user times icon" ></i>
+                        </div>
+                    );
+            }
+        case "admin":
+            switch (props.user.role) {
+                case "owner":
+                    return <div></div>
+                case "admin":
+                    return <div></div>
+                default:
+                    return (
+                        <div className="userKickButton" onClick={userKick}>
+                            <i className="kickButton user times icon" ></i>
+                        </div>
+                    );
+            }
+        default:
+            console.log(props.totalUserRole);
+            return <div></div>
     }
 }
