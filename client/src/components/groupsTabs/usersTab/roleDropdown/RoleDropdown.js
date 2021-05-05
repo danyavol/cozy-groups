@@ -9,6 +9,7 @@ export default function RoleDropdown(props) {
             key: "admin",
             text: "Admin",
             value: "admin",
+            color: "red"
         },
         {
             key: "editor",
@@ -55,6 +56,11 @@ export default function RoleDropdown(props) {
         });
     }
 
+    const renderLabel = (option) => ({
+        color: option.color,
+        content: option.text
+    });
+
     switch (props.totalUserRole) {
         case "owner":
             switch (props.role) {
@@ -64,9 +70,11 @@ export default function RoleDropdown(props) {
                     return (
                         <Dropdown
                             inline
+
                             options={rolesForOwner}
                             defaultValue={currentRole}
                             onChange={handleChangeRole}
+                            renderLabel={renderLabel}
                         />
                     );
             }

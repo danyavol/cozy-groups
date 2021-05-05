@@ -9,6 +9,10 @@ table h2 {
 .userSegment {
     display: flex;
     justify-content: flex-start;
+
+}
+
+.userSegmentRow {
     height: 100px;
 }
 
@@ -21,7 +25,6 @@ table h2 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0;
 }
 
 .userName {
