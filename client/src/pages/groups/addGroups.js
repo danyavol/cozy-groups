@@ -17,6 +17,9 @@ class addGroups extends Component {
 
             inviteCode : '',
             groupName : '',
+
+            groupNameError:null,
+            inviteCodeError:null,
             
             globalErrorTitle: '',
             globalError: '',
@@ -28,6 +31,7 @@ class addGroups extends Component {
         this.handleGroupNameChange = this.handleGroupNameChange.bind(this);
         this.handleInviteCodeChange = this.handleInviteCodeChange.bind(this);
         this.hideGlobalError = this.hideGlobalError.bind(this);
+        this.validateField = this.validateField.bind(this);
     }
 
     componentDidMount() {
@@ -50,14 +54,13 @@ class addGroups extends Component {
                         <div className="middle aligned row">
 
 
-
                             <div className="column">
                                 <div className="ui icon header">
-                                <FontAwesomeIcon icon={faDoorOpen} size='4x' /><br/>
-                                <p>Присоединиться</p> 
+                                    <FontAwesomeIcon  icon={faDoorOpen} size='4x' /><br/>
                                 </div>
+                                <p className="header-text" data-position="top center" data-tooltip="Код приглашения состоит из 6 символов.">Присоединиться</p>
                                 <div className="ui search">
-                                    <div className="ui icon input">
+                                    <div className={`ui icon input ${this.state.inviteCodeError ? 'error' : ''}`}>
                                         <input 
                                             name = "invite-code"
                                             className="prompt" 
@@ -66,28 +69,31 @@ class addGroups extends Component {
                                             value = {this.state.inviteCode} 
                                             onChange = {this.handleInviteCodeChange} 
                                         />
-                                        <i className="plug icon"></i>
+                                        <i className={`plug icon ${this.state.inviteCodeError === 'empty' || this.state.inviteCodeError === 'regExp' ? 'red' : ''}`}></i>
                                     </div>
-                                    <div className="results"></div>
                                 </div>
+                                <div className="ui hidden divider"></div>
+                                <div className={`ui basic red pointing prompt label ${this.state.inviteCodeError === 'empty' ? 'visible' : 'hidden'}`}>Введите код приглашения</div>
+                                <div className={`ui basic red pointing prompt label ${this.state.inviteCodeError === 'regExp' ? 'visible' : 'hidden'}`}>Неверный формат кода</div>
                                 <div className="ui hidden divider"></div>
                                 <div className = "margin">
                                     <div onClick={this.joinGroup}
                                         className={`ui primary button
                                             ${this.state.loadingJoin ? 'loading disabled' : ''} 
-                                            ${this.state.loadingCreate ? 'disabled' : ''}`}>Присоединиться 
+                                            ${this.state.loadingCreate ? 'disabled' : ''}
+                                            ${this.state.inviteCodeError === 'empty' || this.state.inviteCodeError === 'regExp' ? 'disabled' : ''}`}>Присоединиться 
                                     </div>
                                 </div>
                             </div>
 
 
-
                             <div className="column">
                                 <div className="ui icon header">
-                                <FontAwesomeIcon icon={faPlusSquare} size='4x' /><br/> Создать группу 
+                                    <FontAwesomeIcon icon={faPlusSquare} size='4x' /><br/>
                                 </div>
+                                <p className="header-text" data-position="top center" data-tooltip="Название группы должно быть больше 3 символов.">Создать группу</p>
                                 <div className="ui search">
-                                    <div className="ui icon input">
+                                    <div className={` ui icon input ${this.state.groupNameError ? 'error' : ''}`}>
                                         <input 
                                             name = "group-name"
                                             className="prompt" 
@@ -96,22 +102,24 @@ class addGroups extends Component {
                                             value = {this.state.groupName} 
                                             onChange = {this.handleGroupNameChange} 
                                         />
-                                        <i className="keyboard icon"></i>
+                                        <i className={`keyboard icon ${this.state.groupNameError === 'empty' || this.state.groupNameError === 'regExp' ? 'red' : ''}`}></i>
                                     </div>
-                                    <div className="results"></div>
                                 </div>
+                                <div className="ui hidden divider"></div>
+                                <div className={`ui basic red pointing prompt label ${this.state.groupNameError === 'empty' ? 'visible' : 'hidden'}`}>Введите название группы</div>
+                                <div className={`ui basic red pointing prompt label ${this.state.groupNameError === 'regExp' ? 'visible' : 'hidden'}`}>Неверный формат названия</div>
                                 <div className="ui hidden divider"></div>
                                 <div className = "margin">
                                     <div 
                                         onClick={this.createGroup} 
                                         className={`ui primary button 
                                             ${this.state.loadingCreate ? 'loading disabled' : ''} 
-                                            ${this.state.loadingJoin ? 'disabled' : ''}`}>Создать 
+                                            ${this.state.loadingJoin ? 'disabled' : ''}
+                                            ${this.state.groupNameError === 'empty' || this.state.groupNameError === 'regExp' ? 'disabled' : ''}`}>Создать 
                                     </div>
                                 </div>
                             </div>
                         </div>
-
 
 
                     </div>
@@ -194,13 +202,45 @@ class addGroups extends Component {
         })
     }
 
+    validateField(fieldName,value) {
+        switch (fieldName) {
+            case "inviteCode":
+                if(!value) {
+                    this.setState({inviteCodeError : 'empty'});
+                    return false;
+                } 
+                else if((value.length < 6 || value.length > 6)) {
+                    this.setState({inviteCodeError : 'regExp'});
+                    return false;
+                }
+                else {
+                    this.setState({inviteCodeError : null});
+                    return true;
+                }
+            case "groupName":
+                if(!value) {
+                    this.setState({groupNameError : 'empty'});
+                    return false;
+                } 
+                else if(!(value.length > 3 && value.length < 50)) {
+                    this.setState({groupNameError : 'regExp'});
+                    return false;
+                }
+                else {
+                    this.setState({groupNameError : null});
+                    return true;
+                }
+        } 
+    }
+
     handleInviteCodeChange(e) {
-        this.setState({inviteCode : e.target.value})
+        this.setState({inviteCode : e.target.value},() => this.validateField("inviteCode", e.target.value))
     }
 
 
     handleGroupNameChange(e) {
-        this.setState({groupName : e.target.value})
+        this.setState({groupName : e.target.value},() => this.validateField("groupName", e.target.value));
+        
     }
 }
 
