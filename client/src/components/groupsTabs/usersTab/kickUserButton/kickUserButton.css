@@ -1,15 +1,15 @@
 .kickButton {
-    color: red;
+    color: var(--error-color);
+    cursor: pointer;
 }
 
 .userKickButton {
     display: flex;
     justify-content: center;
     width: 40px;
-    font-size: 30px;
 }
 
 .kickButton:hover {
-    color: darkred;
+    color: var(--error-color-hover);
 }
 
