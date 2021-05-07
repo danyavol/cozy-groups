@@ -34,6 +34,11 @@ function GroupHooks(props) {
     });
 
     useEffect(() => {
+        if(localStorage.getItem('token') === null) {
+            props.updateMainModal("Ошибка","Нет доступа к группе!","error");
+            props.deleteToken(null);
+            props.history.push("/");  
+        }
         if (props.token !== null) {
             console.log("token: " + props.token);
             setLoading(true);
@@ -54,9 +59,10 @@ function GroupHooks(props) {
                     }
                 })
                 .catch(err => {
-                    console.log(err);
+                    props.updateMainModal("Ошибка",err.response.data.message,"error")
+                    props.history.push("/groups");  
                 });
-        }
+        } 
     }, [props.token, props.match.params.id]);
 
     const deleteGroup = () => {

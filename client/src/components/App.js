@@ -204,10 +204,17 @@ class App extends Component {
     }
 
     deleteToken(error) {
-        if(error.response.status === 401 || error.response.status === undefined) {
+        if(error === null) {
             localStorage.removeItem('token');
             this.clearGroups();
             this.updateToken(null);
+        }
+        else {
+            if(error.response.status === 401 || error.response.status === undefined) {
+                localStorage.removeItem('token');
+                this.clearGroups();
+                this.updateToken(null);
+            }
         }
     }
 
