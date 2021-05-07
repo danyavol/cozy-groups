@@ -29,27 +29,25 @@ function UsersRows(props) {
     useEffect(() => {
         setUsersRows(
             users.map((user) =>
-                <div key={user.id} className="ui segment userSegmentRow ">
-                    <div className={`userSegment ${userLoading.toString().indexOf(user.id) > -1 ? 'hidden' : ''}`}>
-                        <div className={`contentRow `}>
+                <div key={user.id} className="ui segment">
+                    <div className="userSegmentRow">
+                        <div className={`userSegment ${userLoading.toString().indexOf(user.id) > -1 ? 'hidden' : ''}`}>
                             <div className="userName">
-                                <h2>{user.firstName} {user.lastName}</h2>
-                                <div>{user.login}</div>
+                                <h2 className="fullName">{user.firstName} {user.lastName}</h2>
+                                <h3 className="login">{user.login}</h3>
                             </div>
                             <div className="userRole">
-                                <h2>
-                                    <RoleDropdown
-                                        role={user.role}
-                                        id={user.id}
-                                        groupId={props.group.id}
-                                        token={props.token}
+                                <RoleDropdown
+                                    role={user.role}
+                                    id={user.id}
+                                    groupId={props.group.id}
+                                    token={props.token}
 
-                                        totalUserRole={totalUserRole}
+                                    totalUserRole={totalUserRole}
 
-                                        addLoadingUser={handlerAddLoadingUser}
-                                        deleteLoadingUser={handlerDeleteLoadingUser}
-                                    />
-                                </h2>
+                                    addLoadingUser={handlerAddLoadingUser}
+                                    deleteLoadingUser={handlerDeleteLoadingUser}
+                                />
                             </div>
                             <div className="userKick">
                                 <KickUserButton
@@ -66,12 +64,11 @@ function UsersRows(props) {
                                 />
                             </div>
                         </div>
-                    </div>
-                    <div className={userLoading.toString().indexOf(user.id) > -1 ? '' : 'hidden'}>
-                        <UserLoader />
+                        <div className={userLoading.toString().indexOf(user.id) > -1 ? '' : 'hidden'}>
+                            <UserLoader />
+                        </div>
                     </div>
                 </div>
-
             )
         );
     }, [users, userLoading]);

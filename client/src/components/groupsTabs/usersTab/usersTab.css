@@ -4,42 +4,55 @@ table h2 {
 }
 
 .hidden {
-    display: none;
-}
-.userSegment {
-    display: flex;
-    justify-content: flex-start;
-
+    display: none !important;
 }
 
 .userSegmentRow {
-    height: 100px;
+    padding: 0 40px;
+    min-height: 51px;
 }
 
-.row {
-    display: flex;
-    flex-direction: column;
-}
-
-.contentRow {
+.userSegment {
     display: flex;
     justify-content: space-between;
-    align-items: center;
 }
 
 .userName {
-    width: 400px;
+    flex-grow: 1;
+}
+
+.userName .fullName {
+    margin: 0;
+    font-size: 20px;
+}
+
+.userName .login {
+    margin: 5px 0 0 0;
+    font-size: 16px !important;
+    font-weight: 400 !important;
 }
 
 .userRole {
+    width: 110px;
+    font-size: 20px;
+    font-weight: bold;
     display: flex;
-    justify-content: flex-start;
-    margin-left: 300px;
-    width: 300px;
-
+    align-items: center;
 }
 
 .userKick {
-    margin-right: 50px;
-    margin-left: 150px;
+    width: 40px;
+    margin-left: 30%;
+    display: flex;
+    align-items: center;
+}
+
+@media (max-width: 1100px) {
+    .userSegmentRow {
+        padding: 0;
+    }
+    .userKick {
+        margin-left: 40px;
+        margin-right: 0;
+    }
 }

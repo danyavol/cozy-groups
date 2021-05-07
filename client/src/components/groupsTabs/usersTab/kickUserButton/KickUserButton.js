@@ -35,7 +35,7 @@ export default function KickUserButton(props) {
                 default:
                     return (
                         <div className="userKickButton" onClick={userKick}>
-                            <i className="kickButton user times icon" ></i>
+                            <i className="kickButton user times icon big" ></i>
                         </div>
                     );
             }
@@ -48,7 +48,7 @@ export default function KickUserButton(props) {
                 default:
                     return (
                         <div className="userKickButton" onClick={userKick}>
-                            <i className="kickButton user times icon" ></i>
+                            <i className="kickButton user times icon big" ></i>
                         </div>
                     );
             }

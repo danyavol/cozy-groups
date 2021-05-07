@@ -1,6 +1,7 @@
 import {Dropdown} from "semantic-ui-react";
 import React, {useState} from "react";
 import axios from "axios";
+import './roleDropdown.css';
 
 export default function RoleDropdown(props) {
     const [currentRole, setCurrentRole] = useState(props.role);
@@ -9,37 +10,46 @@ export default function RoleDropdown(props) {
             key: "admin",
             text: "Admin",
             value: "admin",
-            color: "red"
+            className: "role-admin"
         },
         {
             key: "editor",
             text: "Editor",
-            value: "editor"
+            value: "editor",
+            className: "role-editor"
         },
         {
             key: "member",
             text: "Member",
-            value: "member"
+            value: "member",
+            className: "role-member"
         }
     ];
     const rolesForAdmin = [
         {
             key: "editor",
             text: "Editor",
-            value: "editor"
+            value: "editor",
+            className: "role-editor"
         },
         {
             key: "member",
             text: "Member",
-            value: "member"
+            value: "member",
+            className: "role-member"
         }
     ];
 
-    const handleChangeRole = (value) => {
-        console.log(value);
+    const handleChangeRole = (event) => {
+        const newRole = event.target.innerText.toLowerCase();
+        const selectedElem = event.target.classList.contains('item') ? event.target : event.target.parentNode;
+
+        selectedElem.classList.remove('role-' + currentRole);
+        selectedElem.classList.add('role-' + newRole);
+        setCurrentRole(newRole);
+
         props.addLoadingUser(props.id);
-        let data = {groupId : props.groupId, userId : props.id, newRole : value.target.innerText.toLowerCase()}
-        console.log(data);
+        let data = {groupId : props.groupId, userId : props.id, newRole : newRole}
         axios.post('http://localhost:3080/groups/edit-role', data, {
            headers: {
                'Authorization' : props.token
@@ -65,14 +75,14 @@ export default function RoleDropdown(props) {
         case "owner":
             switch (props.role) {
                 case "owner":
-                    return <div>Owner</div>
+                    return <div className="role-owner">Owner</div>
                 default:
                     return (
                         <Dropdown
                             inline
-
                             options={rolesForOwner}
                             defaultValue={currentRole}
+                            className={'role-' + currentRole}
                             onChange={handleChangeRole}
                             renderLabel={renderLabel}
                         />
@@ -81,15 +91,16 @@ export default function RoleDropdown(props) {
         case "admin":
             switch (props.role) {
                 case "owner":
-                    return <div>Owner</div>
+                    return <div className="role-owner">Owner</div>
                 case "admin":
-                    return <div>Admin</div>
+                    return <div className="role-admin">Admin</div>
                 default:
                     return (
                         <Dropdown
                             inline
                             options={rolesForAdmin}
                             defaultValue={currentRole}
+                            className={'role-' + currentRole}
                             onChange={handleChangeRole}
                         />
                     );
@@ -97,13 +108,13 @@ export default function RoleDropdown(props) {
         default:
             switch (props.role) {
                 case "owner":
-                    return <div>Owner</div>
+                    return <div className="role-owner">Owner</div>
                 case "admin":
-                    return <div>Admin</div>
+                    return <div className="role-admin">Admin</div>
                 case "editor":
-                    return <div>Editor</div>
+                    return <div className="role-editor">Editor</div>
                 case "member":
-                    return <div>Member</div>
+                    return <div className="role-member">Member</div>
             }
     }
 }
