@@ -9,6 +9,7 @@ export default withRouter(function Modal(props) {
     
     const [inputModal,setInputModal] = useState("");
     const [inputErrorModal,setInputErrorModal] = useState(null);
+    const [inputErrorTextModal,setInputErrorTextModal] = useState('');
 
 
     const timeout = (modal) => {
@@ -26,16 +27,24 @@ export default withRouter(function Modal(props) {
     }
 
     const validateField = (value) => {
-        if (!value) {
+        if(!value) {
             setInputErrorModal('empty');
+            setInputErrorTextModal('Введите название!');
             return false;
         } 
-        else if (!(value.length > 3 && value.length < 50)) {
+        else if(!(value.length > 3 && value.length < 50)) {
+            if(value.length < 4) {
+                setInputErrorTextModal('Длинна не менее 4 символов!');
+            }
+            if(value.length > 50) {
+                setInputErrorTextModal('Длинна не более 50 символов!')
+            }
             setInputErrorModal('reqExp');
             return false;
-        } 
+        }
         else {
             setInputErrorModal('');
+            setInputErrorTextModal('');
             return true;
         }
     }
@@ -90,7 +99,7 @@ export default withRouter(function Modal(props) {
                             />
                             <i className="pencil alternate icon"></i>
                         </div>
-                        <div className={`ui basic red pointing prompt label ${inputErrorModal === 'reqExp' || inputErrorModal ==='empty' ? 'visible':'hidden'}`}>Неверный формат названия</div>
+                        <div className={`ui basic red pointing prompt label ${inputErrorModal === 'reqExp' || inputErrorModal ==='empty' ? 'visible':'hidden'}`}>{inputErrorTextModal}</div>
                     </div>
                     <div className="actions">
                         <div onClick={() => {props.updateVisible(); setInputModal(""); setInputErrorModal(null)}} className="ui black deny button">Отменить</div>

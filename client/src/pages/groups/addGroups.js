@@ -20,6 +20,9 @@ class addGroups extends Component {
 
             groupNameError:null,
             inviteCodeError:null,
+
+            groupNameErrorText:'',
+            inviteCodeErrorText:'',
             
             globalErrorTitle: '',
             globalError: '',
@@ -73,8 +76,7 @@ class addGroups extends Component {
                                     </div>
                                 </div>
                                 <div className="ui hidden divider"></div>
-                                <div className={`ui basic red pointing prompt label ${this.state.inviteCodeError === 'empty' ? 'visible' : 'hidden'}`}>Введите код приглашения</div>
-                                <div className={`ui basic red pointing prompt label ${this.state.inviteCodeError === 'regExp' ? 'visible' : 'hidden'}`}>Неверный формат кода</div>
+                                <div className={`ui basic red pointing prompt label ${this.state.inviteCodeError === 'regExp' || this.state.inviteCodeError === 'empty' ? 'visible' : 'hidden'}`}>{this.state.inviteCodeErrorText}</div>
                                 <div className="ui hidden divider"></div>
                                 <div className = "margin">
                                     <div onClick={this.joinGroup}
@@ -106,8 +108,7 @@ class addGroups extends Component {
                                     </div>
                                 </div>
                                 <div className="ui hidden divider"></div>
-                                <div className={`ui basic red pointing prompt label ${this.state.groupNameError === 'empty' ? 'visible' : 'hidden'}`}>Введите название группы</div>
-                                <div className={`ui basic red pointing prompt label ${this.state.groupNameError === 'regExp' ? 'visible' : 'hidden'}`}>Неверный формат названия</div>
+                                <div className={`ui basic red pointing prompt label ${this.state.groupNameError === 'regExp' || this.state.groupNameError === 'empty' ? 'visible' : 'hidden'}`}>{this.state.groupNameErrorText}</div>
                                 <div className="ui hidden divider"></div>
                                 <div className = "margin">
                                     <div 
@@ -207,26 +208,37 @@ class addGroups extends Component {
             case "inviteCode":
                 if(!value) {
                     this.setState({inviteCodeError : 'empty'});
+                    this.setState({inviteCodeErrorText : 'Введите код!'})
                     return false;
                 } 
                 else if((value.length < 6 || value.length > 6)) {
+                    this.setState({inviteCodeErrorText : 'Код состоит из 6 символов!'})
                     this.setState({inviteCodeError : 'regExp'});
                     return false;
                 }
                 else {
                     this.setState({inviteCodeError : null});
+                    this.setState({inviteCodeErrorText : ''});
                     return true;
                 }
             case "groupName":
                 if(!value) {
                     this.setState({groupNameError : 'empty'});
+                    this.setState({groupNameErrorText : 'Введите название!'})
                     return false;
                 } 
                 else if(!(value.length > 3 && value.length < 50)) {
+                    if(value.length < 4) {
+                        this.setState({groupNameErrorText : 'Длинна не менее 4 символов!'})
+                    }
+                    if(value.length > 50) {
+                        this.setState({groupNameErrorText : 'Длинна не более 50 символов!'})
+                    }
                     this.setState({groupNameError : 'regExp'});
                     return false;
                 }
                 else {
+                    this.setState({groupNameErrorText : ''})
                     this.setState({groupNameError : null});
                     return true;
                 }
