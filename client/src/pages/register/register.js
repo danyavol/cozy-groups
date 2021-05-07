@@ -65,7 +65,7 @@ class Register extends Component {
 
                     <div className={`field required ${this.state.loginError ? 'error' : ''}`}>
                         <label className="promt">
-                            <div data-position="top left" data-tooltip="Логин от 2 до 15 символов на английском языке.">
+                            <div data-position="top left">
                                 Логин
                             </div>
                         </label>
@@ -82,7 +82,7 @@ class Register extends Component {
                     <div className="two fields">
                         <div className={`field required ${this.state.firstNameError ? 'error' : ''}`}>
                             <label className="promt">
-                                <div data-position="top left" data-tooltip="Имя и фамилия на русском\английском языке до 20 символов.">
+                                <div data-position="top left">
                                     Имя
                                 </div>
                             </label>
@@ -97,7 +97,7 @@ class Register extends Component {
                         </div>
                         <div className={`field ${this.state.lastNameError ? 'error' : ''}`}>
                             <label className="promt">
-                                <div data-position="top left" data-tooltip="Имя и фамилия на русском\английском языке до 20 символов.">
+                                <div data-position="top left">
                                     Фамилия
                                 </div>
                             </label>
@@ -114,7 +114,7 @@ class Register extends Component {
                     
                     <div className="field required">
                         <label className="promt">
-                            <div data-position="top left" data-tooltip="Пароль должен быть длинной не менее 4 символов, содержать буквы, минимум 1 заглавную букву, и цифры">
+                            <div data-position="top left">
                                 Пароль
                             </div>
                         </label>
@@ -242,10 +242,10 @@ class Register extends Component {
                   
                    
                     if(value.length < 3) {
-                        this.setState({loginErrorText : 'Логин должен быть больше 2 символов!'})
+                        this.setState({loginErrorText : 'Минимальная длина логина 2 символа!'})
                     }
                     if(value.length > 15) {
-                        this.setState({loginErrorText : 'Логин должен быть меньше 15 символов!'})
+                        this.setState({loginErrorText : 'Максимальная длина логина 15 символов!'})
                     }
                     if(rus.test(value)) {
                         this.setState({loginErrorText : 'Логин не должен содержать русских букв!'})
@@ -267,10 +267,13 @@ class Register extends Component {
                 } 
                 else if (!this.state.nameRegex.test(value)) {
                     if(value.length < 3) {
-                        this.setState({firstNameErrorText : 'Имя должно быть больше 2 символов!'})
+                        this.setState({firstNameErrorText : 'Минимальная длина имени 2 символа!'})
                     }
-                    if(value.length > 20) {
-                        this.setState({firstNameErrorText : 'Имя должно быть меньше 20 символов!'})
+                    else if(value.length > 20) {
+                        this.setState({firstNameErrorText : 'Максимальная длина имени 20 символов!'})
+                    }
+                    else {
+                        this.setState({firstNameErrorText : 'Имя должно состоять только из русских или только из английский букв!'})
                     }
                     this.setState({firstNameError: 'regExp'});
                     return false;
@@ -283,10 +286,13 @@ class Register extends Component {
             case 'lastName':
                 if (value && !this.state.nameRegex.test(value)) {
                     if(value.length < 3) {
-                        this.setState({lastNameErrorText : 'Фамилия должна быть больше 2 символов!'})
+                        this.setState({lastNameErrorText : 'Минимальная длина фамилии 2 символа!'})
                     }
-                    if(value.length > 20) {
-                        this.setState({lastNameErrorText : 'Фамилия должна быть меньше 20 символов!'})
+                    else if(value.length > 20) {
+                        this.setState({lastNameErrorText : 'Максимальная длина фамилии 20 символов!'})
+                    }
+                    else {
+                        this.setState({lastNameErrorText : 'Фамилия должна состоять только из русских или только из английский букв!'})
                     }
                     this.setState({lastNameError: 'regExp'});
                     return false;
@@ -303,12 +309,12 @@ class Register extends Component {
                     return false;
                 } 
                 else if (!this.state.passRegex.test(value)) {
-                    this.setState({passwordErrorText : 'Пароль должен содержать буквы, минимум 1 заглавную букву, и цифры'})
+                    this.setState({passwordErrorText : 'Пароль должен содержать маленькие буквы, большие буквы и цифры!'})
                     if(rus.test(value)) {
                         this.setState({passwordErrorText : 'Пароль не должен содержать русских букв!'})
                     }
                     if(value.length < 4) {
-                        this.setState({passwordErrorText : 'Пароль должен быть длиннее 4 символов!'})
+                        this.setState({passwordErrorText : 'Минимальная длина пароля 4 символа!'})
                     }
                     this.setState({passwordError: 'regExp'});
                     return false;
