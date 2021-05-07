@@ -7,8 +7,8 @@ class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            login:'',
-            password:'',
+            login: '',
+            password: '',
 
             loginError: '',
             passwordError: '',
@@ -27,14 +27,14 @@ class Login extends Component {
         this.props.history.push(path)
     }
 
-    componentDidMount(){
+    componentDidMount() {
         document.title = "Авторизация";
     }
 
     render() {
         return (
             <Fragment>
-                <form className="ui form attached segment padded container text" onSubmit = {this.handleSubmit} autoComplete="off">
+                <form className="ui form attached segment padded container text" onSubmit={this.handleSubmit} autoComplete="off">
                     <h2 className="ui header">Авторизация</h2>
 
                     <div className={`ui negative message ${this.state.globalError ? '' : 'hidden'}`}>
@@ -73,7 +73,7 @@ class Login extends Component {
                         disabled={this.state.loading ? 'disabled' : ''}
                     >Войти</button>
 
-    
+
                 </form>
                 <div className="ui bottom attached warning message container text">
                     <i className="icon help"></i>
@@ -116,7 +116,7 @@ class Login extends Component {
                 if (response.data.ok) {
                     localStorage.setItem('token', response.data.token);
 
-                    localStorage.setItem('user',JSON.stringify(response.data.user))
+                    localStorage.setItem('user', JSON.stringify(response.data.user))
 
                     this.props.updateUser(response.data.user);
 
@@ -130,13 +130,13 @@ class Login extends Component {
 
                 if (err.response) errorText = err.response.data.message;
                 else errorText = 'Ошибка соединения с сервером';
-                
+
                 this.setState({
                     globalErrorTitle: 'Ошибка',
                     globalError: errorText,
                     loading: false
                 });
-                
+
             });
 
 
@@ -144,7 +144,7 @@ class Login extends Component {
 
     handleInputChange(e) {
         this.setState(
-            {[e.target.name]: e.target.value},
+            { [e.target.name]: e.target.value },
             () => this.validateField(e.target.name, e.target.value)
         );
     }
@@ -153,22 +153,24 @@ class Login extends Component {
         switch (fieldName) {
             case 'login':
                 if (!value) {
-                    this.setState({loginError: 'empty'});
+                    this.setState({ loginError: 'empty' });
                     return false;
                 }
                 else {
-                    this.setState({loginError: null});
+                    this.setState({ loginError: null });
                     return true;
                 }
             case 'password':
                 if (!value) {
-                    this.setState({passwordError: 'empty'});
+                    this.setState({ passwordError: 'empty' });
                     return false;
                 }
                 else {
-                    this.setState({passwordError: null});
+                    this.setState({ passwordError: null });
                     return true;
                 }
+            default:
+                return true;
         }
     }
 }

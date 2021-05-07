@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
-import {Link, useRouteMatch, withRouter} from "react-router-dom";
+import React, { Component } from 'react';
+import { Link, useRouteMatch, withRouter } from "react-router-dom";
 
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faSignInAlt, faSignOutAlt, faUnlockAlt, faUserCog} from '@fortawesome/free-solid-svg-icons';
-import {faPlusSquare} from '@fortawesome/free-regular-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSignInAlt, faSignOutAlt, faUnlockAlt, faUserCog } from '@fortawesome/free-solid-svg-icons';
+import { faPlusSquare } from '@fortawesome/free-regular-svg-icons'
 import "./header.css";
 import axios from "axios";
 
@@ -30,8 +30,8 @@ class Header extends Component {
         this.props.updateToken(null)
         this.props.clearGroups();
         this.props.history.push("/")
-        axios.delete('http://localhost:3080/auth/logout',{
-            headers:{
+        axios.delete('http://localhost:3080/auth/logout', {
+            headers: {
                 'Authorization': this.state.token
             }
         });
@@ -63,7 +63,7 @@ class Header extends Component {
                         <div className="myGroups">
                             <HeaderGroups to="/groups" />
                             <GroupsList state={this.state} />
-                        </div> 
+                        </div>
                     </div>
                     <div className="menu-bottom">
                         <MenuLink
@@ -72,7 +72,7 @@ class Header extends Component {
                             icon={faUserCog}
                         />
                         <MenuLink
-                            click={() => this.props.updateModal('Выход','Вы действительно хотите выйти из аккаунта?',this.exit,'action')}
+                            click={() => this.props.updateModal('Выход', 'Вы действительно хотите выйти из аккаунта?', this.exit, 'action')}
                             label="Выйти"
                             icon={faSignOutAlt}
                         />
@@ -84,7 +84,6 @@ class Header extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         if (prevProps !== this.props) {
-            // console.log('did update');
             this.setState({
                 token: this.props.token,
                 loading: this.props.loading
@@ -92,12 +91,12 @@ class Header extends Component {
         }
 
         if (this.props.myGroups !== prevProps.myGroups) {
-            this.setState({myGroups: this.props.myGroups});
+            this.setState({ myGroups: this.props.myGroups });
         }
     }
 }
 
-function HeaderGroups({to, click}) {
+function HeaderGroups({ to, click }) {
     let match = useRouteMatch({
         path: to,
         exact: true
@@ -115,7 +114,7 @@ function GroupsList(props) {
     if (props.state.myGroups.length !== 0) {
         const listGroups = props.state.myGroups.map((group) =>
             <li key={group.id}>
-                <GroupsMenuLinks to={'/groups/' + group.id} label={group.name}/>
+                <GroupsMenuLinks to={'/groups/' + group.id} label={group.name} />
             </li>
         );
 
@@ -142,12 +141,12 @@ function MenuLink({ icon, label, to, click }) {
     return (
         <div className={`header-link ${match && to ? 'active' : ''}`}>
             <FontAwesomeIcon icon={icon} size='2x' />
-            <h4><Link onClick={click ? click : null} to={to}>{label}</Link></h4>
+            <h4><Link onClick={click ? click : null} to={to || ''}>{label}</Link></h4>
         </div>
     )
 }
 
-function GroupsMenuLinks({ label, to, click}) {
+function GroupsMenuLinks({ label, to, click }) {
     let match = useRouteMatch({
         path: to,
         exact: true

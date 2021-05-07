@@ -1,4 +1,4 @@
-import {Dropdown, Tab} from "semantic-ui-react";
+import { Dropdown, Tab } from "semantic-ui-react";
 import React from "react";
 
 export default function PostsTab(props) {
@@ -14,7 +14,7 @@ const CreatePostButton = () => {
     return (
         <div className="createPost">
             <Dropdown
-                icon={{name: "big plus", size: "huge"}}
+                icon={{ name: "plus", size: "huge" }}
                 className="icon"
                 direction="left"
             >

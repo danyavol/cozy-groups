@@ -16,8 +16,7 @@ export default function KickUserButton(props) {
                 userId: props.user.id
             }
         }).then(response => {
-            if(response.data.ok) {
-                console.log("Пользователь удален");
+            if (response.data.ok) {
                 props.usersChange(props.user.id);
                 props.changeUserLoading();
             }
@@ -53,7 +52,6 @@ export default function KickUserButton(props) {
                     );
             }
         default:
-            console.log(props.totalUserRole);
             return <div></div>
     }
 }

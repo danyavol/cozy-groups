@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import "./group.css"
 import axios from "axios";
 
@@ -25,7 +25,7 @@ function GroupHooks(props) {
     }, [group]);
 
     useEffect(() => {
-        if(title === undefined) {
+        if (title === undefined) {
             document.title = "Группа";
         }
         else {
@@ -34,13 +34,12 @@ function GroupHooks(props) {
     });
 
     useEffect(() => {
-        if(localStorage.getItem('token') === null) {
-            props.updateMainModal("Ошибка","Нет доступа к группе!","error");
+        if (localStorage.getItem('token') === null) {
+            props.updateMainModal("Ошибка", "Нет доступа к группе!", "error");
             props.deleteToken(null);
-            props.history.push("/");  
+            props.history.push("/");
         }
         if (props.token !== null) {
-            console.log("token: " + props.token);
             setLoading(true);
             setToken(props.token);
             axios.get('http://localhost:3080/groups/' + props.match.params.id, {
@@ -54,149 +53,142 @@ function GroupHooks(props) {
                         setGroup(response.data.group);
                         setLoading(false);
                         setRole(currentUser.role);
-                        console.log(role);
-                        console.log("token: " + token);
                     }
                 })
                 .catch(err => {
-                    props.updateMainModal("Ошибка",err.response.data.message,"error")
-                    props.history.push("/groups");  
+                    props.updateMainModal("Ошибка", err.response.data.message, "error")
+                    props.history.push("/groups");
                 });
-        } 
+        }
     }, [props.token, props.match.params.id]);
 
     const deleteGroup = () => {
         setLoading(true);
         setLoaderText("Удаление группы...");
         props.updateModal();
-        axios.delete('http://localhost:3080/groups/'+props.match.params.id,{
-            headers:{
+        axios.delete('http://localhost:3080/groups/' + props.match.params.id, {
+            headers: {
                 'Authorization': props.token
             }
         }).then(response => {
-            if(response.data.ok) {
+            if (response.data.ok) {
                 setLoading(false);
-                console.log('Вы удалили группу!');
                 props.updateDeleteGroups(props.match.params.id);
                 props.history.push("/");
             }
         })
-        .catch((err) => {
-            setLoading(false);
-            if (err.response) {
-                props.updateMainModal("Ошибка",err.response.data.message,"error");
-            }
-            else
-            {
-                props.updateMainModal("Ошибка",err.response.data.message,"error");
-                setTimeout(() => {
-                    props.history.push("/");
-                },3000);
-            }
-        });
+            .catch((err) => {
+                setLoading(false);
+                if (err.response) {
+                    props.updateMainModal("Ошибка", err.response.data.message, "error");
+                }
+                else {
+                    props.updateMainModal("Ошибка", err.response.data.message, "error");
+                    setTimeout(() => {
+                        props.history.push("/");
+                    }, 3000);
+                }
+            });
     };
 
     const leave = () => {
         setLoading(true);
         setLoaderText("Выход из группы...");
         props.updateModal();
-        let data = {groupId : group.id};
+        let data = { groupId: group.id };
         axios.post('http://localhost:3080/groups/leave', data, {
-            headers:{
-                'Authorization' : props.token
-            }
-        }).
-        then(response => {
-            if(response.data.ok) {
-                props.updateMainModal('Уведомление',"Вы вышли из группы!","notification")
-                props.updateDeleteGroups(props.match.params.id);
-                props.history.push("/");
+            headers: {
+                'Authorization': props.token
             }
         })
-        .catch((err) => {
-            setLoading(false);
-            if (err.response) {
-               props.updateMainModal("Ошибка",err.response.data.message,"error");
-            }
-            else
-            {
-                setTimeout(() => {
+            .then(response => {
+                if (response.data.ok) {
+                    props.updateMainModal('Уведомление', "Вы вышли из группы!", "notification")
+                    props.updateDeleteGroups(props.match.params.id);
                     props.history.push("/");
-                    props.close();
-            },3000);
-            }
-        })
+                }
+            })
+            .catch((err) => {
+                setLoading(false);
+                if (err.response) {
+                    props.updateMainModal("Ошибка", err.response.data.message, "error");
+                }
+                else {
+                    setTimeout(() => {
+                        props.history.push("/");
+                        props.close();
+                    }, 3000);
+                }
+            })
     };
 
     const transfer = (userId) => {
         setLoading(true);
         setLoaderText("Обновление владельца группы...");
         props.updateModal();
-        let data ={groupId : group.id, userId : userId }
-        axios.post('http://localhost:3080/groups/transfer-owner-rights',data, {
-            headers:{
+        let data = { groupId: group.id, userId: userId }
+        axios.post('http://localhost:3080/groups/transfer-owner-rights', data, {
+            headers: {
                 'Authorization': props.token
             }
-        }).
-        then(response => {
-            if(response.data.ok) {
+        })
+            .then(response => {
+                if (response.data.ok) {
+                    setLoading(false);
+                    setRole("admin")
+                    let newGroup = group;
+                    let newOwner = newGroup.users.indexOf(newGroup.users.find(user => user.id === userId));
+                    let oldOwner = newGroup.users.indexOf(newGroup.users.find(user => user.id === props.user.id));
+                    newGroup.users[newOwner].role = "owner";
+                    newGroup.users[oldOwner].role = "admin";
+                    setGroup(newGroup);
+                    props.updateMainModal('Уведомление', response.data.message, "notification")
+                }
+            })
+            .catch((err) => {
                 setLoading(false);
-                setRole("admin")
-                let newGroup = group;
-                let newOwner = newGroup.users.indexOf(newGroup.users.find(user => user.id === userId));
-                let oldOwner = newGroup.users.indexOf(newGroup.users.find(user => user.id === props.user.id));
-                newGroup.users[newOwner].role="owner";
-                newGroup.users[oldOwner].role="admin";
-                setGroup(newGroup);
-                props.updateMainModal('Уведомление',response.data.message,"notification")
-            }
-        })
-        .catch((err) => {
-            setLoading(false);
-            if (err.response) {
-               props.updateMainModal("Ошибка",err.response.data.message,"error");
-            }
-            else
-            {
-                setTimeout(() => {
-                    props.history.push("/");
-                    props.close();
-            },3000);
-            }
-        })
+                if (err.response) {
+                    props.updateMainModal("Ошибка", err.response.data.message, "error");
+                }
+                else {
+                    setTimeout(() => {
+                        props.history.push("/");
+                        props.close();
+                    }, 3000);
+                }
+            })
     }
 
     const change = (newName) => {
         setLoading(true);
         setLoaderText("Обновление названия группы...");
         props.updateModal();
-        let data ={groupId : group.id, groupName : newName}
-        axios.put('http://localhost:3080/groups/group-name',data, {
-            headers:{
+        let data = { groupId: group.id, groupName: newName }
+        axios.put('http://localhost:3080/groups/group-name', data, {
+            headers: {
                 'Authorization': props.token
             }
-        }).
-        then(response => {
-            if(response.data.ok) {
+        })
+            .then(response => {
+                if (response.data.ok) {
+                    setLoading(false);
+                    setTitle(newName);
+                    props.updateMainModal('Уведомление', response.data.message, "notification")
+                    props.updateGroup(props.match.params.id, newName);
+                }
+            })
+            .catch((err) => {
                 setLoading(false);
-                setTitle(newName);
-                props.updateMainModal('Уведомление',response.data.message,"notification")
-                props.updateGroup(props.match.params.id,newName);
-            }
-        })
-        .catch((err) => {
-            setLoading(false);
-            if (err.response) {
-               props.updateMainModal("Ошибка",err.response.data.message,"error");
-            }
-            else
-            {
-                setTimeout(() => {
-                    props.history.push("/");
-                    props.close();
-            },3000);
-            }
-        })
+                if (err.response) {
+                    props.updateMainModal("Ошибка", err.response.data.message, "error");
+                }
+                else {
+                    setTimeout(() => {
+                        props.history.push("/");
+                        props.close();
+                    }, 3000);
+                }
+            })
     }
 
     const handleUserChange = (newUsers) => {
@@ -213,10 +205,10 @@ function GroupHooks(props) {
                     <div className="buttons">
                         <SettingsDropdown
                             role={role}
-                            transfer={() => props.updateModal(`Передача прав владельца группы "${group.name}"`,`Выберите из списка пользователя для передачи прав`,transfer,"users",group)}
-                            change={() => props.updateModal(`Изменение названия группы`,`Введите новое название группы:`,change,"input")}
-                            leave={() => props.updateModal(`Выход`,`Хотите выйти из группы "${group.name}"?`,leave,"action")}
-                            delete={() => props.updateModal(`Удаление`,`Вы действительно хотите удалить группу "${group.name}"? Это безвозвратное действие!`,deleteGroup,"action")}
+                            transfer={() => props.updateModal(`Передача прав владельца группы "${group.name}"`, `Выберите из списка пользователя для передачи прав`, transfer, "users", group)}
+                            change={() => props.updateModal(`Изменение названия группы`, `Введите новое название группы:`, change, "input")}
+                            leave={() => props.updateModal(`Выход`, `Хотите выйти из группы "${group.name}"?`, leave, "action")}
+                            delete={() => props.updateModal(`Удаление`, `Вы действительно хотите удалить группу "${group.name}"? Это безвозвратное действие!`, deleteGroup, "action")}
                         />
                     </div>
                     <div>

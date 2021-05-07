@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { Fragment, useEffect, useState } from "react";
-import {CopyToClipboard} from "react-copy-to-clipboard/lib/Component";
+import { CopyToClipboard } from "react-copy-to-clipboard/lib/Component";
 import Loader from "../../components/loader/Loader";
 
 
@@ -9,18 +9,18 @@ export default function InviteTab(props) {
     const [copied, setCopied] = useState(false);
     const [loading, setLoading] = useState(false);
     useEffect(() => {
-      setInviteCode(props.inviteCode);   
-    },[props.inviteCode])
+        setInviteCode(props.inviteCode);
+    }, [props.inviteCode])
 
     const updateInviteCode = () => {
         setLoading(true);
-        let data = {groupId : props.groupId};
-        axios.put("http://localhost:3080/groups/invite-code", data,{
-            headers:{
+        let data = { groupId: props.groupId };
+        axios.put("http://localhost:3080/groups/invite-code", data, {
+            headers: {
                 'Authorization': props.token
             }
         }).then(response => {
-            if(response.data.ok) {
+            if (response.data.ok) {
                 setInviteCode(response.data.inviteCode);
                 setLoading(false);
             }
@@ -30,12 +30,12 @@ export default function InviteTab(props) {
     return (
         <Fragment>
             <Loader loading={loading} text="Получаем код..." />
-            <div  className="inviteCard" className={loading ? 'hidden' : ''}>
+            <div className={`inviteCard ${loading ? 'hidden' : ''}`}>
                 <div className="ui fluid centered card inviteCard">
                     <div className="content">
-                        <a className="center aligned header">Код приглашения</a>
+                        <span className="center aligned header">Код приглашения</span>
                         <div className="center aligned description">
-                            <div   id="inviteCode">
+                            <div id="inviteCode">
                                 <h1>{inviteCode}</h1>
                                 <CopyToClipboard
                                     text={inviteCode}
@@ -44,7 +44,7 @@ export default function InviteTab(props) {
                                     <h2><i className={`copy ${copied ? '' : 'disabled'} icon`}></i></h2>
                                 </CopyToClipboard>
                             </div>
-                            
+
                         </div>
                     </div>
                     <div className="center aligned extra content">
@@ -53,6 +53,6 @@ export default function InviteTab(props) {
                 </div>
             </div>
         </Fragment>
-        
+
     );
 }

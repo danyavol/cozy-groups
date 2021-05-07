@@ -1,5 +1,5 @@
-import {Dropdown} from "semantic-ui-react";
-import React, {useState} from "react";
+import { Dropdown } from "semantic-ui-react";
+import React, { useState } from "react";
 import axios from "axios";
 import './roleDropdown.css';
 
@@ -49,21 +49,20 @@ export default function RoleDropdown(props) {
         setCurrentRole(newRole);
 
         props.changeLoadingUser(props.id);
-        let data = {groupId : props.groupId, userId : props.id, newRole : newRole}
+        let data = { groupId: props.groupId, userId: props.id, newRole: newRole }
         axios.post('http://localhost:3080/groups/edit-role', data, {
-           headers: {
-               'Authorization' : props.token
-           }
-        }).
-        then(response => {
-            if (response.data.ok) {
-                console.log("Смена Роли");
-                props.changeLoadingUser();
+            headers: {
+                'Authorization': props.token
             }
-        }).
-        catch(error => {
-            console.log(error);
-        });
+        })
+            .then(response => {
+                if (response.data.ok) {
+                    props.changeLoadingUser();
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }
 
     const renderLabel = (option) => ({
@@ -91,51 +90,53 @@ export default function RoleDropdown(props) {
     //     }
     // }
     // else {
-        switch (props.totalUserRole) {
-            case "owner":
-                switch (props.role) {
-                    case "owner":
-                        return <div className="role-owner">Owner</div>
-                    default:
-                        return (
-                            <Dropdown
-                                inline
-                                options={rolesForOwner}
-                                defaultValue={currentRole}
-                                className={'role-' + currentRole}
-                                onChange={changeFunc}
-                                renderLabel={renderLabel}
-                            />
-                        );
-                }
-            case "admin":
-                switch (props.role) {
-                    case "owner":
-                        return <div className="role-owner">Owner</div>
-                    case "admin":
-                        return <div className="role-admin">Admin</div>
-                    default:
-                        return (
-                            <Dropdown
-                                inline
-                                options={rolesForAdmin}
-                                defaultValue={currentRole}
-                                className={'role-' + currentRole}
-                                onChange={handleChangeRole}
-                            />
-                        );
-                }
-            default:
-                switch (props.role) {
-                    case "owner":
-                        return <div className="role-owner">Owner</div>
-                    case "admin":
-                        return <div className="role-admin">Admin</div>
-                    case "editor":
-                        return <div className="role-editor">Editor</div>
-                    case "member":
-                        return <div className="role-member">Member</div>
-                }
-        }
+    switch (props.totalUserRole) {
+        case "owner":
+            switch (props.role) {
+                case "owner":
+                    return <div className="role-owner">Owner</div>
+                default:
+                    return (
+                        <Dropdown
+                            inline
+                            options={rolesForOwner}
+                            defaultValue={currentRole}
+                            className={'role-' + currentRole}
+                            onChange={changeFunc}
+                            renderLabel={renderLabel}
+                        />
+                    );
+            }
+        case "admin":
+            switch (props.role) {
+                case "owner":
+                    return <div className="role-owner">Owner</div>
+                case "admin":
+                    return <div className="role-admin">Admin</div>
+                default:
+                    return (
+                        <Dropdown
+                            inline
+                            options={rolesForAdmin}
+                            defaultValue={currentRole}
+                            className={'role-' + currentRole}
+                            onChange={handleChangeRole}
+                        />
+                    );
+            }
+        default:
+            switch (props.role) {
+                case "owner":
+                    return <div className="role-owner">Owner</div>
+                case "admin":
+                    return <div className="role-admin">Admin</div>
+                case "editor":
+                    return <div className="role-editor">Editor</div>
+                case "member":
+                    return <div className="role-member">Member</div>
+                default:
+                    return ''
+            }
+    }
     // }
 }

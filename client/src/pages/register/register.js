@@ -7,7 +7,7 @@ import "./register.css"
 
 class Register extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             passRegex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[\d\w\W]{4,}$/,
@@ -20,7 +20,7 @@ class Register extends Component {
             login: '',
             firstName: '',
             lastName: '',
-            password : '',
+            password: '',
             passwordConfirm: '',
 
             loginError: '',
@@ -54,7 +54,7 @@ class Register extends Component {
     render() {
         return (
             <Fragment>
-                <form onSubmit = {this.handleSubmit} className="ui form attached segment padded container text" autoComplete="off">
+                <form onSubmit={this.handleSubmit} className="ui form attached segment padded container text" autoComplete="off">
                     <h2 className="ui header">Регистрация</h2>
 
                     <div className={`ui negative message ${this.state.globalError ? '' : 'hidden'}`}>
@@ -78,7 +78,7 @@ class Register extends Component {
                         />
                         <div className={`ui basic red pointing prompt label ${this.state.loginError === 'regExp' || this.state.loginError === 'empty' ? 'visible' : 'hidden'}`}>{this.state.loginErrorText}</div>
                     </div>
-    
+
                     <div className="two fields">
                         <div className={`field required ${this.state.firstNameError ? 'error' : ''}`}>
                             <label className="promt">
@@ -90,8 +90,8 @@ class Register extends Component {
                                 type="text"
                                 name="firstName"
                                 placeholder="Введите имя"
-                                value = {this.state.firstName}
-                                onChange = {this.handleInputChange}
+                                value={this.state.firstName}
+                                onChange={this.handleInputChange}
                             />
                             <div className={`ui basic red pointing prompt label ${this.state.firstNameError === 'regExp' || this.state.firstNameError === 'empty' ? 'visible' : 'hidden'}`}>{this.state.firstNameErrorText}</div>
                         </div>
@@ -105,13 +105,13 @@ class Register extends Component {
                                 type="text"
                                 name="lastName"
                                 placeholder="Введите фамилию"
-                                value = {this.state.lastName}
-                                onChange = {this.handleInputChange}
+                                value={this.state.lastName}
+                                onChange={this.handleInputChange}
                             />
                             <div className={`ui basic red pointing prompt label ${this.state.lastNameError === 'regExp' ? 'visible' : 'hidden'}`}>{this.state.lastNameErrorText}</div>
                         </div>
                     </div>
-                    
+
                     <div className="field required">
                         <label className="promt">
                             <div data-position="top left">
@@ -124,8 +124,8 @@ class Register extends Component {
                                     type="password"
                                     name="password"
                                     placeholder="Введите пароль"
-                                    value = {this.state.password}
-                                    onChange = {this.handleInputChange}
+                                    value={this.state.password}
+                                    onChange={this.handleInputChange}
                                 />
                                 <div className={`ui basic red pointing prompt label ${this.state.passwordError === 'regExp' || this.state.passwordError === 'empty' ? 'visible' : 'hidden'}`}>{this.state.passwordErrorText}</div>
                             </div>
@@ -134,8 +134,8 @@ class Register extends Component {
                                     type="password"
                                     name="passwordConfirm"
                                     placeholder="Повторите пароль"
-                                    value = {this.state.passwordConfirm}
-                                    onChange = {this.handleInputChange}
+                                    value={this.state.passwordConfirm}
+                                    onChange={this.handleInputChange}
                                 />
                                 <div className={`ui basic red pointing prompt label ${this.state.passwordConfirmError === 'notEqual' || this.state.passwordConfirmError === 'empty' ? 'visible' : 'hidden'}`}>{this.state.passwordConfirmErrorText}</div>
                             </div>
@@ -165,7 +165,7 @@ class Register extends Component {
 
     handleInputChange(e) {
         this.setState(
-            {[e.target.name]: e.target.value}, 
+            { [e.target.name]: e.target.value },
             () => this.validateField(e.target.name, e.target.value)
         );
     }
@@ -187,163 +187,165 @@ class Register extends Component {
 
         this.setState({ loading: true });
 
-        this.setState({globalError : '', globalErrorTitle : ''});
+        this.setState({ globalError: '', globalErrorTitle: '' });
 
         let data = {
-            login : this.state.login,
-            firstName : this.state.firstName,
-            lastName : this.state.lastName,
-            password : this.state.password
+            login: this.state.login,
+            firstName: this.state.firstName,
+            lastName: this.state.lastName,
+            password: this.state.password
         }
 
         axios.post('http://localhost:3080/auth/register', data)
-        .then(response => {
-            this.setState({ loading: false });
+            .then(response => {
+                this.setState({ loading: false });
 
-            if (response.data.ok) {
-                localStorage.setItem('token', response.data.token);
+                if (response.data.ok) {
+                    localStorage.setItem('token', response.data.token);
 
-                localStorage.setItem('user', JSON.stringify(response.data.user))
+                    localStorage.setItem('user', JSON.stringify(response.data.user))
 
-                this.props.updateUser(response.data.user);
+                    this.props.updateUser(response.data.user);
 
-                this.props.updateToken(response.data.token);
+                    this.props.updateToken(response.data.token);
 
-                this.changeRoute('/');
-            }
-        })
-        .catch((err) => {
-            let errorText;
+                    this.changeRoute('/');
+                }
+            })
+            .catch((err) => {
+                let errorText;
 
-            if (err.response) errorText = err.response.data.message;
-            else errorText = 'Ошибка соединения с сервером';
-            
-            this.setState({
-                globalErrorTitle: 'Ошибка',
-                globalError: errorText,
-                loading: false
+                if (err.response) errorText = err.response.data.message;
+                else errorText = 'Ошибка соединения с сервером';
+
+                this.setState({
+                    globalErrorTitle: 'Ошибка',
+                    globalError: errorText,
+                    loading: false
+                });
+
             });
-            
-        });
-       
+
     }
 
     validateField(fieldName, value) {
-        let rus =/^[а-яА-ЯёЁ\s-]+$/;
+        let rus = /^[а-яА-ЯёЁ\s-]+$/;
         switch (fieldName) {
             case 'login':
                 if (!value) {
-                    this.setState({loginErrorText : 'Введите логин!'})
-                    this.setState({loginError: 'empty'});
-                    
+                    this.setState({ loginErrorText: 'Введите логин!' })
+                    this.setState({ loginError: 'empty' });
+
                     return false;
-                } 
+                }
                 else if (!this.state.loginRegex.test(value)) {
-                  
-                   
-                    if(value.length < 3) {
-                        this.setState({loginErrorText : 'Минимальная длина логина 2 символа!'})
+
+
+                    if (value.length < 3) {
+                        this.setState({ loginErrorText: 'Минимальная длина логина 2 символа!' })
                     }
-                    if(value.length > 15) {
-                        this.setState({loginErrorText : 'Максимальная длина логина 15 символов!'})
+                    if (value.length > 15) {
+                        this.setState({ loginErrorText: 'Максимальная длина логина 15 символов!' })
                     }
-                    if(rus.test(value)) {
-                        this.setState({loginErrorText : 'Логин не должен содержать русских букв!'})
-                    } 
-                    this.setState({loginError: 'regExp'});
-                    
+                    if (rus.test(value)) {
+                        this.setState({ loginErrorText: 'Логин не должен содержать русских букв!' })
+                    }
+                    this.setState({ loginError: 'regExp' });
+
                     return false;
-                } 
+                }
                 else {
-                    this.setState({loginError: null});
-                    this.setState({loginErrorText : ''})
+                    this.setState({ loginError: null });
+                    this.setState({ loginErrorText: '' })
                     return true;
                 }
             case 'firstName':
                 if (!value) {
-                    this.setState({firstNameErrorText : 'Введите имя!'})
-                    this.setState({firstNameError: 'empty'});
+                    this.setState({ firstNameErrorText: 'Введите имя!' })
+                    this.setState({ firstNameError: 'empty' });
                     return false;
-                } 
+                }
                 else if (!this.state.nameRegex.test(value)) {
-                    if(value.length < 3) {
-                        this.setState({firstNameErrorText : 'Минимальная длина имени 2 символа!'})
+                    if (value.length < 3) {
+                        this.setState({ firstNameErrorText: 'Минимальная длина имени 2 символа!' })
                     }
-                    else if(value.length > 20) {
-                        this.setState({firstNameErrorText : 'Максимальная длина имени 20 символов!'})
+                    else if (value.length > 20) {
+                        this.setState({ firstNameErrorText: 'Максимальная длина имени 20 символов!' })
                     }
                     else {
-                        this.setState({firstNameErrorText : 'Имя должно состоять только из русских или только из английский букв!'})
+                        this.setState({ firstNameErrorText: 'Имя должно состоять только из русских или только из английский букв!' })
                     }
-                    this.setState({firstNameError: 'regExp'});
+                    this.setState({ firstNameError: 'regExp' });
                     return false;
-                } 
+                }
                 else {
-                    this.setState({firstNameError: null});
-                    this.setState({firstNameErrorText : ''})
+                    this.setState({ firstNameError: null });
+                    this.setState({ firstNameErrorText: '' })
                     return true;
                 }
             case 'lastName':
                 if (value && !this.state.nameRegex.test(value)) {
-                    if(value.length < 3) {
-                        this.setState({lastNameErrorText : 'Минимальная длина фамилии 2 символа!'})
+                    if (value.length < 3) {
+                        this.setState({ lastNameErrorText: 'Минимальная длина фамилии 2 символа!' })
                     }
-                    else if(value.length > 20) {
-                        this.setState({lastNameErrorText : 'Максимальная длина фамилии 20 символов!'})
+                    else if (value.length > 20) {
+                        this.setState({ lastNameErrorText: 'Максимальная длина фамилии 20 символов!' })
                     }
                     else {
-                        this.setState({lastNameErrorText : 'Фамилия должна состоять только из русских или только из английский букв!'})
+                        this.setState({ lastNameErrorText: 'Фамилия должна состоять только из русских или только из английский букв!' })
                     }
-                    this.setState({lastNameError: 'regExp'});
+                    this.setState({ lastNameError: 'regExp' });
                     return false;
                 }
                 else {
-                    this.setState({lastNameError: null});
-                    this.setState({lastNameErrorText : ''})
+                    this.setState({ lastNameError: null });
+                    this.setState({ lastNameErrorText: '' })
                     return true;
                 }
             case 'password':
                 if (!value) {
-                    this.setState({passwordError: 'empty'});
-                    this.setState({passwordErrorText : 'Введите пароль!'})
+                    this.setState({ passwordError: 'empty' });
+                    this.setState({ passwordErrorText: 'Введите пароль!' })
                     return false;
-                } 
+                }
                 else if (!this.state.passRegex.test(value)) {
-                    this.setState({passwordErrorText : 'Пароль должен содержать маленькие буквы, большие буквы и цифры!'})
-                    if(rus.test(value)) {
-                        this.setState({passwordErrorText : 'Пароль не должен содержать русских букв!'})
+                    this.setState({ passwordErrorText: 'Пароль должен содержать маленькие буквы, большие буквы и цифры!' })
+                    if (rus.test(value)) {
+                        this.setState({ passwordErrorText: 'Пароль не должен содержать русских букв!' })
                     }
-                    if(value.length < 4) {
-                        this.setState({passwordErrorText : 'Минимальная длина пароля 4 символа!'})
+                    if (value.length < 4) {
+                        this.setState({ passwordErrorText: 'Минимальная длина пароля 4 символа!' })
                     }
-                    this.setState({passwordError: 'regExp'});
+                    this.setState({ passwordError: 'regExp' });
                     return false;
                 }
                 else {
-                    this.setState({passwordError: null});
-                    this.setState({passwordErrorText : ''})
+                    this.setState({ passwordError: null });
+                    this.setState({ passwordErrorText: '' })
                     return true;
                 }
             case 'passwordConfirm':
                 if (!value) {
-                    this.setState({passwordConfirmError: 'empty'});
-                    this.setState({passwordConfirmErrorText : 'Подтвердите пароль!'})
+                    this.setState({ passwordConfirmError: 'empty' });
+                    this.setState({ passwordConfirmErrorText: 'Подтвердите пароль!' })
                     return false;
-                } 
+                }
                 else if (this.state.password !== value) {
-                    this.setState({passwordConfirmError: 'notEqual'});
-                    this.setState({passwordConfirmErrorText : 'Пароли не совпадают!'})
+                    this.setState({ passwordConfirmError: 'notEqual' });
+                    this.setState({ passwordConfirmErrorText: 'Пароли не совпадают!' })
                     return false;
                 }
                 else {
-                    this.setState({passwordConfirmError: null});
-                    this.setState({passwordConfirmErrorText : ''})
+                    this.setState({ passwordConfirmError: null });
+                    this.setState({ passwordConfirmErrorText: '' })
                     return true;
                 }
+            default:
+                return true;
         }
     }
 
-    
+
 }
 
 export default withRouter(Register);

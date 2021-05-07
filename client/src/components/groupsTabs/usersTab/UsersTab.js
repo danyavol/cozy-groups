@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
 import "./usersTab.css";
 import RoleDropdown from "./roleDropdown/RoleDropdown";
@@ -13,7 +13,7 @@ export default function UsersTab(props) {
 
 function UsersRows(props) {
     const [users, setUsers] = useState([]);
-    const [usersRows, setUsersRows] = useState([]);
+    // const [usersRows, setUsersRows] = useState([]);
     const [userLoading, setUserLoading] = useState('');
     const [totalUserRole, setTotalUserRole] = useState('');
 
@@ -28,8 +28,7 @@ function UsersRows(props) {
                 if (user.role !== totalUserRole)
                     setTotalUserRole(user.role);
         });
-        console.log(totalUserRole);
-    }, );
+    });
 
 
     const handlerChangeUserLoading = (id) => {
@@ -42,7 +41,6 @@ function UsersRows(props) {
 
 
     // useEffect(() => {
-    //     console.log(usersRows);
     //     setUsersRows(
     //         users.map((user) =>
     //             <div key={user.id} className="ui segment">
@@ -92,9 +90,8 @@ function UsersRows(props) {
 
 
     const handlerUsersChange = (deleteUserId) => {
-        console.log(deleteUserId);
         const newUsers = [];
-        users.map(user => {
+        users.forEach(user => {
             if (user.id !== deleteUserId)
                 newUsers.push(user);
         });

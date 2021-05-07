@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
 export default function Users(props) {
 
@@ -9,14 +9,14 @@ export default function Users(props) {
         let login = JSON.parse(localStorage.user).login;
         users.forEach(user => {
             if (login === user.login) {
-                let index =users.indexOf(users.find(user => user.login === login));
-                users.splice(index,1);
+                let index = users.indexOf(users.find(user => user.login === login));
+                users.splice(index, 1);
             }
         });
         setUsers(users);
     }, [props.users]);
 
-    return(
+    return (
         users.map((user) =>
             <div key={user.id} className="ui segment" onClick={() => props.function(user.id)}>
                 <div className="userName">
@@ -24,5 +24,5 @@ export default function Users(props) {
                     <div>{user.login}</div>
                 </div>
             </div>
-    ));   
+        ));
 }

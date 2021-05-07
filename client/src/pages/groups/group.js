@@ -1,8 +1,8 @@
 import React from 'react';
-import {Dimmer, Dropdown, Tab} from 'semantic-ui-react';
-import {withRouter} from "react-router-dom";
+import { Dropdown, Tab } from 'semantic-ui-react';
+import { withRouter } from "react-router-dom";
 import Modal from '../../components/modal/modal.js';
-import {CopyToClipboard} from "react-copy-to-clipboard/lib/Component";
+import { CopyToClipboard } from "react-copy-to-clipboard/lib/Component";
 
 import './group.css';
 import axios from "axios";
@@ -19,12 +19,12 @@ class Group extends React.Component {
             loading: true,
             loaderText: 'Загрузка группы...',
 
-            open:false,
-            dimmer:false,
-            header:'Выход',
-            text:'',
-            type:'',
-            function:null,
+            open: false,
+            dimmer: false,
+            header: 'Выход',
+            text: '',
+            type: '',
+            function: null,
         }
 
         this.leave = this.leave.bind(this);
@@ -35,67 +35,65 @@ class Group extends React.Component {
         return (
             <div>
                 <Loader loading={this.state.loading} text={this.state.loaderText} />
-                    <Modal
-                         header={this.state.header}
-                         visible={this.state.open}
-                         element={this.state.text}
-                         updateVisible={this.openModal}
-                         function={this.state.function}
-                         dimmer={this.state.dimmer}
-                         type={this.state.type}
-                    >
-                        <div className={this.state.loading ? 'hidden' : ''}>
-                            <div className="header">
-                                <div className="buttons">
-                                    <SettingsDropdown leave={() => this.openModal(`Выход`,`Хотите выйти из группы "${this.state.group.name}"?`,this.leave,"action")} />
-                                </div>
-                                <div>
-                                    <Title state={this.state} />
-                                </div>
+                <Modal
+                    header={this.state.header}
+                    visible={this.state.open}
+                    element={this.state.text}
+                    updateVisible={this.openModal}
+                    function={this.state.function}
+                    dimmer={this.state.dimmer}
+                    type={this.state.type}
+                >
+                    <div className={this.state.loading ? 'hidden' : ''}>
+                        <div className="header">
+                            <div className="buttons">
+                                <SettingsDropdown leave={() => this.openModal(`Выход`, `Хотите выйти из группы "${this.state.group.name}"?`, this.leave, "action")} />
                             </div>
                             <div>
-                                <Tabs openModal={this.openModal} state={this.state} />
+                                <Title state={this.state} />
                             </div>
-                        </div>                        
-                    </Modal>
+                        </div>
+                        <div>
+                            <Tabs openModal={this.openModal} state={this.state} />
+                        </div>
+                    </div>
+                </Modal>
             </div>
         )
     }
 
-    openModal( header, text, func, type) {
-        if(this.state.open) {
-            this.setState({open : false, dimmer : false });
+    openModal(header, text, func, type) {
+        if (this.state.open) {
+            this.setState({ open: false, dimmer: false });
         }
         else {
-            this.setState({open : true, dimmer : true, header:header, text: text, type : type, function: func});
+            this.setState({ open: true, dimmer: true, header: header, text: text, type: type, function: func });
         }
     }
 
     leave() {
-        this.setState({loading : true, loaderText : 'Выход из группы...', open : false, dimmer : false});
-        let data = {groupId : this.state.group.id};
-        axios.post('http://localhost:3080/groups/leave',data, {
-            headers:{
-                'Authorization':this.state.token
-            }
-        }).
-        then(response => {
-            if(response.data.ok) {
-                console.log('Вы вышли из группы!');
-                this.props.updateDeleteGroups(this.props.match.params.id);
-                this.props.history.push("/");
+        this.setState({ loading: true, loaderText: 'Выход из группы...', open: false, dimmer: false });
+        let data = { groupId: this.state.group.id };
+        axios.post('http://localhost:3080/groups/leave', data, {
+            headers: {
+                'Authorization': this.state.token
             }
         })
-        .catch((err) => {
-            this.setState({loading : false,open : true});
-            this.props.deleteToken(err);
-            if (err.response) this.setState({header:`Ошибка`,text : `${err.response.data.message}`,type: `${`error`}`, function:this.openModal });
-            else
-            {
-                this.setState({text :'Ошибка соединения с сервером.' });
-                setTimeout(() => {this.props.history.push("/");},3000);
-            } 
-        })
+            .then(response => {
+                if (response.data.ok) {
+                    this.props.updateDeleteGroups(this.props.match.params.id);
+                    this.props.history.push("/");
+                }
+            })
+            .catch((err) => {
+                this.setState({ loading: false, open: true });
+                this.props.deleteToken(err);
+                if (err.response) this.setState({ header: `Ошибка`, text: `${err.response.data.message}`, type: `${`error`}`, function: this.openModal });
+                else {
+                    this.setState({ text: 'Ошибка соединения с сервером.' });
+                    setTimeout(() => { this.props.history.push("/"); }, 3000);
+                }
+            })
     }
 
     componentDidMount() {
@@ -120,12 +118,12 @@ class Group extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if(this.state.text !== prevState.text) {
+        if (this.state.text !== prevState.text) {
             let sometext = this.state.text;
-            this.setState({text : sometext});
+            this.setState({ text: sometext });
         }
         if (this.props.match.params.id !== prevProps.match.params.id) {
-            this.setState({token: this.props.token, loading: true});
+            this.setState({ token: this.props.token, loading: true });
             axios.get('http://localhost:3080/groups/' + this.props.match.params.id, {
                 headers: {
                     'Authorization': this.state.token
@@ -145,7 +143,7 @@ class Group extends React.Component {
         }
 
         if (this.props !== prevProps) {
-            this.setState({token: this.props.token});
+            this.setState({ token: this.props.token });
             axios.get('http://localhost:3080/groups/' + this.props.match.params.id, {
                 headers: {
                     'Authorization': this.state.token
@@ -176,28 +174,28 @@ function Tabs(props) {
     const panes = [
         {
             menuItem:
-                {key: 'posts', icon: 'sticky note', content: 'Все записи'},
+                { key: 'posts', icon: 'sticky note', content: 'Все записи' },
             render: () => <PostsTab createPost={props.createPost} />
         },
         {
             menuItem:
-                {key: 'favorites', icon: 'star', content: 'Важные'},
+                { key: 'favorites', icon: 'star', content: 'Важные' },
             render: () => <Tab.Pane attached={false}>Важные</Tab.Pane>
         },
         {
             menuItem:
-                {key: 'users', icon: 'users', content: 'Пользователи'},
+                { key: 'users', icon: 'users', content: 'Пользователи' },
             render: () => <Tab.Pane attached={false}><UsersMenu state={props.state} /></Tab.Pane>
         },
         {
             menuItem:
-                {key: 'invite', icon: 'linkify', content: 'Ссылка для приглашения'},
+                { key: 'invite', icon: 'linkify', content: 'Ссылка для приглашения' },
             render: () => <InviteTab inviteCode={props.state.group.inviteCode} copied={props.state.copied} openModal={props.openModal} />
         }
     ];
 
     const GroupTabs = () => (
-        <Tab menu={{secondary: true, pointing: true}} panes={panes} />
+        <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
     );
 
     return (<GroupTabs />);
@@ -217,7 +215,7 @@ function CreatePostButton() {
     return (
         <div className="createPost">
             <Dropdown
-                icon={{name: "big plus", size: "huge"}}
+                icon={{ name: "plus", size: "huge" }}
                 className="icon"
                 direction="left"
             >
@@ -243,11 +241,11 @@ class InviteTab extends React.Component {
             <div className="inviteCard">
                 <div className="ui fluid centered card inviteCard">
                     <div className="content">
-                        <a className="center aligned header">Код приглашения</a>
+                        <span className="center aligned header">Код приглашения</span>
                         <div className="center aligned description">
                             <h1 id="inviteCode">
                                 {this.props.inviteCode}
-                                <CopyToClipboard text={this.props.inviteCode}  onCopy={() => {this.setState({copied: true});this.props.openModal('Уведомление','Код успешно скопирован!','','notification')}}>
+                                <CopyToClipboard text={this.props.inviteCode} onCopy={() => { this.setState({ copied: true }); this.props.openModal('Уведомление', 'Код успешно скопирован!', '', 'notification') }}>
                                     <h2><i className={`copy ${this.state.copied ? '' : 'disabled'} icon`}></i></h2>
                                 </CopyToClipboard>
                             </h1>
@@ -266,10 +264,10 @@ class InviteTab extends React.Component {
 
 // Вкладка пользователей.
 function UsersMenu(props) {
-    if (props.state.group.length !== 0){
+    if (props.state.group.length !== 0) {
         return (
             <table className="ui very basic collapsed single line table">
-                <UsersRows state={props.state}/>
+                <UsersRows state={props.state} />
             </table>
         )
     } else {
@@ -363,11 +361,11 @@ function userKick(userId, groupId, token) {
             groupId: groupId,
             userId: userId
         }
-    }).
-    then(response => {
-        if(response.data.ok) {
-        }
     })
+        .then(response => {
+            if (response.data.ok) {
+            }
+        })
         .catch((err) => {
             console.log(err);
         });
@@ -383,7 +381,7 @@ function SettingsDropdown(props) {
             className="icon"
         >
             <Dropdown.Menu>
-                <Dropdown.Header  content="Настройки" />
+                <Dropdown.Header content="Настройки" />
                 <Dropdown.Divider />
                 <Dropdown.Item>Изменить название группы</Dropdown.Item>
                 <Dropdown.Item>Передать права владельца</Dropdown.Item>
