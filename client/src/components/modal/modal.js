@@ -35,7 +35,7 @@ export default withRouter(function Modal(props) {
             return false;
         } 
         else {
-            setInputErrorModal(null);
+            setInputErrorModal('');
             return true;
         }
     }
@@ -81,7 +81,7 @@ export default withRouter(function Modal(props) {
                     </div>
                     <div className={`${props.scrolling ? 'scrolling' : ''} content color`}>
                         {props.element}
-                        <div className={`ui fluid icon input ${inputErrorModal !==null ? 'error' : ''} input-properties `}>
+                        <div className={`ui fluid icon input ${inputErrorModal === 'reqExp' || inputErrorModal ==='empty' ? 'error':''} input-properties `}>
                             <input 
                                 value={inputModal} 
                                 onChange={handleInputChange}
@@ -90,13 +90,13 @@ export default withRouter(function Modal(props) {
                             />
                             <i className="pencil alternate icon"></i>
                         </div>
-                        <div className={`ui basic red pointing prompt label ${inputErrorModal !== null ? 'visible' : 'hidden'}`}>Неверный формат названия</div>
+                        <div className={`ui basic red pointing prompt label ${inputErrorModal === 'reqExp' || inputErrorModal ==='empty' ? 'visible':'hidden'}`}>Неверный формат названия</div>
                     </div>
                     <div className="actions">
                         <div onClick={() => {props.updateVisible(); setInputModal(""); setInputErrorModal(null)}} className="ui black deny button">Отменить</div>
                         <div 
                             onClick={() => {props.function(inputModal); setInputModal(""); setInputErrorModal(null)}} 
-                            className={`ui positive right labeled icon button ${inputErrorModal !== null ? 'disabled':''}`}
+                            className={`ui positive right labeled icon button ${inputErrorModal === 'reqExp' || inputErrorModal ==='empty' || inputErrorModal ===null ? 'disabled':''}`}
                         >
                             Подтвердить
                             <i  className="checkmark icon"></i>

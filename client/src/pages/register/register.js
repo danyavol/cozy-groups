@@ -185,6 +185,8 @@ class Register extends Component {
 
         this.setState({ loading: true });
 
+        this.setState({globalError : '', globalErrorTitle : ''});
+
         let data = {
             login : this.state.login,
             firstName : this.state.firstName,
