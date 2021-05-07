@@ -34,26 +34,29 @@ function GroupHooks(props) {
     });
 
     useEffect(() => {
-        setLoading(true);
-        setToken(props.token);
-        axios.get('http://localhost:3080/groups/' + props.match.params.id, {
-            headers: {
-                'Authorization': props.token
-            }
-        })
-            .then(response => {
-                if (response.data.ok) {
-                    let currentUser = response.data.group.users.find(user => user.id === props.user.id)
-                    setGroup(response.data.group);
-                    setLoading(false);
-                    setRole(currentUser.role);
-                    console.log(role);
-                    console.log("token: " + token);
+        if (props.token !== null) {
+            console.log("token: " + props.token);
+            setLoading(true);
+            setToken(props.token);
+            axios.get('http://localhost:3080/groups/' + props.match.params.id, {
+                headers: {
+                    'Authorization': props.token
                 }
             })
-            .catch(err => {
-                console.log(err);
-            });
+                .then(response => {
+                    if (response.data.ok) {
+                        let currentUser = response.data.group.users.find(user => user.id === props.user.id)
+                        setGroup(response.data.group);
+                        setLoading(false);
+                        setRole(currentUser.role);
+                        console.log(role);
+                        console.log("token: " + token);
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        }
     }, [props.token, props.match.params.id]);
 
     const deleteGroup = () => {

@@ -6,7 +6,7 @@ import "./kickUserButton.css";
 export default function KickUserButton(props) {
 
     function userKick() {
-        props.addLoadingUser(props.user.id);
+        props.changeUserLoading(props.user.id);
         axios.delete('http://localhost:3080/groups/kick-user', {
             headers: {
                 'Authorization': props.token
@@ -19,7 +19,7 @@ export default function KickUserButton(props) {
             if(response.data.ok) {
                 console.log("Пользователь удален");
                 props.usersChange(props.user.id);
-                props.deleteLoadingUser(props.user.id);
+                props.changeUserLoading();
             }
         }).catch((err) => {
             console.log(err);

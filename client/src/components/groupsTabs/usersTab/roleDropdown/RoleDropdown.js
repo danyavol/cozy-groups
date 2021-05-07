@@ -48,7 +48,7 @@ export default function RoleDropdown(props) {
         selectedElem.classList.add('role-' + newRole);
         setCurrentRole(newRole);
 
-        props.addLoadingUser(props.id);
+        props.changeLoadingUser(props.id);
         let data = {groupId : props.groupId, userId : props.id, newRole : newRole}
         axios.post('http://localhost:3080/groups/edit-role', data, {
            headers: {
@@ -58,7 +58,7 @@ export default function RoleDropdown(props) {
         then(response => {
             if (response.data.ok) {
                 console.log("Смена Роли");
-                props.deleteLoadingUser(props.id);
+                props.changeLoadingUser();
             }
         }).
         catch(error => {
@@ -71,50 +71,71 @@ export default function RoleDropdown(props) {
         content: option.text
     });
 
-    switch (props.totalUserRole) {
-        case "owner":
-            switch (props.role) {
-                case "owner":
-                    return <div className="role-owner">Owner</div>
-                default:
-                    return (
-                        <Dropdown
-                            inline
-                            options={rolesForOwner}
-                            defaultValue={currentRole}
-                            className={'role-' + currentRole}
-                            onChange={handleChangeRole}
-                            renderLabel={renderLabel}
-                        />
-                    );
-            }
-        case "admin":
-            switch (props.role) {
-                case "owner":
-                    return <div className="role-owner">Owner</div>
-                case "admin":
-                    return <div className="role-admin">Admin</div>
-                default:
-                    return (
-                        <Dropdown
-                            inline
-                            options={rolesForAdmin}
-                            defaultValue={currentRole}
-                            className={'role-' + currentRole}
-                            onChange={handleChangeRole}
-                        />
-                    );
-            }
-        default:
-            switch (props.role) {
-                case "owner":
-                    return <div className="role-owner">Owner</div>
-                case "admin":
-                    return <div className="role-admin">Admin</div>
-                case "editor":
-                    return <div className="role-editor">Editor</div>
-                case "member":
-                    return <div className="role-member">Member</div>
-            }
+    const changeFunc = (event) => {
+        props.changeLoadingUser(props.id);
+        handleChangeRole(event);
+        // props.changeLoadingUser();
     }
+
+
+    // if (props.loadingUser === props.userId) {
+    //     switch (props.role) {
+    //         case "owner":
+    //             return <div className="role-owner">Owner</div>
+    //         case "admin":
+    //             return <div className="role-admin">Admin</div>
+    //         case "editor":
+    //             return <div className="role-editor">Editor</div>
+    //         case "member":
+    //             return <div className="role-member">Member</div>
+    //     }
+    // }
+    // else {
+        switch (props.totalUserRole) {
+            case "owner":
+                switch (props.role) {
+                    case "owner":
+                        return <div className="role-owner">Owner</div>
+                    default:
+                        return (
+                            <Dropdown
+                                inline
+                                options={rolesForOwner}
+                                defaultValue={currentRole}
+                                className={'role-' + currentRole}
+                                onChange={changeFunc}
+                                renderLabel={renderLabel}
+                            />
+                        );
+                }
+            case "admin":
+                switch (props.role) {
+                    case "owner":
+                        return <div className="role-owner">Owner</div>
+                    case "admin":
+                        return <div className="role-admin">Admin</div>
+                    default:
+                        return (
+                            <Dropdown
+                                inline
+                                options={rolesForAdmin}
+                                defaultValue={currentRole}
+                                className={'role-' + currentRole}
+                                onChange={handleChangeRole}
+                            />
+                        );
+                }
+            default:
+                switch (props.role) {
+                    case "owner":
+                        return <div className="role-owner">Owner</div>
+                    case "admin":
+                        return <div className="role-admin">Admin</div>
+                    case "editor":
+                        return <div className="role-editor">Editor</div>
+                    case "member":
+                        return <div className="role-member">Member</div>
+                }
+        }
+    // }
 }
