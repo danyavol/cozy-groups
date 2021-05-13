@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import {useCallback, useEffect, useState} from "react";
 
 import "./usersTab.css";
 import RoleDropdown from "./roleDropdown/RoleDropdown";
 import KickUserButton from "./kickUserButton/KickUserButton";
 import UserLoader from "../../loader/UserLoader";
+import Loader from "../../loader/Loader";
 
 export default function UsersTab(props) {
     return (
@@ -13,9 +14,10 @@ export default function UsersTab(props) {
 
 function UsersRows(props) {
     const [users, setUsers] = useState([]);
-    // const [usersRows, setUsersRows] = useState([]);
+    const [usersRows, setUsersRows] = useState([]);
     const [userLoading, setUserLoading] = useState('');
     const [totalUserRole, setTotalUserRole] = useState('');
+    const [totalUserId, setTotalUserId] = useState('');
 
     useEffect(() => {
         setUsers(props.group.users);
@@ -24,85 +26,31 @@ function UsersRows(props) {
 
     useEffect(() => {
         props.group.users.forEach(user => {
-            if (JSON.parse(localStorage.user).login === user.login)
+            if (JSON.parse(localStorage.user).login === user.login) {
                 if (user.role !== totalUserRole)
                     setTotalUserRole(user.role);
+                if (user.id !== totalUserId)
+                    setTotalUserId(user.id);
+            }
+
         });
-    });
+    }, [props.group]);
 
 
-    const handlerChangeUserLoading = (id) => {
-        if (userLoading === '')
-            setUserLoading(id);
-        else
-            setUserLoading('');
+    const handlerChangeUserLoading = (value) => {
+        setUserLoading(value);
     }
 
-
-
-    // useEffect(() => {
-    //     setUsersRows(
-    //         users.map((user) =>
-    //             <div key={user.id} className="ui segment">
-    //                 <div className="userSegmentRow">
-    //                     <div className={`userSegment ${userLoading === user.id ? 'hidden' : ''}`}>
-    //                         <div className="userName">
-    //                             <h2 className="fullName">{user.firstName} {user.lastName}</h2>
-    //                             <h3 className="login">{user.login}</h3>
-    //                         </div>
-    //                         <div className="userRole">
-    //                             <RoleDropdown
-    //                                 role={user.role}
-    //                                 id={user.id}
-    //                                 groupId={props.group.id}
-    //                                 token={props.token}
-    //
-    //                                 totalUserRole={totalUserRole}
-    //                                 loadingUser={userLoading}
-    //
-    //                                 changeLoadingUser={handlerChangeUserLoading}
-    //                             />
-    //                         </div>
-    //                         <div className="userKick">
-    //                             <KickUserButton
-    //                                 token={props.token}
-    //                                 user={user}
-    //                                 groupId={props.group.id}
-    //                                 users={props.group.users}
-    //
-    //                                 totalUserRole={totalUserRole}
-    //                                 loadingUser={userLoading}
-    //
-    //                                 changeUserLoading={handlerChangeUserLoading}
-    //                                 usersChange={handlerUsersChange}
-    //                             />
-    //                         </div>
-    //                     </div>
-    //                     <div className={userLoading === user.id ? '' : 'hidden'}>
-    //                         <UserLoader />
-    //                     </div>
-    //                 </div>
-    //             </div>
-    //         )
-    //     );
-    // }, [users, userLoading]);
-
-
-
-    const handlerUsersChange = (deleteUserId) => {
-        const newUsers = [];
-        users.forEach(user => {
-            if (user.id !== deleteUserId)
-                newUsers.push(user);
-        });
-        props.changeUsers(newUsers);
-        setUsers(newUsers);
+    const handleUsersChange = (usersList) => {
+        setUsers(usersList);
+        props.changeUsers(usersList);
     }
+
 
     const newUsers = users.map((user) =>
-        <div key={user.id} className="ui segment">
+        <div key={user.id} className={`ui segment ${user.id === totalUserId ? 'totalUser' : ''}`}>
             <div className="userSegmentRow">
-                <div className={`userSegment ${userLoading === user.id ? 'hidden' : ''}`}>
+                <div className="userSegment">
                     <div className="userName">
                         <h2 className="fullName">{user.firstName} {user.lastName}</h2>
                         <h3 className="login">{user.login}</h3>
@@ -117,6 +65,7 @@ function UsersRows(props) {
                             totalUserRole={totalUserRole}
                             loadingUser={userLoading}
 
+                            newUsers={handleUsersChange}
                             changeLoadingUser={handlerChangeUserLoading}
                         />
                     </div>
@@ -131,19 +80,20 @@ function UsersRows(props) {
                             loadingUser={userLoading}
 
                             changeUserLoading={handlerChangeUserLoading}
-                            usersChange={handlerUsersChange}
+                            newUsers={handleUsersChange}
                         />
                     </div>
-                </div>
-                <div className={`loader ${userLoading === user.id ? '' : 'hidden'}`}>
-                    <UserLoader />
                 </div>
             </div>
         </div>
     );
 
-
-    return (
-        <div>{newUsers}</div>
-    );
+    if (userLoading)
+        return (
+          <Loader loading={true} text="Загрузка пользователей..."/>
+        );
+    else
+        return (
+            <div>{newUsers}</div>
+        );
 }

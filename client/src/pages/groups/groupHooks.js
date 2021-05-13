@@ -134,15 +134,19 @@ function GroupHooks(props) {
         })
             .then(response => {
                 if (response.data.ok) {
-                    setLoading(false);
-                    setRole("admin")
-                    let newGroup = group;
-                    let newOwner = newGroup.users.indexOf(newGroup.users.find(user => user.id === userId));
-                    let oldOwner = newGroup.users.indexOf(newGroup.users.find(user => user.id === props.user.id));
-                    newGroup.users[newOwner].role = "owner";
-                    newGroup.users[oldOwner].role = "admin";
-                    setGroup(newGroup);
-                    props.updateMainModal('Уведомление', response.data.message, "notification")
+                    let message = response.data.message;
+                    axios.get('http://localhost:3080/groups/' + props.match.params.id, {
+                        headers: {
+                            'Authorization': props.token
+                        }
+                    })
+                        .then(response => {
+                            if (response.data.ok) {
+                                setGroup(response.data.group);
+                                setLoading(false);
+                                props.updateMainModal('Уведомление', message, "notification");
+                            }
+                        });
                 }
             })
             .catch((err) => {

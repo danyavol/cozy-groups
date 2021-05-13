@@ -48,7 +48,7 @@ export default function RoleDropdown(props) {
         selectedElem.classList.add('role-' + newRole);
         setCurrentRole(newRole);
 
-        props.changeLoadingUser(props.id);
+        props.changeLoadingUser(true);
         let data = { groupId: props.groupId, userId: props.id, newRole: newRole }
         axios.post('http://localhost:3080/groups/edit-role', data, {
             headers: {
@@ -57,7 +57,17 @@ export default function RoleDropdown(props) {
         })
             .then(response => {
                 if (response.data.ok) {
-                    props.changeLoadingUser();
+                    axios.get('http://localhost:3080/groups/' + props.groupId, {
+                        headers: {
+                            'Authorization': props.token
+                        }
+                    })
+                        .then(response => {
+                            if (response.data.ok) {
+                                props.newUsers(response.data.group.users);
+                                props.changeLoadingUser(false);
+                            }
+                        })
                 }
             })
             .catch(error => {
@@ -70,26 +80,7 @@ export default function RoleDropdown(props) {
         content: option.text
     });
 
-    const changeFunc = (event) => {
-        props.changeLoadingUser(props.id);
-        handleChangeRole(event);
-        // props.changeLoadingUser();
-    }
 
-
-    // if (props.loadingUser === props.userId) {
-    //     switch (props.role) {
-    //         case "owner":
-    //             return <div className="role-owner">Owner</div>
-    //         case "admin":
-    //             return <div className="role-admin">Admin</div>
-    //         case "editor":
-    //             return <div className="role-editor">Editor</div>
-    //         case "member":
-    //             return <div className="role-member">Member</div>
-    //     }
-    // }
-    // else {
     switch (props.totalUserRole) {
         case "owner":
             switch (props.role) {
@@ -102,7 +93,7 @@ export default function RoleDropdown(props) {
                             options={rolesForOwner}
                             defaultValue={currentRole}
                             className={'role-' + currentRole}
-                            onChange={changeFunc}
+                            onChange={handleChangeRole}
                             renderLabel={renderLabel}
                         />
                     );
@@ -138,5 +129,4 @@ export default function RoleDropdown(props) {
                     return ''
             }
     }
-    // }
 }

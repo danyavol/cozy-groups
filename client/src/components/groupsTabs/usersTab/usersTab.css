@@ -51,6 +51,10 @@ table h2 {
     width: 100%;
 }
 
+.totalUser {
+    background: #E4F0FD !important;
+}
+
 @media (max-width: 1100px) {
     .userSegmentRow {
         padding: 0;
