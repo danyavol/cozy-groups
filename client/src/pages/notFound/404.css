@@ -1,0 +1,15 @@
+.error-block {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.text {
+    font-size: 200px;
+    margin-bottom: 0;
+    height: 210px;
+}
+.phrase {
+    margin-bottom: 40px !important;
+}

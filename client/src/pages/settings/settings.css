@@ -1,0 +1,27 @@
+#login {
+    font-size: 65px;
+    padding-left: 20px;
+    margin: 0;
+}
+.flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.blocks {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.blocks * {
+    width: 100%;
+    align-self: stretch;
+    margin: 0 !important;
+}
+.blocks .segment:nth-child(2) {
+    margin-left: 15px !important;
+    margin-right: 15px !important;
+}
+.blocks .segment .icon {
+    margin-right: 15px !important;
+}
