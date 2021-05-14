@@ -13,3 +13,7 @@
 .phrase {
     margin-bottom: 40px !important;
 }
+.error-image {
+    width: 600px;
+    margin-bottom: -50px;
+}
