@@ -13,14 +13,14 @@ export default function PostsTab(props) {
     const postsCards = posts.map(post =>
         <div class="ui card custom-width">
             <div class="content">
-                <p className="right floated"><i class="user icon"></i>{props.group.users.find(user => user.id === post.author).login}</p>
+                <p className="right floated"><i class="user icon"></i>{post.author.login}</p>
                 <div class="header">{post.title}</div>
                 <div class="description">
                     <p className="word-break">{post.description}</p>
                 </div>
             </div>
             <div class="extra content">
-                <span class="left floated like"><i class="comment icon"></i> 999 Комментариев </span>
+                <span class="left floated like"><i class="comment icon"></i>{post.totalComments}</span>
                 <span class="right floated star"><i class="calendar icon"></i>{new Date(post.createdAt).toLocaleString()}</span>
             </div>
         </div>

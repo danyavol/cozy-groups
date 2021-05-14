@@ -10,13 +10,8 @@ export default function Tabs(props) {
     const panes = [
         {
             menuItem:
-                { key: 'posts', icon: 'sticky note', content: 'Все записи' },
+                { key: 'posts', icon: 'book', content: 'Записи группы' },
             render: () => <PostsTab posts={props.posts} createPost={props.createPost} group={props.group} />
-        },
-        {
-            menuItem:
-                { key: 'favorites', icon: 'star', content: 'Важные' },
-            render: () => <Tab.Pane attached={false}>Важные</Tab.Pane>
         },
         {
             menuItem:
