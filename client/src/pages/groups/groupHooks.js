@@ -43,6 +43,7 @@ function GroupHooks(props) {
         }
         if (props.token !== null) {
             setLoading(true);
+            setLoaderText("Загрузка группы...")
             setToken(props.token);
             axios.get('http://localhost:3080/groups/' + props.match.params.id, {
                 headers: {
@@ -61,9 +62,7 @@ function GroupHooks(props) {
                         })
                             .then(response => {
                                 if (response.data.ok) {
-                                    let posts = response.data.posts;
                                     setGroupPosts(response.data.posts);
-                                    console.log(groupPosts);
                                     setLoading(false);
                                 }
                             })
@@ -226,7 +225,9 @@ const change = (newName) => {
     })
     .then(response => {
         if (response.data.ok) {
-            let message = response.data.message;
+            setTitle(newName);
+            props.updateMainModal('Уведомление', response.data.message, "notification")
+            props.updateGroup(props.match.params.id, newName);
             axios.get('http://localhost:3080/groups/' + props.match.params.id, {
                 headers: {
                     'Authorization': props.token
@@ -236,7 +237,6 @@ const change = (newName) => {
                     if (response.data.ok) {
                         setGroup(response.data.group);
                         setLoading(false);
-                        props.updateMainModal('Уведомление', message, "notification");
                     }
                 })
                 .catch((err) => {
@@ -255,10 +255,16 @@ const change = (newName) => {
     })
     .catch((err) => {
         setLoading(false);
-        setTitle(newName);
-        props.updateMainModal('Уведомление', err.response.data.message, "notification")
-        props.updateGroup(props.match.params.id, newName);
-    })
+        if (err.response) {
+            props.updateMainModal("Ошибка", err.response.data.message, "error");
+        }
+        else {
+            setTimeout(() => {
+                props.history.push("/");
+                props.close();
+            }, 3000);
+        }
+    });
 }
 
 const handleUserChange = (newUsers) => {
