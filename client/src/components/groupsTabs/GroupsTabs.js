@@ -9,7 +9,7 @@ export default function Tabs(props) {
         {
             menuItem:
                 { key: 'posts', icon: 'sticky note', content: 'Все записи' },
-            render: () => <PostsTab />
+            render: () => <PostsTab posts={props.posts} createPost={props.createPost} group={props.group} />
         },
         {
             menuItem:

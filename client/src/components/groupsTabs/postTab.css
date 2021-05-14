@@ -1,0 +1,13 @@
+.custom-width {
+    width: unset !important;
+}
+.word-break {
+    word-break: break-all;
+}
+.null-posts {
+    display: flex;
+    flex-direction: column ;
+    align-items: center;
+    justify-content: center;
+    height: 90%;
+}

@@ -9,6 +9,8 @@ export default withRouter(function Modal(props) {
     const [inputModal, setInputModal] = useState("");
     const [inputErrorModal, setInputErrorModal] = useState(null);
     const [inputErrorTextModal, setInputErrorTextModal] = useState('');
+    const [inputTitleModal, setInputTitleModal] = useState("");
+    const [inputDescriptionModal, setInputDescriptionModal] = useState("");
 
 
     const timeout = (modal) => {
@@ -23,6 +25,16 @@ export default withRouter(function Modal(props) {
     const handleInputChange = (e) => {
         validateField(e.target.value)
         setInputModal(e.target.value)
+    }
+
+    const handleTitleChange = (e) => {
+        
+        setInputTitleModal(e.target.value)
+    }
+
+    const handleDescriptionChange = (e) => {
+        
+        setInputDescriptionModal(e.target.value)
     }
 
     const validateField = (value) => {
@@ -78,6 +90,52 @@ export default withRouter(function Modal(props) {
     if (props.type === "error") {
         return (
             timeout(errorModal)
+        );
+    }
+    if(props.type === "simple-post") {
+        return (
+            <Fragment>
+                <div className={`ui ${props.size} modal modal-properties ${props.visible ? 'active' : ''}`}>
+                    <div className="header">{props.header}
+                        <i onClick={() => { props.updateVisible(); setInputTitleModal(""); setInputDescriptionModal(""); setInputErrorModal(null) }} className="close black icon float-right"></i>
+                    </div>
+                    <div className={`${props.scrolling ? 'scrolling' : ''} content color`}>
+                        {props.element}
+                        <div className={`ui fluid icon input ${inputErrorModal === 'reqExp' || inputErrorModal === 'empty' ? 'error' : ''} input-properties `}>
+                            <input
+                                value={inputTitleModal}
+                                onChange={handleTitleChange}
+                                type="text"
+                                placeholder="Введите заголовок..."
+                            />
+                            <i className="pencil alternate icon"></i>
+                        </div>
+                        <div className={`ui fluid icon input ${inputErrorModal === 'reqExp' || inputErrorModal === 'empty' ? 'error' : ''} input-properties `}>
+                            <input
+                                value={inputDescriptionModal}
+                                onChange={handleDescriptionChange}
+                                type="text"
+                                placeholder="Введите описание..."
+                            />
+                            <i className="pencil alternate icon"></i>
+                        </div>
+                        <div className={`ui basic red pointing prompt label ${inputErrorModal === 'reqExp' || inputErrorModal === 'empty' ? 'visible' : 'hidden'}`}>{inputErrorTextModal}</div>
+                    </div>
+                    <div className="actions">
+                        <div onClick={() => { props.updateVisible(); setInputModal(""); setInputErrorModal(null) }} className="ui black deny button">Отменить</div>
+                        <div
+                            onClick={() => { props.function(inputTitleModal,inputDescriptionModal); setInputTitleModal(""); setInputDescriptionModal(""); setInputErrorModal(null) }}
+                            className={`ui positive right labeled icon button `}
+                        >
+                            Подтвердить
+                            <i className="checkmark icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <Dimmer.Dimmable dimmed={props.dimmer} >
+                    <Dimmer className='position' simple />
+                </Dimmer.Dimmable>
+            </Fragment>
         );
     }
     if (props.type === "input") {

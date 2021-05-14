@@ -40,7 +40,7 @@
 }
 
 .createPost {
-    position: absolute;
+    position: fixed;
     float: right;
     z-index: 3;
     bottom: 0;
