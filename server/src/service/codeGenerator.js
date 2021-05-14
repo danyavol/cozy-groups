@@ -1,13 +1,27 @@
-module.exports = (groups, type) => {
+module.exports = (dataArray, field, codeType) => {
     // Получение существующих кодов, чтобы избежать повтора
-    let existingCodes = [];
-    groups.map(group => existingCodes.push(group[type]));
+    const existingCodes = [];
+    if (dataArray && field)
+        dataArray.map( item => existingCodes.push(item[field]) );
 
     // Определение набора символов и длины кода
-    let characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    let codeLength = 6;
-    if (type == 'id') {
-        characters = 'ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let characters, codeLength;
+    switch (codeType) {
+        case 'group_inviteCode':
+            characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+            codeLength = 6;
+            break;
+        case 'group_id':
+            characters = 'ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            codeLength = 6;
+            break;
+        case 'post_id':
+            characters = 'ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            codeLength = 6;
+            break;
+        default:
+            characters = 'ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            codeLength = 8;
     }
 
     // Создание кода

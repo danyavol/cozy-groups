@@ -2,7 +2,7 @@ const express = require('express');
 const posts = express.Router();
 module.exports = posts;
 
-const {v4: uuidv4} = require('uuid');
+const generateCode = require('../../service/codeGenerator.js');
 const groupsCollection = require('../../database/database.js')('groups');
 const postsCollection = require('../../database/database.js')('posts');
 const permissions = require('../../service/permissions.js');
@@ -10,9 +10,11 @@ const Text = require('../../service/responseMessages.js');
 const { sendResponse } = require('../../service/requestService.js');
 
 
-function generateBasicPost(groupId, authorId, type='default') {
+async function generateBasicPost(groupId, authorId, type='default') {
+    let posts = await postsCollection.find({id: groupId}, true);
+    
     return {
-        id: 'post-' + uuidv4(),
+        id: generateCode(posts, 'id', 'post_id'),
         groupId: groupId,
         author: authorId,
         createdAt: Date.now(),
@@ -40,7 +42,7 @@ posts.post('/:groupId/default', async (req, res) => {
     else if (!title) {
         return sendResponse(res, 400, Text.error.emptyPostTitle);
     } else {
-        const post = generateBasicPost(groupId, senderId, 'default');
+        const post = await generateBasicPost(groupId, senderId, 'default');
         post.title = title;
         post.description = description || '';
 

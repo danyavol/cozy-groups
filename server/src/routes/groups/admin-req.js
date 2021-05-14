@@ -40,7 +40,7 @@ groups.put('/invite-code', async (req, res) => {
     else {
         let allGroups = await groupsCollection.find(null, true);
         
-        let inviteCode = generateCode(allGroups, 'inviteCode');
+        let inviteCode = generateCode(allGroups, 'inviteCode', 'group_inviteCode');
 
         groupsCollection.updateOne({id: groupId}, {$set: {inviteCode: inviteCode}})
         

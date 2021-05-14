@@ -32,6 +32,7 @@ exports.getPostDTO =  async function (data, extended=false) {
             firstName: author.firstName,
             lastName: author.lastName
         };
+        post.totalComments = post.comments.length;
     
         delete post._id;
         delete post.groupId;

@@ -95,7 +95,7 @@ groups.post('/transfer-owner-rights', async (req, res) => {
 
             await groupsCollection.updateOne({id: groupId}, {$set: {users: group.users}});
 
-            return sendResponse(res, 200, Text.success.ownerRoleTransfered);
+            return sendResponse(res, 200, Text.success.ownerRoleTransferred);
         }
     }
 
