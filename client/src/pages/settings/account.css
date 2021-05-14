@@ -1,5 +1,5 @@
 #login {
-    font-size: 65px;
+    font-size: 55px;
     padding-left: 20px;
     margin: 0;
 }
@@ -24,4 +24,10 @@
 }
 .blocks .segment .icon {
     margin-right: 15px !important;
+}
+.informations * {
+    font-size: 30px !important;
+    margin: 0;
+    padding-left: 21px;
+    text-align: left;
 }

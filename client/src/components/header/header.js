@@ -67,8 +67,8 @@ class Header extends Component {
                     </div>
                     <div className="menu-bottom">
                         <MenuLink
-                            to="/settings"
-                            label="Настройки"
+                            to="/account"
+                            label={`Аккаунт`}
                             icon={faUserCog}
                         />
                         <MenuLink

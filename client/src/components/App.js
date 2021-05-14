@@ -9,7 +9,7 @@ import Home from '../pages/home/home.js';
 import Login from '../pages/login/login.js';
 import Register from '../pages/register/register.js';
 import Error from '../pages/notFound/404.js';
-import Settings from '../pages/settings/settings.js'
+import Account from '../pages/settings/account.js'
 import Header from './header/header.js';
 import AddGroups from '../pages/groups/addGroups.js';
 import GroupsList from '../pages/groups/groupsList.js';
@@ -115,6 +115,7 @@ class App extends Component {
                         loading={this.state.loading}
                         updateModal={this.updateModal}
                         updateMainModal={this.updateMainModal}
+                        user={this.state.user}
                     />
                     <main>
                         <Modal
@@ -174,8 +175,8 @@ class App extends Component {
                                     loading={this.state.loading}
                                 />
                             </Route>
-                            <Route path="/settings">
-                                <Settings
+                            <Route path="/account">
+                                <Account
                                     user={this.state.user}
                                     groups={this.state.Groups}
                                     loading={this.state.loading}
