@@ -13,7 +13,7 @@ class Error extends Component {
     render() {
         return (
            <div className="error-block">
-               <h1 className="text">404</h1>
+               <h1 className="error-block-text">404</h1>
                <h4 className="phrase">{this.phrases[this.number]}</h4>
                <a className="ui huge button" href="/"><i className="reply icon"></i>Вернуться на главную страницу</a>
            </div>
