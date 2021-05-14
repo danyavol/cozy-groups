@@ -6,7 +6,7 @@ import "./kickUserButton.css";
 export default function KickUserButton(props) {
 
     function userKick() {
-        props.changeUserLoading(props.user.id);
+        props.changeUserLoading(true);
         axios.delete('http://localhost:3080/groups/kick-user', {
             headers: {
                 'Authorization': props.token
@@ -17,8 +17,17 @@ export default function KickUserButton(props) {
             }
         }).then(response => {
             if (response.data.ok) {
-                props.usersChange(props.user.id);
-                props.changeUserLoading();
+                axios.get('http://localhost:3080/groups/' + props.groupId, {
+                    headers: {
+                        'Authorization': props.token
+                    }
+                })
+                    .then(response => {
+                        if (response.data.ok) {
+                            props.newUsers(response.data.group.users);
+                            props.changeLoadingUser(false);
+                        }
+                    });
             }
         }).catch((err) => {
             console.log(err);

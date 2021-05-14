@@ -211,6 +211,7 @@ const transfer = (userId) => {
                 }, 3000);
             }
         })
+       
 }
 
 const change = (newName) => {
@@ -223,26 +224,41 @@ const change = (newName) => {
             'Authorization': props.token
         }
     })
-        .then(response => {
-            if (response.data.ok) {
-                setLoading(false);
-                setTitle(newName);
-                props.updateMainModal('Уведомление', response.data.message, "notification")
-                props.updateGroup(props.match.params.id, newName);
-            }
-        })
-        .catch((err) => {
-            setLoading(false);
-            if (err.response) {
-                props.updateMainModal("Ошибка", err.response.data.message, "error");
-            }
-            else {
-                setTimeout(() => {
-                    props.history.push("/");
-                    props.close();
-                }, 3000);
-            }
-        })
+    .then(response => {
+        if (response.data.ok) {
+            let message = response.data.message;
+            axios.get('http://localhost:3080/groups/' + props.match.params.id, {
+                headers: {
+                    'Authorization': props.token
+                }
+            })
+                .then(response => {
+                    if (response.data.ok) {
+                        setGroup(response.data.group);
+                        setLoading(false);
+                        props.updateMainModal('Уведомление', message, "notification");
+                    }
+                })
+                .catch((err) => {
+                    setLoading(false);
+                    if (err.response) {
+                        props.updateMainModal("Ошибка", err.response.data.message, "error");
+                    }
+                    else {
+                        setTimeout(() => {
+                            props.history.push("/");
+                            props.close();
+                        }, 3000);
+                    }
+                });
+        }
+    })
+    .catch((err) => {
+        setLoading(false);
+        setTitle(newName);
+        props.updateMainModal('Уведомление', err.response.data.message, "notification")
+        props.updateGroup(props.match.params.id, newName);
+    })
 }
 
 const handleUserChange = (newUsers) => {
