@@ -82,7 +82,7 @@ auth.post('/login', async (req, res) => {
         else {
             if ( !isValidPassword(password, user.password) ) {
                 // Неверный пароль
-                return sendResponse(res, 400, Text.error.wrondPassword);
+                return sendResponse(res, 400, Text.error.wrongPassword);
             } 
             else {
                 // Пароль верный

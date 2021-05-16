@@ -25,9 +25,10 @@ module.exports = {
         emptyLogin: 'Введите логин',
         emptyPassword: 'Введите пароль',
         findUserByLogin: 'Пользователь с данным логином не найден',
-        wrondPassword: 'Неверный пароль',
+        wrongPassword: 'Неверный пароль',
         // Посты
         emptyPostTitle: 'Введите заголовок поста',
+        findPostById: 'Пост с таким id не найден'
     },
     success: {
         // Группы
@@ -39,7 +40,7 @@ module.exports = {
         groupDeleted: 'Группа успешно удалена',
         // Роли
         userRoleChanged: 'Права пользователя успешно изменены',
-        ownerRoleTransfered: 'Права владельца успешно переданы',
+        ownerRoleTransferred: 'Права владельца успешно переданы',
         // Авторизация
         userCreated: 'Пользователь успешно зарегистрирован',
         userAuthorized: 'Успешно авторизован',

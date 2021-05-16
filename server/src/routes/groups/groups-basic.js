@@ -27,9 +27,9 @@ groups.post('/create', async (req, res) => {
         let allGroups = await groupsCollection.find(null, true);
         
         let group = {
-            id: generateCode(allGroups, 'id'),
+            id: generateCode(allGroups, 'id', 'group_id'),
             name: name,
-            inviteCode: generateCode(allGroups, 'inviteCode'),
+            inviteCode: generateCode(allGroups, 'inviteCode', 'group_inviteCode'),
             users: [
                 { id: senderId, role: 'owner' }
             ]

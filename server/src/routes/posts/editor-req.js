@@ -1,20 +1,28 @@
-// Создать пост
-// Создать опрос
-
 const express = require('express');
 const posts = express.Router();
 module.exports = posts;
 
-const {v4: uuidv4} = require('uuid');
+const generateCode = require('../../service/codeGenerator.js');
 const groupsCollection = require('../../database/database.js')('groups');
 const postsCollection = require('../../database/database.js')('posts');
 const permissions = require('../../service/permissions.js');
 const Text = require('../../service/responseMessages.js');
 const { sendResponse } = require('../../service/requestService.js');
 
-function genPostId() {
-    return 'post-'+uuidv4();
+
+async function generateBasicPost(groupId, authorId, type='default') {
+    let posts = await postsCollection.find({id: groupId}, true);
+    
+    return {
+        id: generateCode(posts, 'id', 'post_id'),
+        groupId: groupId,
+        author: authorId,
+        createdAt: Date.now(),
+        type: type,
+        comments: []
+    };
 }
+
 
 posts.post('/:groupId/default', async (req, res) => {
     let senderId = res.locals.userId;
@@ -34,21 +42,12 @@ posts.post('/:groupId/default', async (req, res) => {
     else if (!title) {
         return sendResponse(res, 400, Text.error.emptyPostTitle);
     } else {
-        const post = {
-            id: genPostId(),
-            groupId: groupId,
-            author: senderId,
-            createdAt: Date.now(),
-            type: 'default',
-            title: title,
-            description: description || ''       
-        }
+        const post = await generateBasicPost(groupId, senderId, 'default');
+        post.title = title;
+        post.description = description || '';
 
         await postsCollection.insertOne(post);
         
-        delete post._id;
-        delete post.groupId;
-        
-        return sendResponse(res, 200, Text.success.postCreated, {post: post});
+        return sendResponse(res, 200, Text.success.postCreated);
     }
 });
