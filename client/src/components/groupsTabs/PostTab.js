@@ -1,17 +1,19 @@
 import { Dropdown, Tab } from "semantic-ui-react";
 import React, { useEffect, useState } from "react";
 import "./postTab.css"
+import { Link, useLocation, withRouter } from "react-router-dom";
 
-export default function PostsTab(props) {
+function PostsTab(props) {
 
     const [posts, setPosts] = useState([]);
+
 
     useEffect(() => {
         setPosts(props.posts);
     }, [props.posts]);
 
     const postsCards = posts.map(post =>
-        <div class="ui card custom-width">
+        <div key={post.id} class="ui card custom-width">
             <div class="content">
                 <p className="right floated"><i class="user icon"></i>{props.group.users.find(user => user.id === post.author).login}</p>
                 <div class="header">{post.title}</div>
@@ -20,7 +22,7 @@ export default function PostsTab(props) {
                 </div>
             </div>
             <div class="extra content">
-                <span class="left floated like"><i class="comment icon"></i> 999 Комментариев </span>
+                <span className="left floated like"><i class="comment icon"></i> 999 Комментариев </span>
                 <span class="right floated star"><i class="calendar icon"></i>{new Date(post.createdAt).toLocaleString()}</span>
             </div>
         </div>
@@ -37,32 +39,18 @@ export default function PostsTab(props) {
                 </svg>
                 <h1>У вас ещё нет постов :(</h1>
                 </div>
-               
-                <CreatePostButton createPost={props.createPost} />
+                
+               <Link color='black' to={"/groups/" + props.match.params.id + "/post/new"}><i className=" createPost plus huge icon"></i></Link> 
             </div>
         );
     }
     return (
         <div className="postTab">
             {postsCards}
-            <CreatePostButton createPost={props.createPost} />
+            <Link color='black' to={"/groups/" + props.match.params.id + "/post/new"}><i className=" createPost plus huge icon"></i></Link> 
         </div>
     );
 }
 
-const CreatePostButton = (props) => {
-    return (
-        <div className="createPost">
-            <Dropdown
-                icon={{ name: "plus", size: "huge" }}
-                className="icon"
-                direction="left"
-            >
-                <Dropdown.Menu>
-                    <Dropdown.Item onClick={props.createPost} text="Создать пост" />
-                    <Dropdown.Item text="Создать опрос" />
-                </Dropdown.Menu>
-            </Dropdown>
-        </div>
-    );
-}
+
+export default withRouter(PostsTab)

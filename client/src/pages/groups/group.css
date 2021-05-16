@@ -46,7 +46,8 @@
     bottom: 0;
     right: 0;
     size: 20pt;
-    margin: 30px;
+    margin: 30px !important;
+    color: black !important;
 }
 
 .postTab {
