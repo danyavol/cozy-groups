@@ -21,6 +21,7 @@ import './App.css';
 import 'semantic-ui-css/semantic.min.css'
 import axios from "axios";
 import GroupHooks from "../pages/groups/groupHooks";
+import CreatePost from '../pages/posts/createPost.js';
 import Post from '../pages/posts/post.js';
 
 
@@ -153,8 +154,9 @@ class App extends Component {
                                     myGroups={this.state.Groups}
                                 />
                             </Route>
+                            <Route path="/groups/:id/post/new"  component={() => <CreatePost token={this.state.token} updateMainModal = {this.updateMainModal}/>}></Route>
+                            <Route path="/groups/:id/post/:postid" component={() => <Post token={this.state.token} updateMainModal = {this.updateMainModal}/>} />
                             
-                            <Route path="/groups/:id/post/new"  component={() => <Post token={this.state.token} updateMainModal = {this.updateMainModal}/>}></Route>
 
                             <Route path="/groups/:id"
                                 render={(props) => (

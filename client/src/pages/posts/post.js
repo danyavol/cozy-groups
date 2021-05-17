@@ -1,32 +1,18 @@
-import { Fragment } from "react";
-import React, { useEffect, useState } from 'react';
-import { withRouter } from "react-router-dom";
-import { Form, Radio } from 'semantic-ui-react'
-import DefaultPost from "../../components/postsTypes/defaultPost";
 import axios from "axios";
-import './post.css'
+import { Fragment, useEffect, useState } from "react";
+import { withRouter } from "react-router-dom"
+import Loader from "../../components/loader/Loader";
 
 function Post(props) {
 
-    const [checked, setChecked] = useState('default');
-    const [cozyData, setCozyData] = useState({ title: '', description: '' });
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [post, setPost] = useState({});
+    const [author, SetAuthor] = useState("");
+    const [loading, setLoading] = useState(true);
+    const [loaderText, setLoaderText] = useState("Загрузка поста...")
 
-    const updateData = (value) => {
-        if(value.title === '') {
-            setError('empty');
-        }
-        else {
-            setError('');
-        }
-        setCozyData(value);
-    }
-
-    const createPost = () => {
+    useEffect(() => {
         setLoading(true);
-        let data = { title: cozyData.title, description: cozyData.description };
-        axios.post('http://localhost:3080/posts/' + props.match.params.id + '/' + cozyData.type, data, {
+        axios.get('http://localhost:3080/posts/' + props.match.params.id + '/post/' + props.match.params.postid, {
             headers: {
                 'Authorization': props.token
             }
@@ -34,59 +20,78 @@ function Post(props) {
             .then(response => {
                 if (response.data.ok) {
                     setLoading(false);
-                    props.updateMainModal('Уведомление', "Пост успешно создан!", "notification");
-                    props.history.push('/groups/' + props.match.params.id);
+                    setPost(response.data.post);
+                    SetAuthor(response.data.post.author.login)
+                    console.log(response.data.post);
                 }
             })
-            .catch((err) => {
-                if (err.response) {
-                    setLoading(false);
-                    props.updateMainModal("Ошибка", err.response.data.message, "error");
-                }
-                else {
-                    setTimeout(() => {
-                        props.history.push("/");
-                        props.close();
-                    }, 3000);
-                }
-            })
-    }
+    }, [props.token, props.match.params.id, props.match.params.postid])
 
     return (
         <Fragment>
-            <div className={`ui padded ${loading ? `disabled` : ``} segment`}>
-                <div>
-                    <h1 className="settings-header">Настройки поста</h1>
+            <Loader loading={loading} text={loaderText} />
+            <div className={loading ? 'hidden' : ''}>
+                <div className={``}>
+
+                    <p className="right floated"><i class="user icon"></i> {author} {new Date(post.createdAt).toLocaleString()}</p>
                 </div>
-                <Form>
-                    <Form.Field>
-                        <Radio
-                            toggle
-                            label='Обычный пост'
-                            name='radioGroup'
-                            value='default'
-                            checked={checked === 'default'}
-                            onChange={() => setChecked('default')}
-                        />
-                    </Form.Field>
-                    <Form.Field>
-                        <Radio
-                            toggle
-                            label='Опрос'
-                            name='radioGroup'
-                            value='quiz'
-                            checked={checked === 'quiz'}
-                            onChange={() => setChecked('quiz')}
-                        />
-                    </Form.Field>
-                </Form>
+                <div className="ui segment">
+                    <h2>{post.title}</h2>
+                    <div className="ui divider"></div>
+                    <h3>{post.description}</h3>
+                </div>
+                <div className="ui segment">
+                    <h1>Комментарии {post.totalComments}</h1>
+                    <div class="ui minimal comments">
+                        <div class="comment">
+                            <a class="avatar">
+                                <img src="/images/avatar/small/matt.jpg" />
+                            </a>
+                            <div class="content">
+                                <a class="author">Matt</a>
+                                <div class="metadata">
+                                    <span class="date">Сегодня вечером в 5:42</span>
+                                </div>
+                                <div class="text">Как артистично! </div>
+                            </div>
+                        </div>
+                        <div class="comment">
+                            <a class="avatar">
+                                <img src="/images/avatar/small/elliot.jpg" />
+                            </a>
+                            <div class="content">
+                                <a class="author">Elliot Fu</a>
+                                <div class="metadata">
+                                    <span class="date">Вчера в 12:30 утра</span>
+                                </div>
+                                <div class="text">
+                                    <p>Это будет очень полезно для моих исследований. Спасибо!</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="comment">
+                            <a class="avatar">
+                                <img src="/images/avatar/small/joe.jpg" />
+                            </a>
+                            <div class="content">
+                                <a class="author">Джо Хендерсон</a>
+                                <div class="metadata">
+                                    <span class="date">5 дней назад</span>
+                                </div>
+                                <div class="text">Чувак, это удивительно. Огромное спасибо. </div>
+                            </div>
+                        </div>
+                        <form class="ui reply form">
+                            <div class="field">
+                                <textarea></textarea>
+                            </div>
+                            <div class="ui blue labeled submit icon button"><i class="icon edit"></i> Добавить ответ </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-            {checked === 'default' ? <DefaultPost error={error} loading={loading} update={updateData} /> : "а нихуя"}
-            <div className='ui center aligned padded segment'>
-                <a className={`ui huge ${error === null || error === 'empty' ? `disabled` : `` } ${loading ? `loading` : ``} button`} onClick={createPost}><i className="reply icon"></i>Создать пост</a>
-            </div>
+
         </Fragment>
     );
 }
-
-export default withRouter(Post);
+export default withRouter(Post)
