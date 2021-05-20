@@ -28,7 +28,12 @@ module.exports = {
         wrongPassword: 'Неверный пароль',
         // Посты
         emptyPostTitle: 'Введите заголовок поста',
-        findPostById: 'Пост с таким id не найден'
+        findPostById: 'Пост с таким id не найден',
+        // Опросы
+        quizOptionsRequired: 'Параметр options обязательный',
+        quizCanCancelParamRequired: 'Параметр canCancel обязательный',
+        invalidQuizOptions: 'Неверный формат параметра options',
+        invalidQuizType: 'Неверный формат параметра quizType',
     },
     success: {
         // Группы
