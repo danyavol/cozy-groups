@@ -14,7 +14,7 @@ export default function Users(props) {
             }
         });
         setUsers(users);
-    }, [props.users]);
+    }, [props.users, props.group.users]);
 
     return (
         users.map((user) =>

@@ -10,23 +10,25 @@ function PostsTab(props) {
 
     useEffect(() => {
         setPosts(props.posts);
+        console.log(props.posts);
     }, [props.posts]);
 
     const postsCards = posts.map(post =>
-        <div key={post.id} onClick={() => props.history.push('/groups/'+ props.match.params.id + '/post/' + post.id)} class="ui card custom-width">
-            <div class="content">
-                <p className="right floated"><i class="user icon"></i>{post.author.login}</p>
-                <div class="header" >{post.title}</div>
-                <div class="description">
+        <div key={post.id} onClick={() => props.history.push('/groups/'+ props.match.params.id + '/post/' + post.id)} className="ui card custom-width">
+            <div className="content">
+                <p className="right floated"><i className="user icon"></i>{post.author.login}</p>
+                <div className="header" >{post.title}</div>
+                <div className="description">
                     <p className="word-break">{post.description}</p>
                 </div>
             </div>
-            <div class="extra content">
-                <span class="left floated like"><i class="comment icon"></i>{post.totalComments}</span>
-                <span class="right floated star"><i class="calendar icon"></i>{new Date(post.createdAt).toLocaleString()}</span>
+            <div className="extra content">
+                <span className="left floated like"><i className="comment icon"></i>{post.totalComments}</span>
+                <span className="right floated star"><i className="calendar icon"></i>{new Date(post.createdAt).toLocaleString()}</span>
             </div>
         </div>
-    )
+    );
+
     if (posts.length === 0) {
         return (
             <div className="postTab">

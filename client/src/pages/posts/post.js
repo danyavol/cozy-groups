@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Fragment, useEffect, useState } from "react";
-import { withRouter } from "react-router-dom"
+import {useParams, withRouter} from "react-router-dom"
 import Loader from "../../components/loader/Loader";
 
 function Post(props) {
@@ -9,23 +9,28 @@ function Post(props) {
     const [author, SetAuthor] = useState("");
     const [loading, setLoading] = useState(true);
     const [loaderText, setLoaderText] = useState("Загрузка поста...")
+    const postId = useParams().postid;
+    const params = useParams();
 
     useEffect(() => {
-        setLoading(true);
-        axios.get('http://localhost:3080/posts/' + props.match.params.id + '/post/' + props.match.params.postid, {
-            headers: {
-                'Authorization': props.token
-            }
-        })
-            .then(response => {
-                if (response.data.ok) {
-                    setLoading(false);
-                    setPost(response.data.post);
-                    SetAuthor(response.data.post.author.login)
-                    console.log(response.data.post);
+        if (props.token !== null) {
+            console.log(params.postid);
+            setLoading(true);
+            axios.get('http://localhost:3080/posts/' + props.match.params.id + '/post/' + postId, {
+                headers: {
+                    'Authorization': props.token
                 }
             })
-    }, [props.token, props.match.params.id, props.match.params.postid])
+                .then(response => {
+                    if (response.data.ok) {
+                        setLoading(false);
+                        setPost(response.data.post);
+                        SetAuthor(response.data.post.author.login)
+                        console.log(response.data.post);
+                    }
+                })
+        }
+    }, [props.token, props.match.params.id, postId])
 
     return (
         <Fragment>
@@ -33,7 +38,7 @@ function Post(props) {
             <div className={loading ? 'hidden' : ''}>
                 <div className={``}>
 
-                    <p className="right floated"><i class="user icon"></i> {author} {new Date(post.createdAt).toLocaleString()}</p>
+                    <p className="right floated"><i className ="user icon"></i> {author} {new Date(post.createdAt).toLocaleString()}</p>
                 </div>
                 <div className="ui segment">
                     <h2>{post.title}</h2>

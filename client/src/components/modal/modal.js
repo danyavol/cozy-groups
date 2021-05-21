@@ -20,7 +20,7 @@ export default withRouter(function Modal(props) {
 
     useEffect(() => {
         setInputErrorModal(inputErrorModal);
-    })
+    }, [inputErrorModal]);
 
     const handleInputChange = (e) => {
         validateField(e.target.value)

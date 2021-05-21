@@ -1,9 +1,7 @@
-import {useCallback, useEffect, useState} from "react";
-
+import {useEffect, useState} from "react";
 import "./usersTab.css";
 import RoleDropdown from "./roleDropdown/RoleDropdown";
 import KickUserButton from "./kickUserButton/KickUserButton";
-import UserLoader from "../../loader/UserLoader";
 import Loader from "../../loader/Loader";
 
 export default function UsersTab(props) {
@@ -14,13 +12,12 @@ export default function UsersTab(props) {
 
 function UsersRows(props) {
     const [users, setUsers] = useState([]);
-    const [usersRows, setUsersRows] = useState([]);
     const [userLoading, setUserLoading] = useState('');
     const [totalUserRole, setTotalUserRole] = useState('');
     const [totalUserId, setTotalUserId] = useState('');
 
     useEffect(() => {
-        setUsers(props.group.users);
+        setUsers(sortUsers(props.group.users));
     }, [props.group]);
 
 
@@ -34,16 +31,49 @@ function UsersRows(props) {
             }
 
         });
-    }, [props.group]);
-
+    }, [props.group, totalUserId, totalUserRole]);
 
     const handlerChangeUserLoading = (value) => {
         setUserLoading(value);
     }
 
     const handleUsersChange = (usersList) => {
-        setUsers(usersList);
+        setUsers(sortUsers(usersList));
         props.changeUsers(usersList);
+    }
+
+    const sortUsers = users => {
+        if (users !== null) {
+            let sortedUsers = [];
+            let admins = [];
+            let editors = [];
+            let members = [];
+
+            sortedUsers.push(users.find(user => user.role === 'owner'));
+
+            users.forEach(user => {
+                if (user.role === 'admin')
+                    admins.push(user);
+            });
+
+            users.forEach(user => {
+                if (user.role === 'editor')
+                    editors.push(user);
+            });
+
+            users.forEach(user => {
+                if (user.role === 'member')
+                    editors.push(user);
+            });
+
+            admins.sort((a, b) => a.firstName.localeCompare(b.firstName));
+            editors.sort((a, b) => a.firstName.localeCompare(b.lastName));
+            members.sort((a, b) => a.firstName.localeCompare(b.firstName));
+
+            sortedUsers.push(...admins, ...editors, ...members);
+
+            return sortedUsers;
+        }
     }
 
 

@@ -1,11 +1,10 @@
 import { Tab } from "semantic-ui-react";
 import React from "react";
-import PostsTab from "./PostTab";
+import PostsTab from "./postTab/PostTab";
 import InviteTab from "./InviteTab";
 import UsersTab from "./usersTab/UsersTab";
 
 export default function Tabs(props) {
-    const handleUsersChange = (usersList) => {}
 
     const panes = [
         {
@@ -20,14 +19,16 @@ export default function Tabs(props) {
                 token={props.token}
                 group={props.group}
                 changeUsers={props.changeUsers}
-
-                newUsers={handleUsersChange}
             />
         },
         {
             menuItem:
                 { key: 'invite', icon: 'linkify', content: 'Код приглашения' },
-            render: () => <InviteTab groupId={props.group.id} inviteCode={props.group.inviteCode} token={props.token} />
+            render: () => <InviteTab
+                groupId={props.group.id}
+                inviteCode={props.group.inviteCode}
+                token={props.token}
+            />
         }
     ];
 
