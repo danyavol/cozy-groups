@@ -16,7 +16,7 @@ async function generateBasicPost(groupId, authorId, type='default') {
     return {
         id: generateCode(posts, 'id', 'post_id'),
         groupId: groupId,
-        author: authorId,
+        authorId: authorId,
         createdAt: Date.now(),
         type: type,
         comments: []
@@ -33,21 +33,20 @@ posts.post('/:groupId/default', async (req, res) => {
     if (!group) return sendResponse(res, 400, Text.error.findGroupById);
     
     let author = group.users.filter(u => u.id === senderId)[0];
-    if (!author) {
-        return sendResponse(res, 400, Text.error.notGroupMember);
-    } 
-    else if ( !permissions[author.role].includes('createPost') ) {
-        return sendResponse(res, 400, Text.error.permissionDenied);
-    }
-    else if (!title) {
-        return sendResponse(res, 400, Text.error.emptyPostTitle);
-    } else {
-        const post = await generateBasicPost(groupId, senderId, 'default');
-        post.title = title;
-        post.description = description || '';
+    if (!author) return sendResponse(res, 400, Text.error.notGroupMember);
 
-        await postsCollection.insertOne(post);
-        
-        return sendResponse(res, 200, Text.success.postCreated);
-    }
+    if ( !permissions[author.role].includes('createPost') )
+        return sendResponse(res, 400, Text.error.permissionDenied);
+
+    if (!title) return sendResponse(res, 400, Text.error.emptyPostTitle);
+    
+    
+    const post = await generateBasicPost(groupId, senderId, 'default');
+    post.title = title;
+    post.description = description || '';
+
+    await postsCollection.insertOne(post);
+    
+    return sendResponse(res, 200, Text.success.postCreated);
+    
 });

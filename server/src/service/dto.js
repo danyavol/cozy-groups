@@ -3,29 +3,27 @@ const usersCollection = require('../database/database.js')('users');
 
 
 // data  =>  single post or array
-exports.getPostDTO =  async function (data, extended=false) {
+exports.getPostDTO =  async function (data) {
 
     if (Array.isArray(data)) {
         const allUsers = await usersCollection.find(null, true);
 
-        for (let post of data)
-            for (let user of allUsers)
-                if (post.author === user.id) {
-                    post = handleSinglePost(post, user, extended);
-                    break;
-                }
+        data.forEach(post => {
+            const user = allUsers.find(user => user.id === post.authorId);
+            post = handleSinglePost(post, user);
+        });
     } 
     else {
-        const user = await usersCollection.find({id: data.author});
+        const author = await usersCollection.find({id: data.authorId});
         
-        data = handleSinglePost(data, user, extended);
+        data = handleSinglePost(data, author);
     }
     
     return data;
 
 
 
-    function handleSinglePost(post, author={}, extended) {
+    function handleSinglePost(post, author={}) {
         post.author = {
             id: author.id,
             login: author.login,
@@ -34,12 +32,48 @@ exports.getPostDTO =  async function (data, extended=false) {
         };
         post.totalComments = post.comments.length;
     
-        delete post._id;
-        delete post.groupId;
-        
-        if (!extended) delete post.comments;
+        const fieldsToDelete = ['_id', 'groupId', 'authorId', 'comments'];
+        fieldsToDelete.forEach(field => delete post[field]);
 
         return post;
+    }
+
+}
+
+
+// data  =>  single comment or array
+exports.getCommentDTO =  async function (data) {
+
+    if (Array.isArray(data)) {
+        const allUsers = await usersCollection.find(null, true);
+
+        data.forEach(comment => {
+            const user = allUsers.find(user => user.id === comment.authorId);
+            comment = handleSingleComment(comment, user);
+        });
+    } 
+    else {
+        const author = await usersCollection.find({id: data.authorId});
+        
+        data = handleSingleComment(data, author);
+    }
+    
+    return data;
+
+
+
+    function handleSingleComment(comment, author={}) {
+        comment.author = {
+            id: author.id,
+            login: author.login,
+            firstName: author.firstName,
+            lastName: author.lastName
+        };
+    
+        const fieldsToDelete = ['_id', 'groupId', 'postId', 'authorId'];
+        fieldsToDelete.forEach(field => delete comment[field]);
+
+        return comment;
     }
 
 }
