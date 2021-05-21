@@ -2,6 +2,7 @@ import axios from "axios";
 import { Fragment, useEffect, useState } from "react";
 import {useParams, withRouter} from "react-router-dom"
 import Loader from "../../components/loader/Loader";
+import DateParser from '../../services/dateParserService';
 
 function Post(props) {
 
@@ -38,7 +39,7 @@ function Post(props) {
             <div className={loading ? 'hidden' : ''}>
                 <div className={``}>
 
-                    <p className="right floated"><i className ="user icon"></i> {author} {new Date(post.createdAt).toLocaleString()}</p>
+                    <p className="right floated"><i className ="user icon"></i> {author} {DateParser.beautify(new Date(post.createdAt))}</p>
                 </div>
                 <div className="ui segment">
                     <h2>{post.title}</h2>

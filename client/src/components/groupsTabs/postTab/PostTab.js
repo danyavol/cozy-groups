@@ -2,6 +2,7 @@ import { Dropdown, Tab } from "semantic-ui-react";
 import React, { useEffect, useState } from "react";
 import "./postTab.css"
 import { Link, useLocation, withRouter } from "react-router-dom";
+import DateParser from '../../../services/dateParserService';
 
 function PostsTab(props) {
 
@@ -24,7 +25,7 @@ function PostsTab(props) {
             </div>
             <div className="extra content">
                 <span className="left floated like"><i className="comment icon"></i>{post.totalComments}</span>
-                <span className="right floated star"><i className="calendar icon"></i>{new Date(post.createdAt).toLocaleString()}</span>
+                <span className="right floated star"><i className="calendar icon"></i>{DateParser.beautify(new Date(post.createdAt))}</span>
             </div>
         </div>
     );
