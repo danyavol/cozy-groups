@@ -28,7 +28,18 @@ module.exports = {
         wrongPassword: 'Неверный пароль',
         // Посты
         emptyPostTitle: 'Введите заголовок поста',
-        findPostById: 'Пост с таким id не найден'
+        findPostById: 'Пост с таким id не найден',
+        // Опросы
+        quizOptionsRequired: 'Параметр options обязательный',
+        quizCanCancelParamRequired: 'Параметр canCancel обязательный',
+        invalidQuizOptions: 'Неверный формат параметра options',
+        invalidQuizType: 'Неверный формат параметра quizType',
+        postMustBeQuizType: 'Пост должен быть опросом',
+        notAllowedToCancelVote: 'Нельзя отменить голос',
+        notAllowedToChangeVote: 'Нельзя менять голос',
+        noSuchOption: 'У опроса нет варианта ответа с данным id',
+        optionAlreadyVotedBySomeone: 'Данный вариант ответа уже занят',
+        selectedOptionsMustBeArray: 'Параметр selectedOptions должен быть массивом'
     },
     success: {
         // Группы
@@ -46,6 +57,7 @@ module.exports = {
         userAuthorized: 'Успешно авторизован',
         tokenDeleted: 'Токен успешно удален',
         // Посты
-        postCreated: 'Пост успешно создан'
+        postCreated: 'Пост успешно создан',
+        voteSaved: 'Голос успешно сохранен'
     }
 }

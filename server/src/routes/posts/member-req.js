@@ -94,22 +94,104 @@ posts.post('/:groupId/comment/:postId', async (req, res) => {
 });
 
 
+posts.post('/:groupId/vote-quiz/:postId', async (req, res) => {
+    const senderId = res.locals.userId;
+    const { groupId, postId } = req.params;
+    let { selectedOptions, removeVote } = req.body;
 
 
+    let group, post;
+    await Promise.all([
+        groupsCollection.find({id: groupId}),
+        postsCollection.find({groupId: groupId, id: postId})
+    ]).then(result => { group = result[0]; post = result[1] });
 
+    if (!group) return sendResponse(res, 400, Text.error.findGroupById);
+    if (!post) return sendResponse(res, 400, Text.error.findPostById);
 
-// Приходит вместе с запросом GET posts/{groupId}/post/{postId}
-//
-// comments: [
-//     {
-//         author: {
-//             id: 'user-123123dsc-s1dfs3adc-123ecs4ax',
-//             login: 'kek228', 
-//             firstName: 'Dima', 
-//             lastName: null
-//         },
-//         text: 'Пост говно, автор лох, я пиздабол',
-//         createdAt: 16821931023
-//     }, 
-//     { ... }
-// ]
+    const user = group.users.filter(u => u.id === senderId)[0];
+    if (!user) return sendResponse(res, 400, Text.error.notGroupMember);
+
+    if (post.type != 'quiz') return sendResponse(res, 400, Text.error.postMustBeQuizType);
+    if (!Array.isArray(selectedOptions)) return sendResponse(res, 400, Text.error.selectedOptionsMustBeArray);
+
+    const {quizType, canCancel, options} = post;
+    const newVotes = getVotesForSave({quizType, canCancel, options}, post.votes, senderId, selectedOptions, removeVote);
+
+    if (!newVotes.ok) return sendResponse(res, 400, newVotes.error);
+
+    await postsCollection.updateOne({groupId, id: postId}, {$set: {votes: newVotes.data}});
+    return sendResponse(res, 200, Text.success.voteSaved);
+
+});
+
+function getVotesForSave(quizConfig, votes, senderId, selectedOptions, removeVote) {
+    // Проверка на сколько верно указаны айдишники опшенов
+    let wrongOptions = false;
+    selectedOptions.forEach(o => !quizConfig.options.find(op => op.id === o) ? wrongOptions = true : null);
+    if (wrongOptions) return {ok: false, error: Text.error.noSuchOption}
+
+    // Отмена голоса, но это запрещено
+    if (removeVote && !quizConfig.canCancel) {
+        return {ok: false, error: Text.error.notAllowedToCancelVote};
+    } 
+    // Отмена голоса
+    else if (removeVote && quizConfig.canCancel) {
+        const vote = votes.find(vote => vote.userId === senderId);
+        if (vote) {
+            let set = new Set(vote.selectedOptions);
+            selectedOptions.forEach(o => set.delete(o));
+            if (set.size == 0) votes.splice(votes.indexOf(vote), 1);
+            else vote.selectedOptions = [...set];
+        }
+        return {ok: true, data: votes};
+    }
+
+    // Запись голоса
+    
+    // Множественный выбор
+    if (quizConfig.quizType == 0) {
+        const vote = votes.find(vote => vote.userId === senderId);
+        if (vote && !quizConfig.canCancel) {
+            return {ok: false, error: Text.error.notAllowedToChangeVote};
+        } else if (vote && quizConfig.canCancel) {
+            let set = new Set(vote.selectedOptions);
+            selectedOptions.forEach(o => set.add(o));
+            vote.selectedOptions = [...set];
+        } else {
+            votes.push({userId: senderId, selectedOptions});
+        }
+        return {ok: true, data: votes};
+    }
+
+    // Выбор одного варианта
+    if (quizConfig.quizType == 1) {
+        const vote = votes.find(vote => vote.userId === senderId);
+        if (vote && !quizConfig.canCancel) {
+            return {ok: false, error: Text.error.notAllowedToChangeVote};
+        } else if (vote && quizConfig.canCancel) {
+            vote.selectedOptions = [selectedOptions[0]];
+        } else {
+            votes.push({userId: senderId, selectedOptions: [selectedOptions[0]]})
+        }
+        return {ok: true, data: votes};
+    }
+
+    // Один вариант для одного человека
+    if (quizConfig.quizType == 2) {
+        const alreadyVoted = votes.find(vote => vote.selectedOptions.includes(selectedOptions[0]));
+        if (alreadyVoted && alreadyVoted.userId !== senderId) {
+            return {ok: false, error: Text.error.optionAlreadyVotedBySomeone}
+        }
+        const vote = votes.find(vote => vote.userId === senderId);
+        if (vote && !quizConfig.canCancel) {
+            return {ok: false, error: Text.error.notAllowedToChangeVote};
+        } else if (vote && quizConfig.canCancel) {
+            vote.selectedOptions = [selectedOptions[0]];
+        } else {
+            votes.push({userId: senderId, selectedOptions: [selectedOptions[0]]})
+        }
+        return {ok: true, data: votes};
+    }
+    
+}
