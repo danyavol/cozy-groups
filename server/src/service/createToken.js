@@ -5,11 +5,11 @@ const {v4: uuidv4} = require('uuid');
 const tokensCollection = require('../database/database.js')('tokens');
 
 
-async function createToken(userId, req) {
+async function createToken(userId, req, infiniteToken = false) {
     const tokenData = {
         userId: userId,
         token: 'token-' + uuidv4(),
-        maxAge: Date.now() + maxTokenAge,
+        maxAge: infiniteToken ? null : Date.now() + maxTokenAge,
         'user-agent': req.headers['user-agent']   
     }
 

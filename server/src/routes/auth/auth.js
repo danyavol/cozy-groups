@@ -19,7 +19,7 @@ function isValidPassword(presentedPassword, userPassword) {
 
 
 auth.post('/register', async (req, res) => {
-    let { password, login, firstName, lastName } = req.body;
+    let { password, login, firstName, lastName, infiniteToken } = req.body;
 
     if ( !Validator.login(login) ) {
         return sendResponse(res, 400, Text.error.validation.login);
@@ -52,7 +52,7 @@ auth.post('/register', async (req, res) => {
 
             await usersCollection.insertOne(user);
             
-            let token = await createToken(user.id, req);
+            let token = await createToken(user.id, req, infiniteToken);
             delete user.password;
             delete user._id;
 
@@ -62,7 +62,7 @@ auth.post('/register', async (req, res) => {
 });
 
 auth.post('/login', async (req, res) => {
-    let {password, login} = req.body;
+    let {password, login, infiniteToken} = req.body;
 
     // Проверка логина
     if (!login) {
@@ -86,7 +86,7 @@ auth.post('/login', async (req, res) => {
             } 
             else {
                 // Пароль верный
-                let token = await createToken(user.id, req);
+                let token = await createToken(user.id, req, infiniteToken);
                 delete user.password;
                 delete user._id;
                 return sendResponse(res, 200, Text.success.userAuthorized, {token: token, user: user});
