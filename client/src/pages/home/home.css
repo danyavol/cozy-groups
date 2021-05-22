@@ -7,5 +7,5 @@
     display: none;
 }
 .homepage-logo path{
-    fill: var(--text-surface)
+    fill: #607d8b;
 }

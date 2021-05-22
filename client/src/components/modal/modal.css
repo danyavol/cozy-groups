@@ -16,3 +16,7 @@
 .input-properties {
     margin-top: 10px;
 }
+
+.dimmed.dimmable {
+    z-index: 100;
+}

@@ -15,9 +15,9 @@ function PostsTab(props) {
     }, [props.posts]);
 
     const postsCards = posts.map(post =>
-        <div key={post.id} onClick={() => props.history.push('/groups/'+ props.match.params.id + '/post/' + post.id)} className="ui card custom-width">
+        <div key={post.id} onClick={() => props.history.push('/groups/'+ props.match.params.id + '/post/' + post.id)} className="ui card custom-width pointer post-element">
             <div className="content">
-                <p className="right floated"><i className="user icon"></i>{post.author.login}</p>
+                <p className="right floated"><i className="user icon"></i>{post.author.firstName} {post.author.lastName}</p>
                 <div className="header" >{post.title}</div>
                 <div className="description">
                     <p className="word-break">{post.description}</p>

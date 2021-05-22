@@ -47,7 +47,14 @@
     right: 0;
     size: 20pt;
     margin: 30px !important;
-    color: black !important;
+    color: var(--success-color);
+    text-shadow: -5px 5px 8px rgba(34, 60, 80, 0.2);
+    transition: color 0.2s;
+}
+
+.createPost:hover {
+    color: #9fd623;
+    transition: color 0.2s;
 }
 
 .postTab {

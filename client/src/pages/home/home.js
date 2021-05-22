@@ -42,7 +42,7 @@ class Home extends Component {
                                 <h3 className="ui justified header">В вашей группе есть система ролей, так что вы как истинный король можете сделать себе подданых в качестве администраторов и редакторов</h3>
                             </div>
                             <div className="eight wide center aligned column">
-                                <FontAwesomeIcon icon={faUsers} size='10x' /><br />
+                                <FontAwesomeIcon icon={faUsers} size='10x' color='#F3B605' /><br />
                             </div>
                         </div>
                         <div className="row">
@@ -50,13 +50,13 @@ class Home extends Component {
                         </div>
                         <div className="centered row">
                             <div className="four wide center aligned column">
-                                <FontAwesomeIcon icon={faGoogle} size='10x' />
+                                <FontAwesomeIcon icon={faGoogle} size='10x' color='#4285F4' />
                             </div>
                             <div className="four wide center aligned column">
-                                <FontAwesomeIcon icon={faTrello} size='10x' />
+                                <FontAwesomeIcon icon={faTrello} size='10x' color='#0076BC' />
                             </div>
                             <div className="eight wide center aligned column">
-                                <h1 className="ui header">СИМБИОЗ GOOGLE КЛАССА, ГРУПП И TRELLO </h1>
+                                <h1 className="ui header">СИМБИОЗ GOOGLE КЛАССА И TRELLO </h1>
                                 <h3 className="ui justified header">Мы взяли всё самое лучшее от этих приложений и подумали как было бы забавно соеденить всю эту багадельню вместе. </h3>
                             </div>
                         </div>
@@ -75,19 +75,19 @@ class Home extends Component {
                         </div>
                         <div className="centered row">
                             <div className="three wide center aligned column">
-                                <FontAwesomeIcon icon={faDatabase} size='6x' />
+                                <FontAwesomeIcon icon={faDatabase} size='6x' color='#4CAA3D' />
                             </div>
                             <div className="three wide center aligned column">
-                                <FontAwesomeIcon icon={faReact} size='6x' />
+                                <FontAwesomeIcon icon={faReact} size='6x' color='#00D1F7' />
                             </div>
                             <div className="three wide center aligned column">
-                                <FontAwesomeIcon icon={faNode} size='6x' />
+                                <FontAwesomeIcon icon={faNode} size='6x' color='#88C249' />
                             </div>
                             <div className="three wide center aligned column">
-                                <FontAwesomeIcon icon={faHtml5} size='6x' />
+                                <FontAwesomeIcon icon={faHtml5} size='6x' color='#DE5336' />
                             </div>
                             <div className="three wide center aligned column">
-                                <FontAwesomeIcon icon={faCss3Alt} size='6x' />
+                                <FontAwesomeIcon icon={faCss3Alt} size='6x' color='#1E70B0' />
                             </div>
                         </div>
                         <div className="centered row">

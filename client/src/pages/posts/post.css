@@ -4,3 +4,12 @@
 .hidden {
     display: none;
 }
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.post-title {
+    margin-top: 0;
+}

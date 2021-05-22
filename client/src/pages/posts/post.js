@@ -23,11 +23,11 @@ function Post(props) {
                 }
             })
                 .then(response => {
-                    if (response.data.ok) {
+                    const {ok, post} = response.data;
+                    if (ok) {
                         setLoading(false);
-                        setPost(response.data.post);
-                        SetAuthor(response.data.post.author.login)
-                        console.log(response.data.post);
+                        setPost(post);
+                        SetAuthor(post.author.firstName + ' ' + post.author.lastName);
                     }
                 })
         }
@@ -37,12 +37,13 @@ function Post(props) {
         <Fragment>
             <Loader loading={loading} text={loaderText} />
             <div className={loading ? 'hidden' : ''}>
-                <div className={``}>
-
-                    <p className="right floated"><i className ="user icon"></i> {author} {DateParser.beautify(new Date(post.createdAt))}</p>
-                </div>
+                
                 <div className="ui segment">
-                    <h2>{post.title}</h2>
+                    <div className={`post-header`}>
+                        <p><i className ="user icon"></i> {author} </p>
+                        <p><i className="calendar icon"></i> {DateParser.beautify(new Date(post.createdAt))} </p>
+                    </div>
+                    <h2 className={'post-title'}>{post.title}</h2>
                     <div className="ui divider"></div>
                     <h3>{post.description}</h3>
                 </div>

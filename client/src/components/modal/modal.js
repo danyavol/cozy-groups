@@ -63,7 +63,7 @@ export default withRouter(function Modal(props) {
     const errorModal = <Fragment>
         <div className={`ui error message ${props.visible ? 'active' : ''}`}>
             <div className="header">{props.header}
-                <i onClick={props.updateVisible} className="close black icon float-right"></i>
+                <i onClick={props.updateVisible} className="close black icon float-right pointer"></i>
             </div>
             <div className="content">
                 {props.element}
@@ -74,7 +74,7 @@ export default withRouter(function Modal(props) {
     const notificationModal = <Fragment>
         <div className={`ui success message ${props.visible ? 'active' : ''}`}>
             <div className="header">{props.header}
-                <i onClick={props.updateVisible} className="close black icon float-right"></i>
+                <i onClick={props.updateVisible} className="close black icon float-right pointer"></i>
             </div>
             <div className="content">
                 {props.element}
@@ -97,7 +97,7 @@ export default withRouter(function Modal(props) {
             <Fragment>
                 <div className={`ui ${props.size} modal modal-properties ${props.visible ? 'active' : ''}`}>
                     <div className="header">{props.header}
-                        <i onClick={() => { props.updateVisible(); setInputTitleModal(""); setInputDescriptionModal(""); setInputErrorModal(null) }} className="close black icon float-right"></i>
+                        <i onClick={() => { props.updateVisible(); setInputTitleModal(""); setInputDescriptionModal(""); setInputErrorModal(null) }} className="close black icon float-right pointer"></i>
                     </div>
                     <div className={`${props.scrolling ? 'scrolling' : ''} content color`}>
                         {props.element}
@@ -143,7 +143,7 @@ export default withRouter(function Modal(props) {
             <Fragment>
                 <div className={`ui ${props.size} modal modal-properties ${props.visible ? 'active' : ''}`}>
                     <div className="header">{props.header}
-                        <i onClick={() => { props.updateVisible(); setInputModal(""); setInputErrorModal(null) }} className="close black icon float-right"></i>
+                        <i onClick={() => { props.updateVisible(); setInputModal(""); setInputErrorModal(null) }} className="close black icon float-right pointer"></i>
                     </div>
                     <div className={`${props.scrolling ? 'scrolling' : ''} content color`}>
                         {props.element}
@@ -180,7 +180,7 @@ export default withRouter(function Modal(props) {
             <Fragment>
                 <div className={`ui ${props.size} modal modal-properties ${props.visible ? 'active' : ''}`}>
                     <div className="header">{props.header}
-                        <i onClick={() => { props.updateVisible(); }} className="close black icon float-right"></i>
+                        <i onClick={() => { props.updateVisible(); }} className="close black icon float-right pointer"></i>
                     </div>
                     <div className={`${props.scrolling ? 'scrolling' : ''} content color`}>
                         {props.element}
@@ -201,7 +201,7 @@ export default withRouter(function Modal(props) {
             <Fragment>
                 <div className={`ui ${props.size} modal modal-properties ${props.visible ? 'active' : ''}`}>
                     <div className="header">{props.header}
-                        <i onClick={props.updateVisible} className="close black icon float-right"></i>
+                        <i onClick={props.updateVisible} className="close black icon float-right pointer"></i>
                     </div>
                     <div className={`${props.scrolling ? 'scrolling' : ''} content color`}>
                         {props.element}

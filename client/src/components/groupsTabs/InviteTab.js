@@ -41,7 +41,7 @@ export default function InviteTab(props) {
                                     text={inviteCode}
                                     onCopy={() => setCopied(true)}
                                 >
-                                    <h2><i className={`copy ${copied ? '' : 'disabled'} icon`}></i></h2>
+                                    <h2><i className={`copy ${copied ? '' : 'disabled'} icon pointer`}></i></h2>
                                 </CopyToClipboard>
                             </div>
 

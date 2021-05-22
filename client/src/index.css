@@ -56,3 +56,7 @@ h6 {
 .margin {
     margin-top: 10px;
 }
+
+.pointer {
+    cursor: pointer;
+}
