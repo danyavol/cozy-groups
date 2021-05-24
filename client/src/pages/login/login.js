@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import axios from 'axios';
 import { Link, withRouter } from "react-router-dom";
+import { Checkbox, Form, Radio } from 'semantic-ui-react'
 
 class Login extends Component {
 
@@ -16,9 +17,11 @@ class Login extends Component {
             globalErrorTitle: '',
             globalError: '',
 
-            loading: false
+            loading: false,
+            checked: false,
         }
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleCheckedChange = this.handleCheckedChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.hideGlobalError = this.hideGlobalError.bind(this);
     }
@@ -66,7 +69,16 @@ class Login extends Component {
                         />
                         <div className={`ui basic red pointing prompt label ${this.state.passwordError === 'empty' ? 'visible' : 'hidden'}`}>Введите пароль</div>
                     </div>
+                    <div className="field">
+                         <Checkbox
+                            label='Запомнить меня'
+                            name='radioGroup'
+                            value='default'
+                            checked={this.state.checked}
+                            onChange={this.handleCheckedChange}
+                        />
 
+                    </div>
                     <button
                         className={`ui blue button ${this.state.loading ? 'loading' : ''}`}
                         type="submit"
@@ -104,7 +116,8 @@ class Login extends Component {
 
         let data = {
             login: this.state.login,
-            password: this.state.password
+            password: this.state.password,
+            infiniteToken : this.state.checked
         }
 
         this.hideGlobalError();
@@ -142,6 +155,14 @@ class Login extends Component {
 
     }
 
+    handleCheckedChange(e) {
+        if(this.state.checked === false) {
+            this.setState({checked : true});
+        }
+        else {
+            this.setState({checked : false});
+        }
+    }
     handleInputChange(e) {
         this.setState(
             { [e.target.name]: e.target.value },

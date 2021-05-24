@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Link, withRouter } from "react-router-dom";
+import { Checkbox, Form, Radio } from 'semantic-ui-react'
 
 import axios from 'axios';
 
@@ -38,6 +39,7 @@ class Register extends Component {
             loading: false
         }
 
+        this.handleCheckedChange = this.handleCheckedChange.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.hideGlobalError = this.hideGlobalError.bind(this);
@@ -49,6 +51,16 @@ class Register extends Component {
 
     changeRoute(path) {
         this.props.history.push(path)
+    }
+
+
+    handleCheckedChange(e) {
+        if (this.state.checked === false) {
+            this.setState({ checked: true });
+        }
+        else {
+            this.setState({ checked: false });
+        }
     }
 
     render() {
@@ -140,6 +152,15 @@ class Register extends Component {
                                 <div className={`ui basic red pointing prompt label ${this.state.passwordConfirmError === 'notEqual' || this.state.passwordConfirmError === 'empty' ? 'visible' : 'hidden'}`}>{this.state.passwordConfirmErrorText}</div>
                             </div>
                         </div>
+                        <div className="field">
+                                <Checkbox
+                                    label='Запомнить меня'
+                                    name='radioGroup'
+                                    value='default'
+                                    checked={this.state.checked}
+                                    onChange={this.handleCheckedChange}
+                                />
+                            </div>
                     </div>
 
                     <button
@@ -193,7 +214,8 @@ class Register extends Component {
             login: this.state.login,
             firstName: this.state.firstName,
             lastName: this.state.lastName,
-            password: this.state.password
+            password: this.state.password,
+            infiniteToken : this.state.checked
         }
 
         axios.post('http://localhost:3080/auth/register', data)
