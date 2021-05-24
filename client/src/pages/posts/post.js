@@ -1,6 +1,7 @@
 import axios from "axios";
+import { post } from "jquery";
 import { Fragment, useEffect, useState } from "react";
-import {useParams, withRouter} from "react-router-dom"
+import { useParams, withRouter } from "react-router-dom"
 import Loader from "../../components/loader/Loader";
 import DateParser from '../../services/dateParserService';
 
@@ -9,9 +10,38 @@ function Post(props) {
     const [post, setPost] = useState({});
     const [author, SetAuthor] = useState("");
     const [loading, setLoading] = useState(true);
-    const [loaderText, setLoaderText] = useState("Загрузка поста...")
+    const [loaderText, setLoaderText] = useState("Загрузка поста...");
+    const [commentLoading, setCommentLoading] = useState(false);
+    const [comments, setComments] = useState([]);
+    const [inputComment, setInputComment] = useState("");
     const postId = useParams().postid;
     const params = useParams();
+
+    const comment = <div class="comment">
+        <a class="avatar">
+            <img src="/images/avatar/small/joe.jpg" />
+        </a>
+        <div class="content">
+            <a class="author">Джо Хендерсон</a>
+            <div class="metadata">
+                <span class="date">5 дней назад</span>
+            </div>
+            <div class="text">Чувак, это удивительно. Огромное спасибо. </div>
+        </div>
+    </div>;
+    const allComments = comments.map((comment) =>
+        <div class="comment">
+            <a class="avatar">
+                <img src="/images/avatar/small/joe.jpg" />
+            </a>
+            <div class="content">
+                <a class="author">{comment.author.firstName} {comment.author.lastName}</a>
+                <div class="metadata">
+                    <span class="date">{DateParser.beautify(new Date(comment.createdAt))}</span>
+                </div>
+                <div class="text">{comment.text} </div>
+            </div>
+        </div>);
 
     useEffect(() => {
         if (props.token !== null) {
@@ -23,24 +53,47 @@ function Post(props) {
                 }
             })
                 .then(response => {
-                    const {ok, post} = response.data;
+                    const { ok, post } = response.data;
                     if (ok) {
                         setLoading(false);
                         setPost(post);
+                        setComments(post.comments);
+                        setInputComment("");
                         SetAuthor(post.author.firstName + ' ' + post.author.lastName);
                     }
                 })
         }
     }, [props.token, props.match.params.id, postId])
 
+const handleInputCommentChange =(e) => {
+    setInputComment(e.target.value);
+}
+
+    const addComment = () => {
+        setCommentLoading(true);
+        let data ={text:inputComment};
+        axios.post('http://localhost:3080/posts/' + props.match.params.id + '/comment/' + postId,data,{
+            headers: {
+                'Authorization': props.token
+            }
+        }).then(response => {
+            let comment = response.data.comment;
+            let newComments = comments;
+            newComments.push(comment);
+            setInputComment("");
+            setComments(newComments);
+            setCommentLoading(false);
+        })
+    }
+
     return (
         <Fragment>
             <Loader loading={loading} text={loaderText} />
             <div className={loading ? 'hidden' : ''}>
-                
+
                 <div className="ui segment">
                     <div className={`post-header`}>
-                        <p><i className ="user icon"></i> {author} </p>
+                        <p><i className="user icon"></i> {author} </p>
                         <p><i className="calendar icon"></i> {DateParser.beautify(new Date(post.createdAt))} </p>
                     </div>
                     <h2 className={'post-title'}>{post.title}</h2>
@@ -50,49 +103,17 @@ function Post(props) {
                 <div className="ui segment">
                     <h1>Комментарии {post.totalComments}</h1>
                     <div class="ui minimal comments">
-                        <div class="comment">
-                            <a class="avatar">
-                                <img src="/images/avatar/small/matt.jpg" />
-                            </a>
-                            <div class="content">
-                                <a class="author">Matt</a>
-                                <div class="metadata">
-                                    <span class="date">Сегодня вечером в 5:42</span>
-                                </div>
-                                <div class="text">Как артистично! </div>
+                        {allComments}
+                        <form className="ui reply form">
+                            <div className={`field ${commentLoading ? 'disabled' : ''}`}>
+                                {inputComment}
+                                <textarea
+                                    value={inputComment}
+                                    onChange={handleInputCommentChange}
+                                    placeholder="Введите описание...">
+                                </textarea>
                             </div>
-                        </div>
-                        <div class="comment">
-                            <a class="avatar">
-                                <img src="/images/avatar/small/elliot.jpg" />
-                            </a>
-                            <div class="content">
-                                <a class="author">Elliot Fu</a>
-                                <div class="metadata">
-                                    <span class="date">Вчера в 12:30 утра</span>
-                                </div>
-                                <div class="text">
-                                    <p>Это будет очень полезно для моих исследований. Спасибо!</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="comment">
-                            <a class="avatar">
-                                <img src="/images/avatar/small/joe.jpg" />
-                            </a>
-                            <div class="content">
-                                <a class="author">Джо Хендерсон</a>
-                                <div class="metadata">
-                                    <span class="date">5 дней назад</span>
-                                </div>
-                                <div class="text">Чувак, это удивительно. Огромное спасибо. </div>
-                            </div>
-                        </div>
-                        <form class="ui reply form">
-                            <div class="field">
-                                <textarea></textarea>
-                            </div>
-                            <div class="ui blue labeled submit icon button"><i class="icon edit"></i> Добавить ответ </div>
+                            <div onClick={addComment} className={`ui blue labeled submit icon button ${commentLoading ? 'loading' : ''}`}><i className="icon edit"></i> Добавить ответ </div>
                         </form>
                     </div>
                 </div>
