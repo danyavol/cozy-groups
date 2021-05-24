@@ -13,22 +13,12 @@ function Post(props) {
     const [loaderText, setLoaderText] = useState("Загрузка поста...");
     const [commentLoading, setCommentLoading] = useState(false);
     const [comments, setComments] = useState([]);
+    const [totalComments, setTotalComments] = useState(0);
     const [inputComment, setInputComment] = useState("");
     const postId = useParams().postid;
     const params = useParams();
 
-    const comment = <div class="comment">
-        <a class="avatar">
-            <img src="/images/avatar/small/joe.jpg" />
-        </a>
-        <div class="content">
-            <a class="author">Джо Хендерсон</a>
-            <div class="metadata">
-                <span class="date">5 дней назад</span>
-            </div>
-            <div class="text">Чувак, это удивительно. Огромное спасибо. </div>
-        </div>
-    </div>;
+    
     const allComments = comments.map((comment) =>
         <div class="comment">
             <a class="avatar">
@@ -58,6 +48,7 @@ function Post(props) {
                         setLoading(false);
                         setPost(post);
                         setComments(post.comments);
+                        setTotalComments(post.totalComments)
                         setInputComment("");
                         SetAuthor(post.author.firstName + ' ' + post.author.lastName);
                     }
@@ -81,6 +72,8 @@ const handleInputCommentChange =(e) => {
             let newComments = comments;
             newComments.push(comment);
             setInputComment("");
+            let total = totalComments + 1;
+            setTotalComments(total);
             setComments(newComments);
             setCommentLoading(false);
         })
@@ -101,12 +94,11 @@ const handleInputCommentChange =(e) => {
                     <h3>{post.description}</h3>
                 </div>
                 <div className="ui segment">
-                    <h1>Комментарии {post.totalComments}</h1>
+                    <h1>Комментарии {totalComments}</h1>
                     <div class="ui minimal comments">
                         {allComments}
                         <form className="ui reply form">
                             <div className={`field ${commentLoading ? 'disabled' : ''}`}>
-                                {inputComment}
                                 <textarea
                                     value={inputComment}
                                     onChange={handleInputCommentChange}
