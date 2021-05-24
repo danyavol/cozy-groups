@@ -22,7 +22,7 @@ function Post(props) {
     const allComments = comments.map((comment) =>
         <div class="comment">
             <a class="avatar">
-                <img src="/images/avatar/small/joe.jpg" />
+            <img className="ui small avatar image" src="https://semantic-ui.com/images/wireframe/square-image.png" />
             </a>
             <div class="content">
                 <a class="author">{comment.author.firstName} {comment.author.lastName}</a>
@@ -83,7 +83,6 @@ const handleInputCommentChange =(e) => {
         <Fragment>
             <Loader loading={loading} text={loaderText} />
             <div className={loading ? 'hidden' : ''}>
-
                 <div className="ui segment">
                     <div className={`post-header`}>
                         <p><i className="user icon"></i> {author} </p>
@@ -95,22 +94,21 @@ const handleInputCommentChange =(e) => {
                 </div>
                 <div className="ui segment">
                     <h1>Комментарии {totalComments}</h1>
-                    <div class="ui minimal comments">
-                        {allComments}
-                        <form className="ui reply form">
+                    <div class="ui minimal comments max-width">
+                    <form className="ui reply form">
                             <div className={`field ${commentLoading ? 'disabled' : ''}`}>
                                 <textarea
                                     value={inputComment}
                                     onChange={handleInputCommentChange}
-                                    placeholder="Введите описание...">
+                                    placeholder="Введите комментарий...">
                                 </textarea>
                             </div>
                             <div onClick={addComment} className={`ui blue labeled submit icon button ${commentLoading ? 'loading' : ''}`}><i className="icon edit"></i> Добавить ответ </div>
                         </form>
+                        {allComments}
                     </div>
                 </div>
             </div>
-
         </Fragment>
     );
 }
