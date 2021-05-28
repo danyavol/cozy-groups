@@ -11,7 +11,7 @@ function Post(props) {
 
     const [post, setPost] = useState({});
     const [author, SetAuthor] = useState("");
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [loaderText, setLoaderText] = useState("Загрузка поста...");
     const [commentLoading, setCommentLoading] = useState(false);
     const [comments, setComments] = useState([]);
@@ -35,29 +35,6 @@ function Post(props) {
             </div>
         </div>);
 
-
-    useEffect(() => {
-        if (props.token !== null) {
-            console.log(params.postid);
-            setLoading(true);
-            axios.get('http://localhost:3080/posts/' + props.match.params.id + '/post/' + postId, {
-                headers: {
-                    'Authorization': props.token
-                }
-            })
-                .then(response => {
-                    const { ok, post } = response.data;
-                    if (ok) {
-                        setLoading(false);
-                        setPost(post);
-                        setComments(post.comments);
-                        setTotalComments(post.totalComments)
-                        setInputComment("");
-                        SetAuthor(post.author.firstName + ' ' + post.author.lastName);
-                    }
-                })
-        }
-    }, [])
 
     useEffect(() => {
         if (props.token !== null) {
@@ -134,8 +111,6 @@ function Post(props) {
         <Fragment>
             <Loader loading={loading} text={loaderText} />
             <div className={loading ? 'hidden' : ''}>
-                {/* {defaultPost}
-                {quizPost} */}
                 {post.options !== undefined && post.type === 'quiz' ?
                     <QuizPost
                         post={post}
@@ -143,6 +118,8 @@ function Post(props) {
                         token={props.token}
                         updatePost={updatePost}
                         updateLoading={updateLoading}
+                        updateMainModal={props.updateMainModal}
+                        loading={loading}
                     /> :
                     defaultPost
                 }

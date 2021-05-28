@@ -1,26 +1,38 @@
-import { Fragment, useEffect, useState  } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Form, Checkbox } from 'semantic-ui-react';
 import DateParser from '../../../services/dateParserService';
 import axios from "axios";
 import { withRouter } from "react-router-dom";
 import OneUserQuiz from "./quizTypes/OneUserQuiz";
+import MultipleQuiz from "./quizTypes/MultipleQuiz";
+import SingleQuiz from "./quizTypes/SingleQuiz";
+import '../quizPost.css'
 
 function QuizPost(props) {
 
-    const [answer, setAnswer] = useState("");
+    const [answer, setAnswer] = useState([]);
 
     useEffect(() => {
-        setAnswer("")
-    },[])
+        setAnswer([])
+    }, [])
 
-    const addVote = () => {
+
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    const updateAnswers = (answers) => {
+        if (props.loading === true) answers([]);
+    }
+
+    const deleteVote = () => {
         props.updateLoading(true);
-        let data = { selectedOptions: answer, removeVote: false };
+        let selectedOptions = props.post.votes.find(vote => vote.user.id === user.id).selectedOptions;
+        let data = { selectedOptions: selectedOptions, removeVote: true };
         axios.post('http://localhost:3080/posts/' + props.match.params.id + '/vote-quiz/' + props.post.id, data, {
             headers: {
                 'Authorization': props.token
             }
         }).then(response => {
+           
             axios.get('http://localhost:3080/posts/' + props.match.params.id + '/post/' + props.post.id, {
                 headers: {
                     'Authorization': props.token
@@ -30,11 +42,37 @@ function QuizPost(props) {
                     const { ok, post } = response.data;
                     if (ok) {
                         props.updatePost(post);
+                        setAnswer([])
                     }
                 })
-        }).catch(e => {
-            props.updateLoading(false);
-            console.log(e.response);
+                props.updateMainModal("Уведомление",response.data.message,'notification');
+        })
+    }
+
+    const addVote = () => {
+        props.updateLoading(true);
+        let data = { selectedOptions: answer, removeVote: false };
+        axios.post('http://localhost:3080/posts/' + props.match.params.id + '/vote-quiz/' + props.post.id, data, {
+            headers: {
+                'Authorization': props.token
+            }
+        }).then(response => {
+            //props.updateLoading(false);
+            //props.updateMainModal("Уведомление",response.data.message,'notification');
+            axios.get('http://localhost:3080/posts/' + props.match.params.id + '/post/' + props.post.id, {
+                headers: {
+                    'Authorization': props.token
+                }
+            })
+                .then(response => {
+                    const { ok, post } = response.data;
+                    if (ok) {
+                        props.updateLoading(false);
+                        props.updatePost(post);
+                        setAnswer([])
+                    }
+                })
+                props.updateMainModal("Уведомление",response.data.message,'notification');
         })
     }
 
@@ -53,13 +91,34 @@ function QuizPost(props) {
 
                 <div className="ui divider"></div>
                 <Form>
-                    <OneUserQuiz
-                        post={props.post}
-                        update={updateData}
-                    />
-                    <Form.Field>
-                        <a onClick={addVote} className={'ui huge button'}>Отправить</a>
-                    </Form.Field>
+                    {props.post.quizType === 0 ?
+                        <MultipleQuiz
+                            post={props.post}
+                            update={updateData}
+                            user={user}
+                            updateAnswers={updateAnswers}
+                        /> : ""}
+                    {props.post.quizType === 1 ?
+                        <SingleQuiz
+                            post={props.post}
+                            update={updateData}
+                            user={user}
+                        /> : ""}
+                    {props.post.quizType === 2 ?
+                        <OneUserQuiz
+                            post={props.post}
+                            update={updateData}
+                            user={user}
+                        /> : ""}
+                    <Form.Group>
+                        <Form.Field>
+                            <a onClick={addVote} className={`${answer.length === 0 ? 'disabled hidden' : ''} ui huge button`}>Отправить</a>
+                        </Form.Field>
+                        {props.post.canCancel === true ?
+                            <Form.Field>
+                                <a onClick={deleteVote} className={`${props.post.votes.find(vote => vote.user.id === user.id) === undefined ? 'disabled hidden' : ''} ui huge button`}>Отменить голос</a>
+                            </Form.Field> : ''}
+                    </Form.Group>
                 </Form>
             </div>
         </Fragment>

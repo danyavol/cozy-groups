@@ -157,7 +157,6 @@ class App extends Component {
                             <Route path="/groups/:id/post/new"  component={() => <CreatePost token={this.state.token} updateMainModal = {this.updateMainModal}/>}></Route>
                             <Route path="/groups/:id/post/:postid" component={() => <Post token={this.state.token} updateMainModal = {this.updateMainModal}/>} />
                             
-
                             <Route path="/groups/:id"
                                 render={(props) => (
                                     <Group
