@@ -9,7 +9,9 @@
     display: flex;
     justify-content: space-between;
 }
-
+.max-width{
+    max-width: 100% !important;
+}
 .post-title {
     margin-top: 0;
 }
