@@ -5,6 +5,7 @@ import { Form, Radio } from 'semantic-ui-react'
 import DefaultPost from "../../components/postsTypes/defaultPost";
 import axios from "axios";
 import './post.css'
+import {QuizPost} from "../../components/postsTypes/quizPost";
 
 function CreatePost(props) {
 
@@ -14,8 +15,11 @@ function CreatePost(props) {
     const [error, setError] = useState(null);
 
     const updateData = (value) => {
+        console.log(value);
         if(value.title === '') {
             setError('empty');
+        } else if (value.options && value.options.length < 1) {
+            setError('optionsEmpty');
         }
         else {
             setError('');
@@ -23,10 +27,15 @@ function CreatePost(props) {
         setCozyData(value);
     }
 
+    const returnBack = (event) => {
+        event.preventDefault();
+        props.history.push('/groups/' + props.match.params.id);
+    }
+
     const createPost = () => {
         setLoading(true);
-        let data = { title: cozyData.title, description: cozyData.description };
-        axios.post('http://localhost:3080/posts/' + props.match.params.id + '/' + cozyData.type, data, {
+        // let data = { title: cozyData.title, description: cozyData.description };
+        axios.post('http://localhost:3080/posts/' + props.match.params.id + '/' + cozyData.type, cozyData, {
             headers: {
                 'Authorization': props.token
             }
@@ -49,7 +58,11 @@ function CreatePost(props) {
                         props.close();
                     }, 3000);
                 }
-            })
+            });
+    }
+
+    const createQuiz = () => {
+
     }
 
     return (
@@ -81,9 +94,24 @@ function CreatePost(props) {
                     </Form.Field>
                 </Form>
             </div>
-            {checked === 'default' ? <DefaultPost error={error} loading={loading} update={updateData} /> : "а нихуя"}
+            {checked === 'default' && <DefaultPost error={error} loading={loading} update={updateData} />}
+            {checked === 'quiz' && <QuizPost error={error} loading={loading} update={updateData} />}
             <div className='ui center aligned padded segment'>
-                <a className={`ui huge ${error === null || error === 'empty' ? `disabled` : `` } ${loading ? `loading` : ``} button`} onClick={createPost}><i className="reply icon"></i>Создать пост</a>
+                <a
+                    className={`ui huge ${loading ? `loading` : ``} button`}
+                    onClick={returnBack}
+                >
+                    <i className="reply icon"></i>
+                    Отменить
+                </a>
+                <a
+                    className={`ui huge olive ${error === null || error === 'empty' || error === 'optionsEmpty' ? `disabled` : ``  } 
+                                              ${loading ? `loading` : ``} button`}
+                    onClick={createPost}
+                >
+                    <i className="share icon"></i>
+                    Создать пост
+                </a>
             </div>
         </Fragment>
     );

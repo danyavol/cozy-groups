@@ -1,21 +1,18 @@
-
 import React, { Fragment, useState } from 'react';
 import { withRouter } from "react-router-dom";
 
 function DefaultPost(props) {
-
     const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('')
+    const [description, setDescription] = useState('');
 
-    const handleTitleChange = (e) => {
-        let data = {title : e.target.value, description : description, type:'default'}
+    const handleTitleChange = e => {
+        let data = {title : e.target.value, description, type:'default'}
         props.update(data);
         setTitle(e.target.value)
-        
-        
     }
-    const handleDescriptionChange = (e) => {
-        let data = {title : title, description : e.target.value, type:'default'}
+
+    const handleDescriptionChange = e => {
+        let data = {title, description : e.target.value, type:'default'}
         props.update(data);
         setDescription(e.target.value)
     }
@@ -23,7 +20,7 @@ function DefaultPost(props) {
     return (
         <Fragment>
             <div className={`ui padded ${props.loading ? `disabled`: ``} segment`}>
-                <div class="ui form">
+                <div className="ui form">
                     <div className={`field ${props.error ==='empty' ? 'error':''}`}>
                         <label>Заголовок</label>
                         <div className={`ui fluid icon input`}>
@@ -36,7 +33,7 @@ function DefaultPost(props) {
                             <i className="pencil alternate icon"></i>
                         </div>
                     </div>
-                    <div class="field">
+                    <div className="field">
                         <label>Описание</label>
                         <textarea
                             value={description}
@@ -49,4 +46,4 @@ function DefaultPost(props) {
     );
 }
 
-export default withRouter(DefaultPost)
+export default withRouter(DefaultPost);
