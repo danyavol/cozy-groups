@@ -1,12 +1,11 @@
 import { Fragment, useEffect, useState } from "react";
-import { Form, Checkbox } from 'semantic-ui-react';
+import { Form } from 'semantic-ui-react';
 import DateParser from '../../../services/dateParserService';
 import axios from "axios";
 import { withRouter } from "react-router-dom";
 import OneUserQuiz from "./quizTypes/OneUserQuiz";
 import MultipleQuiz from "./quizTypes/MultipleQuiz";
 import SingleQuiz from "./quizTypes/SingleQuiz";
-import '../quizPost.css'
 
 function QuizPost(props) {
 
@@ -112,11 +111,11 @@ function QuizPost(props) {
                         /> : ""}
                     <Form.Group>
                         <Form.Field>
-                            <a onClick={addVote} className={`${answer.length === 0 ? 'disabled hidden' : ''} ui huge button`}>Отправить</a>
+                            <div onClick={addVote} className={`${answer.length === 0 ? 'disabled hidden' : ''} ui huge button`}>Отправить</div>
                         </Form.Field>
                         {props.post.canCancel === true ?
                             <Form.Field>
-                                <a onClick={deleteVote} className={`${props.post.votes.find(vote => vote.user.id === user.id) === undefined ? 'disabled hidden' : ''} ui huge button`}>Отменить голос</a>
+                                <div onClick={deleteVote} className={`${props.post.votes.find(vote => vote.user.id === user.id) === undefined ? 'disabled hidden' : ''} ui huge button`}>Отменить голос</div>
                             </Form.Field> : ''}
                     </Form.Group>
                 </Form>

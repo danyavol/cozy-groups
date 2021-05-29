@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react';
 import { withRouter } from "react-router-dom";
 
-function DefaultPost(props) {
+function CreateDefaultPost(props) {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
 
@@ -46,4 +46,4 @@ function DefaultPost(props) {
     );
 }
 
-export default withRouter(DefaultPost);
+export default withRouter(CreateDefaultPost);

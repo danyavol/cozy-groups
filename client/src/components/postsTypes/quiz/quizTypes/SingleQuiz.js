@@ -21,12 +21,11 @@ function SingleQuiz(props) {
                 <label>Опрос с 1 вариантом</label>
             </Form.Field>
             {props.post.options.map(option =>
-                <Form.Field>
+                <Form.Field key={option.id}>
                     <Checkbox
-                        disabled={props.post.votes.find(vote => vote.user.id === props.user.id) ? true : false}
+                        disabled={!!props.post.votes.find(vote => vote.user.id === props.user.id)}
                         radio
                         label={`${option.id}. ${option.value} ${props.post.votes.filter(vote => vote.selectedOptions.includes(option.id)).length}`}
-                        value={option}
                         checked={answer.includes(option.id) || props.post.votes.find(vote => vote.user.id === props.user.id && vote.selectedOptions.includes(option.id)) !== undefined}
                         onChange={() => changeAnswer([option.id])}
                     />

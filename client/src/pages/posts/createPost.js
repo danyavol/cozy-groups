@@ -2,10 +2,10 @@ import { Fragment } from "react";
 import React, { useEffect, useState } from 'react';
 import { withRouter } from "react-router-dom";
 import { Form, Radio } from 'semantic-ui-react'
-import DefaultPost from "../../components/postsTypes/defaultPost";
+import DefaultPost from "../../components/postsTypes/createDefaultPost";
 import axios from "axios";
 import './post.css'
-import {QuizPost} from "../../components/postsTypes/quizPost";
+import {CreateQuizPost} from "../../components/postsTypes/createQuizPost";
 
 function CreatePost(props) {
 
@@ -15,7 +15,6 @@ function CreatePost(props) {
     const [error, setError] = useState(null);
 
     const updateData = (value) => {
-        console.log(value);
         if(value.title === '') {
             setError('empty');
         } else if (value.options && value.options.length < 1) {
@@ -34,7 +33,6 @@ function CreatePost(props) {
 
     const createPost = () => {
         setLoading(true);
-        // let data = { title: cozyData.title, description: cozyData.description };
         axios.post('http://localhost:3080/posts/' + props.match.params.id + '/' + cozyData.type, cozyData, {
             headers: {
                 'Authorization': props.token
@@ -59,10 +57,6 @@ function CreatePost(props) {
                     }, 3000);
                 }
             });
-    }
-
-    const createQuiz = () => {
-
     }
 
     return (
@@ -95,7 +89,7 @@ function CreatePost(props) {
                 </Form>
             </div>
             {checked === 'default' && <DefaultPost error={error} loading={loading} update={updateData} />}
-            {checked === 'quiz' && <QuizPost error={error} loading={loading} update={updateData} />}
+            {checked === 'quiz' && <CreateQuizPost error={error} loading={loading} update={updateData} />}
             <div className='ui center aligned padded segment'>
                 <a
                     className={`ui huge ${loading ? `loading` : ``} button`}

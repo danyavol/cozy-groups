@@ -1,8 +1,8 @@
-import React, {Fragment, useCallback, useEffect, useState} from "react";
-import "./quizPost.css";
-import {Checkbox, Form, Radio, Visibility} from "semantic-ui-react";
+import React, {Fragment, useEffect, useState} from "react";
+import "./createQuizPost.css";
+import {Checkbox, Form, Radio} from "semantic-ui-react";
 
-export const QuizPost = ({ loading, error, update }) => {
+export const CreateQuizPost = ({ loading, error, update }) => {
     const [id, setId] = useState(1);
     const [title, setTitle] = useState('');
     const [optionTitle, setOptionTitle] = useState('');
@@ -13,8 +13,7 @@ export const QuizPost = ({ loading, error, update }) => {
     useEffect(() => {
         let data = {title, options,  type:'quiz', quizType, canCancel}
         update(data);
-        // console.log(data);
-    }, [title, options.length, quizType, canCancel]);
+    }, [title, options.length, options, quizType, canCancel]);
 
     const handleTitleChange = e => {
         setTitle(e.target.value);

@@ -1,10 +1,8 @@
 import axios from "axios";
-import { map, post } from "jquery";
 import { Fragment, useEffect, useState } from "react";
 import { useParams, withRouter } from "react-router-dom"
 import Loader from "../../components/loader/Loader";
 import DateParser from '../../services/dateParserService';
-import { Form, Checkbox } from 'semantic-ui-react';
 import QuizPost from "../../components/postsTypes/quiz/quizPost";
 
 function Post(props) {
@@ -22,16 +20,20 @@ function Post(props) {
 
 
     const allComments = comments.map((comment) =>
-        <div class="comment">
-            <a class="avatar">
-                <img className="ui small avatar image" src="https://semantic-ui.com/images/wireframe/square-image.png" />
+        <div className="comment" key={comment.id}>
+            <a className="avatar">
+                <img
+                    className="ui small avatar image"
+                    src="https://semantic-ui.com/images/wireframe/square-image.png"
+                    alt="avatar"
+                />
             </a>
-            <div class="content">
-                <a class="author">{comment.author.firstName} {comment.author.lastName}</a>
-                <div class="metadata">
-                    <span class="date">{DateParser.beautify(new Date(comment.createdAt))}</span>
+            <div className="content">
+                <a className="author">{comment.author.firstName} {comment.author.lastName}</a>
+                <div className="metadata">
+                    <span className="date">{DateParser.beautify(new Date(comment.createdAt))}</span>
                 </div>
-                <div class="text">{comment.text} </div>
+                <div className="text">{comment.text} </div>
             </div>
         </div>);
 
@@ -106,11 +108,19 @@ function Post(props) {
             <h3>{post.description}</h3>
         </div>
 
+    const returnButton = event => {
+        event.preventDefault();
+        props.history.push('/groups/' + props.match.params.id);
+    }
+
 
     return (
         <Fragment>
             <Loader loading={loading} text={loaderText} />
             <div className={loading ? 'hidden' : ''}>
+                <div className="ui icon button" onClick={returnButton}>
+                    <i className="angle left icon"></i>
+                </div>
                 {post.options !== undefined && post.type === 'quiz' ?
                     <QuizPost
                         post={post}
@@ -125,7 +135,7 @@ function Post(props) {
                 }
                 <div className="ui segment">
                     <h1>Комментарии {totalComments}</h1>
-                    <div class="ui minimal comments max-width">
+                    <div className="ui minimal comments max-width">
                         <form className="ui reply form">
                             <div className={`field ${commentLoading ? 'disabled' : ''}`}>
                                 <textarea

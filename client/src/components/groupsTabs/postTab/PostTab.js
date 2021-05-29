@@ -1,11 +1,9 @@
-import { Dropdown, Tab } from "semantic-ui-react";
 import React, { useEffect, useState } from "react";
 import "./postTab.css"
-import { Link, useLocation, withRouter } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import DateParser from '../../../services/dateParserService';
 
 function PostsTab(props) {
-
     const [posts, setPosts] = useState([]);
 
 
@@ -36,18 +34,21 @@ function PostsTab(props) {
                 <div className="null-posts">
                     <h2>У вас ещё нет постов :(</h2>
                 </div>
-                
-               <Link color='black' to={"/groups/" + props.match.params.id + "/post/new"}><i className=" createPost plus huge icon"></i></Link> 
+               <Link color='black' to={"/groups/" + props.match.params.id + "/post/new"}>
+                   <i className={`createPost plus huge ${props.role === 'member' ? 'hide' : 'icon'}`}></i>
+               </Link>
             </div>
         );
     }
     return (
         <div className="postTab">
             {postsCards}
-            <Link color='black' to={"/groups/" + props.match.params.id + "/post/new"}><i className=" createPost plus huge icon"></i></Link> 
+            <Link color='black' to={"/groups/" + props.match.params.id + "/post/new"}>
+                <i className={`createPost plus huge ${props.role === 'member' ? 'hide' : 'icon'}`}></i>
+            </Link>
         </div>
     );
 }
 
 
-export default withRouter(PostsTab)
+export default withRouter(PostsTab);

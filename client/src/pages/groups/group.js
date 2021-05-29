@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import "./group.css"
 import axios from "axios";
-
 import SettingsDropdown from "../../components/settingDropdown/SettingDropdown";
 import Loader from "../../components/loader/Loader";
 import GroupsTabs from "../../components/groupsTabs/GroupsTabs";
 import {useHistory, useParams} from "react-router-dom";
-
+import "./group.css"
 
 function Group(props) {
     const [role, setRole] = useState("");
